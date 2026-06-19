@@ -42,11 +42,14 @@ namespace Norm {
 		Input* input_ = nullptr;
 		//開発用カメラ
 		std::unique_ptr<DevelopCamera> camera_ = nullptr;
-		Vector3 cameraTranslate = { 0.0f,1.0f,-40.0f };
-		Vector3 cameraRotate = { 0.0f,0.0f,0.0f };
+		Vector3 cameraTranslate = { -47.0f,20.0f,42.0f };
+		Vector3 cameraRotate = { 0.12f,1.58f,0.0f };
 
 		//平行光源
 		std::unique_ptr<DirectionalLight> dirLight;
+		//点光源
+		std::unique_ptr<PointLight> pointLight;
+
 
 		//スプライト
 		uint32_t textureHandleSprite_ = 0u;
@@ -57,6 +60,13 @@ namespace Norm {
 		WorldTransform modelBaseWT_;
 		std::unique_ptr<Object3d> shapeBase_ = nullptr;
 		WorldTransform shapeBaseWT_;
+
+		std::unique_ptr<Object3d> sampleMap_ = nullptr;
+		WorldTransform sampleMapWT_;
+
+		std::unique_ptr<Object3d> back_ = nullptr;
+		WorldTransform backWT_;
+
 		//天球・地面
 		std::unique_ptr<Skydome> skydome_ = nullptr;
 		std::unique_ptr<Ground> ground_ = nullptr;

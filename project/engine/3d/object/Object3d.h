@@ -113,6 +113,12 @@ namespace Norm {
 		void Initialize(ShapeTag, const std::string& name, Shape::ShapeKind kind);
 
 		/// <summary>
+		/// デバッグ
+		/// </summary>
+		/// <param name="_name">名前</param>
+		void Debug(const std::wstring& _name);
+
+		/// <summary>
 		/// ワールドトランスフォームの登録
 		/// </summary>
 		/// <param name="_worldTransform">ワールドトランスフォームのポインタ</param>

@@ -83,6 +83,8 @@ namespace Norm {
 #ifdef _DEBUG
 
 		ImGui::Begin("DevelopCamera");
+		ImGui::Text("Translate : %f, %f, %f", worldTransform.GetTranslate().x, worldTransform.GetTranslate().y, worldTransform.GetTranslate().z);
+		ImGui::Text("Rotate : %f, %f, %f", worldTransform.GetRotate().x, worldTransform.GetRotate().y, worldTransform.GetRotate().z);
 		ImGui::End();
 
 		ImGui::Begin("mouse");

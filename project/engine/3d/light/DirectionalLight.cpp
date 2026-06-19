@@ -4,9 +4,6 @@
 
 namespace Norm {
 
-	void DirectionalLight::Initialize() {
-	}
-
 	void DirectionalLight::Update() {
 		//データを転送
 		data_.color = color_;

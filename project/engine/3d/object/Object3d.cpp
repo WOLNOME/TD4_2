@@ -9,6 +9,7 @@
 #include "BaseCamera.h"
 #include "SceneLight.h"
 #include "SceneManager.h"
+#include "StringUtility.h"
 #include <fstream>
 #include <sstream>
 #include <cassert>
@@ -72,6 +73,18 @@ namespace Norm {
 
 		//マネージャーに登録
 		Object3dManager::GetInstance()->RegisterObject(name_, this);
+	}
+
+	void Object3d::Debug(const std::wstring& _name) {
+#ifdef _DEBUG
+		ImGui::Begin("3Dオブジェクト");
+		if(ImGui::CollapsingHeader(StringUtility::ConvertString(_name).c_str())){
+			
+		}
+
+		ImGui::End();
+#endif // _DEBUG
+
 	}
 
 	uint32_t Object3d::RegistWorldTransform(WorldTransform* _worldTransform) {

@@ -2,6 +2,7 @@
 #include "DirectXCommon.h"
 #include "ImGuiManager.h"
 #include "StringUtility.h"
+#include "LineManager.h"
 
 namespace Norm {
 
@@ -24,9 +25,16 @@ namespace Norm {
 			ImGui::DragFloat("半径", &radius_, 0.01f, 0.0f, 20.0f);
 			ImGui::DragFloat("減衰率", &decay_, 0.01f, 0.0f, 100.0f);
 			ImGui::Checkbox("適用するか", &isActive_);
+
+			
 		}
 		ImGui::End();
 
+		//ライトの位置をラインで表示
+		Sphere lineSphere;
+		lineSphere.center = position_;
+		lineSphere.radius = 0.1f;
+		MyMath::CreateLineSphere(lineSphere, { 0,1,0,1 }, 10);
 	}
 
 }

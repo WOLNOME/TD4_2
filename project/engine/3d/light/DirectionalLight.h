@@ -38,10 +38,6 @@ namespace Norm {
 		~DirectionalLight() = default;
 
 		/// <summary>
-		/// 初期化
-		/// </summary>
-		void Initialize();
-		/// <summary>
 		/// 行列の更新
 		/// </summary>
 		void Update();
