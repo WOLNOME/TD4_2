@@ -1,0 +1,124 @@
+{
+    "AngularVelocity": {
+        "Max": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 1.0
+        },
+        "Min": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": -1.0
+        }
+    },
+    "BlendMode": 1,
+    "ClumpNum": 1,
+    "EffectStyle": 0,
+    "EmitRate": 50,
+    "EndColor": {
+        "Max": {
+            "w": 0.0,
+            "x": 1.0,
+            "y": 1.0,
+            "z": 1.0
+        },
+        "Min": {
+            "w": 0.0,
+            "x": 1.0,
+            "y": 1.0,
+            "z": 1.0
+        }
+    },
+    "EndTime": 1.2999999523162842,
+    "FloorHeight": 0.0,
+    "GenerateMethod": 0,
+    "GrainTransform": {
+        "Rotate": {
+            "Max": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "Min": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            }
+        },
+        "Scale": {
+            "Max": {
+                "x": 5.0,
+                "y": 5.0,
+                "z": 5.0
+            },
+            "Min": {
+                "x": 5.0,
+                "y": 5.0,
+                "z": 5.0
+            }
+        }
+    },
+    "Gravity": 9.800000190734863,
+    "IsBillboard": 1,
+    "IsBound": 0,
+    "IsGravity": 1,
+    "LifeTime": {
+        "Max": 4.0,
+        "Min": 4.0
+    },
+    "LocalTransform": {
+        "Rotate": {
+            "w": 0.0,
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+        },
+        "Scale": {
+            "w": 0.0,
+            "x": 8.0,
+            "y": 8.0,
+            "z": 8.0
+        },
+        "Translate": {
+            "w": 0.0,
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+        }
+    },
+    "MaxGrains": 250,
+    "Primitive": 3,
+    "Repulsion": 0.5,
+    "SizeVelocity": {
+        "Max": 0.0,
+        "Min": -0.5
+    },
+    "StartColor": {
+        "Max": {
+            "w": 1.0,
+            "x": 1.0,
+            "y": 1.0,
+            "z": 1.0
+        },
+        "Min": {
+            "w": 1.0,
+            "x": 1.0,
+            "y": 1.0,
+            "z": 1.0
+        }
+    },
+    "StartTime": 0.4000000059604645,
+    "Texture": "smoke.png",
+    "Velocity": {
+        "Max": {
+            "x": 1.0,
+            "y": 1.0,
+            "z": 1.0
+        },
+        "Min": {
+            "x": -1.0,
+            "y": -1.0,
+            "z": -1.0
+        }
+    }
+}
