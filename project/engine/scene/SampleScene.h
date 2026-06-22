@@ -34,6 +34,9 @@ namespace Norm {
 		/// </summary>
 		void DebugWithImGui() override;
 
+
+		void LightMoveProcess();
+
 	private:
 		/// ============================== ///
 		///		メンバ関数
@@ -49,7 +52,6 @@ namespace Norm {
 		std::unique_ptr<DirectionalLight> dirLight;
 		//点光源
 		std::unique_ptr<PointLight> pointLight;
-
 
 		//スプライト
 		uint32_t textureHandleSprite_ = 0u;

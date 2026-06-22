@@ -79,7 +79,35 @@ namespace Norm {
 #ifdef _DEBUG
 		ImGui::Begin("3Dオブジェクト");
 		if(ImGui::CollapsingHeader(StringUtility::ConvertString(_name).c_str())){
-			
+			//トランスフォームの編集
+			if (!worldTransforms_.empty()) {
+				auto& worldTransform = *worldTransforms_.begin()->second;
+				Vector3 translate = worldTransform.GetTranslate();
+				Vector3 rotate = worldTransform.GetRotate();
+				Vector3 scale = worldTransform.GetScale();
+
+				ImGui::DragFloat3(
+					"座標",
+					&translate.x,
+					0.1f
+				);
+				ImGui::DragFloat3(
+					"回転",
+					&rotate.x,
+					0.1f
+				);
+				ImGui::DragFloat3(
+					"スケール",
+					&scale.x,
+					0.1f
+				);
+
+				worldTransform.SetTranslate(translate);
+				worldTransform.SetRotate(rotate);
+				worldTransform.SetScale(scale);
+			}
+
+
 		}
 
 		ImGui::End();

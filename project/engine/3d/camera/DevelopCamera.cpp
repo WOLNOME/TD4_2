@@ -43,7 +43,7 @@ namespace Norm {
 		//ドラッグアンドドロップでカメラの向きを変える
 		if (input_->PushMouseButton(MouseButton::RightButton)) {
 			//マウスの移動幅
-			Vector2 moveValue = input_->GetMousePosition();
+			Vector2 moveValue = input_->GetMouseMoveValue();
 			//デッドゾーン
 			float deadZone = 2.0f;
 			if (moveValue.Length() > deadZone) {
@@ -98,6 +98,7 @@ namespace Norm {
 			ImGui::Text("RIGHT");
 		}
 		ImGui::Text("ScrollValue : %f", input_->GetMouseScrollCount());
+		ImGui::Text("マウスのスクリーン座標 : %f,%f", input_->GetMouseMoveValue().x, input_->GetMouseMoveValue().y);
 		ImGui::End();
 
 #endif // _DEBUG

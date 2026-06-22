@@ -153,10 +153,15 @@ namespace Norm {
 		/// <returns>離された瞬間であれば true、そうでなければ false</returns>
 		bool ReleasePadButton(GamePadButton button);
 		/// <summary>
-		/// 現在のマウス座標を取得する
+		/// 現在のマウスの座標（スクリーン座標）
 		/// </summary>
-		/// <returns>マウス座標（ウィンドウ座標系）</returns>
+		/// <returns>マウスのポジション</returns>
 		Vector2 GetMousePosition();
+		/// <summary>
+		/// 現在のマウスの移動量
+		/// </summary>
+		/// <returns>マウス移動量（スクリーン座標系）</returns>
+		Vector2 GetMouseMoveValue();
 		/// <summary>
 		/// マウスホイールの回転量を取得する
 		/// </summary>

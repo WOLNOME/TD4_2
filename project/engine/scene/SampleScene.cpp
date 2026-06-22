@@ -65,9 +65,12 @@ namespace Norm {
 
 		back_ = std::make_unique<Object3d>();
 		back_->Initialize(ShapeTag{}, Object3dManager::GetInstance()->GenerateName("Back"), Shape::ShapeKind::kPlane);
-		back_->SetTexture(TextureManager::GetInstance()->LoadTexture("black.png"));
-
-
+		back_->SetTexture(TextureManager::GetInstance()->LoadTexture("uvChecker.png"));
+		backWT_.Initialize();
+		backWT_.SetTranslate({ 4.6f,20.0f,41.0f });
+		backWT_.SetRotate({ 0.0f,1.58f,0.0f });
+		backWT_.SetScale({ 30.0f,20.0f,1.0f });
+		back_->RegistWorldTransform(&backWT_);
 
 		//パーティクルの生成と初期化
 		particle_ = std::make_unique<CombinedParticle>();
@@ -90,6 +93,9 @@ namespace Norm {
 		BaseScene::Update();
 		//カメラの更新
 		camera_->Update();
+		//ライト移動処理
+		LightMoveProcess();
+
 		//オブジェクトの回転
 		modelBaseWT_.SetRotate({ 0.0f,modelBaseWT_.GetRotate().y + 0.01f,0.0f });
 		shapeBaseWT_.SetRotate({ shapeBaseWT_.GetRotate().x + 0.01f,shapeBaseWT_.GetRotate().y + 0.01f,shapeBaseWT_.GetRotate().z + 0.01f });
@@ -97,8 +103,6 @@ namespace Norm {
 
 	void SampleScene::DebugWithImGui() {
 #ifdef _DEBUG
-		back_->Debug(L"背景");
-
 		//平行光源
 		dirLight->DebugWithImGui(L"平行光源１");
 		//点光源
@@ -108,7 +112,38 @@ namespace Norm {
 		//ポストエフェクト
 		PostEffectManager::GetInstance()->DebugWithImGui();
 
-		
+
 #endif // _DEBUG
+	}
+
+	void SampleScene::LightMoveProcess() {
+		//ベクトル1を求める
+		Vector3 cameraPos = camera_->worldTransform.GetWorldTranslate();
+		Vector3 pointX;	//マウスのスクリーン座標をワールド座標に変換したときのある点
+		Vector3 mousePos = { input_->GetMousePosition().x,input_->GetMousePosition().y,0.0f };
+		float ndcX = (2.0f * mousePos.x / WinApp::GetInstance()->kClientWidth) - 1.0f;
+		float ndcY = 1.0f - (2.0f * mousePos.y / WinApp::GetInstance()->kClientHeight);
+		Vector3 pointNDC =
+		{
+			ndcX,
+			ndcY,
+			1.0f
+		};
+		Matrix4x4 invViewProj =
+			MyMath::Inverse(camera_->GetViewProjectionMatrix());
+		pointX = MyMath::Transform(pointNDC, invViewProj);
+		//ベクトル1を直線に変換
+		Line line;
+		line.diff = Vector3(pointX - cameraPos).Normalized();
+		line.origin = cameraPos;
+		//YZ平面を作成
+		Plane YZPlane;
+		YZPlane.normal = { 1,0,0 };
+		YZPlane.distance = 0.0f;
+		//直線と平面の交点CPを求める
+		Vector3 cp = MyMath::CollisionPoint(line, YZPlane);
+		//点光源の座標としてcpを適用する
+		pointLight->SetPosition(cp);
+
 	}
 }

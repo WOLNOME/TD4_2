@@ -184,6 +184,21 @@ namespace Norm {
 	}
 
 	Vector2 Input::GetMousePosition() {
+		POINT pos;
+		GetCursorPos(&pos);
+
+		ScreenToClient(
+			WinApp::GetInstance()->GetHwnd(),
+			&pos
+		);
+
+		return {
+			static_cast<float>(pos.x),
+			static_cast<float>(pos.y)
+		};
+	}
+
+	Vector2 Input::GetMouseMoveValue() {
 		return Vector2(static_cast<float>(mouseState_.lX), static_cast<float>(mouseState_.lY));
 	}
 
