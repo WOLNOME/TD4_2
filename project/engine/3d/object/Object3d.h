@@ -169,6 +169,17 @@ namespace Norm {
 		/// </summary>
 		/// <param name="_color">カラー</param>
 		void SetColor(const Vector4& _color);
+		/// <summary>
+		/// アウトラインを付けるか
+		/// </summary>
+		/// <param name="_isOutline">フラグ</param>
+		void SetIsOutline(bool _isOutline) { isOutline_ = _isOutline; }
+		/// <summary>
+		/// アウトラインのパラメータセット
+		/// </summary>
+		/// <param name="_color">カラー</param>
+		/// <param name="_width">幅</param>
+		void SetOutlineParam(const Vector4& _color, int _width) { outlineColor_ = _color; outlineWidth_ = _width; }
 
 		/// <summary>
 		/// 新しいアニメーションを追加
@@ -252,6 +263,10 @@ namespace Norm {
 
 		//色
 		Vector4 color_ = { 1,1,1,1 };
+		//アウトライン
+		bool isOutline_ = false;
+		Vector4 outlineColor_ = { 1,1,1,1 };
+		int outlineWidth_ = 0;
 
 	};
 
