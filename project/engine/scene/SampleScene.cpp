@@ -1,5 +1,8 @@
 #include "SampleScene.h"
 
+//アプリケーション
+#include "application/object/collision/ObjectCollider.h"
+
 namespace Norm {
 
 	void SampleScene::Initialize() {
@@ -63,6 +66,34 @@ namespace Norm {
 		sampleMapWT_.SetRotate({ 0.0f,0.0f,0.0f });
 		sampleMap_->RegistWorldTransform(&sampleMapWT_);
 
+		//コライダー付きオブジェクトの生成と初期化
+		{
+			cObject_ = std::make_unique<Object3d>();
+			cObject_->Initialize(ModelTag{}, Object3dManager::GetInstance()->GenerateName("CObject"), "cube");
+
+			cObject1WT_.Initialize();
+			cObject1WT_.SetTranslate({ 0.0f,5.0f,20.0f });
+			cObject1WT_.SetRotate({ 0.0f,0.0f,0.0f });
+			cObject_->RegistWorldTransform(&cObject1WT_);
+			collider1_ = std::make_unique<ObjectCollider>(cObject_.get());
+			auto* collider1 = dynamic_cast<ObjectCollider*>(collider1_.get());
+			collider1->SetCollisionAttribute(CollisionAttribute::Player);
+			collider1->SetWorldTransform(&cObject1WT_);
+			collider1->SetOffset({ 0.0f,1.0f,0.0f });
+			collider1->SetOBBSize({ 2.0f,2.0f,2.0f });
+
+			cObject2WT_.Initialize();
+			cObject2WT_.SetTranslate({ 0.0f,10.0f,20.0f });
+			cObject2WT_.SetRotate({ 0.0f,0.0f,0.0f });
+			cObject_->RegistWorldTransform(&cObject2WT_);
+			collider2_ = std::make_unique<ObjectCollider>(cObject_.get());
+			auto* collider2 = dynamic_cast<ObjectCollider*>(collider2_.get());
+			collider2->SetCollisionAttribute(CollisionAttribute::Enemy);
+			collider2->SetWorldTransform(&cObject2WT_);
+			collider2->SetOffset({ 0.0f,1.0f,0.0f });
+			collider2->SetOBBSize({ 2.0f,2.0f,2.0f });
+		}
+
 		back_ = std::make_unique<Object3d>();
 		back_->Initialize(ShapeTag{}, Object3dManager::GetInstance()->GenerateName("Back"), Shape::ShapeKind::kPlane);
 		back_->SetTexture(TextureManager::GetInstance()->LoadTexture("uvChecker.png"));
@@ -71,6 +102,11 @@ namespace Norm {
 		backWT_.SetRotate({ 0.0f,1.58f,0.0f });
 		backWT_.SetScale({ 30.0f,20.0f,1.0f });
 		back_->RegistWorldTransform(&backWT_);
+
+		// Enemyの生成と初期化
+		enemy_ = std::make_unique<BaseEnemy>();
+		enemy_->Initialize({ 0.0f, 5.0f, 0.0f });
+
 
 		//パーティクルの生成と初期化
 		particle_ = std::make_unique<CombinedParticle>();
@@ -99,6 +135,9 @@ namespace Norm {
 		//オブジェクトの回転
 		modelBaseWT_.SetRotate({ 0.0f,modelBaseWT_.GetRotate().y + 0.01f,0.0f });
 		shapeBaseWT_.SetRotate({ shapeBaseWT_.GetRotate().x + 0.01f,shapeBaseWT_.GetRotate().y + 0.01f,shapeBaseWT_.GetRotate().z + 0.01f });
+
+		// Enemyの更新
+		enemy_->Update();
 	}
 
 	void SampleScene::DebugWithImGui() {
@@ -111,6 +150,16 @@ namespace Norm {
 		camera_->DebugWithImGui();
 		//ポストエフェクト
 		PostEffectManager::GetInstance()->DebugWithImGui();
+
+		//当たり判定の可視化
+		cObject_->Debug(L"当たり判定オブジェクト");
+		auto* collider1 = dynamic_cast<ObjectCollider*>(collider1_.get());
+		collider1->Debug();
+		auto* collider2 = dynamic_cast<ObjectCollider*>(collider2_.get());
+		collider2->Debug();
+
+		// Enemy
+		enemy_->DebugWithImGui();
 
 #endif // _DEBUG
 	}

@@ -1,10 +1,13 @@
 #pragma once
 #include "BaseScene.h"
 #include "DevelopCamera.h"
+#include "ICollider.h"
+#include "OBBColliderBase.h"
 
 //アプリケーション
 #include "application/object/environment/Skydome.h"
 #include "application/object/environment/Ground.h"
+#include "application/object/entity/enemy/BaseEnemy.h"
 
 namespace Norm {
 
@@ -43,6 +46,7 @@ namespace Norm {
 		///	============================== ///
 
 		Input* input_ = nullptr;
+
 		//開発用カメラ
 		std::unique_ptr<DevelopCamera> camera_ = nullptr;
 		Vector3 cameraTranslate = { -47.0f,20.0f,42.0f };
@@ -69,10 +73,19 @@ namespace Norm {
 		std::unique_ptr<Object3d> back_ = nullptr;
 		WorldTransform backWT_;
 
+		std::unique_ptr<Object3d> cObject_ = nullptr;
+		WorldTransform cObject1WT_;
+		std::unique_ptr<ICollider> collider1_ = nullptr;
+		WorldTransform cObject2WT_;
+		std::unique_ptr<ICollider> collider2_ = nullptr;
+
 		//天球・地面
 		std::unique_ptr<Skydome> skydome_ = nullptr;
 		std::unique_ptr<Ground> ground_ = nullptr;
 		
+		// Enemy
+		std::unique_ptr<BaseEnemy> enemy_ = nullptr;
+
 		//パーティクル(Particleクラスがあるけど使わないで！)
 		std::unique_ptr<CombinedParticle> particle_ = nullptr;
 

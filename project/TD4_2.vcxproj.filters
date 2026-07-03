@@ -347,6 +347,17 @@
     </ClCompile>
     <ClCompile Include="engine\scene\SampleScene.cpp" />
     <ClCompile Include="application\ui\guide\GuideUI.cpp" />
+    <ClCompile Include="engine\scene\GamePlayScene.cpp" />
+    <ClCompile Include="application\stage\StageManager.cpp" />
+    <ClCompile Include="application\stage\MapChip.cpp" />
+    <ClCompile Include="application\stage\StageLoader.cpp" />
+    <ClCompile Include="application\object\Character\Player.cpp" />
+    <ClCompile Include="application\object\collision\ObjectCollider.cpp" />
+    <ClCompile Include="application\object\entity\enemy\BaseEnemy.cpp" />
+    <ClCompile Include="application\object\entity\enemy\State\EnemyState.cpp" />
+    <ClCompile Include="application\object\entity\enemy\State\EnemyAttackState.cpp" />
+    <ClCompile Include="application\object\entity\enemy\State\EnemyMoveState.cpp" />
+    <ClCompile Include="application\object\entity\enemy\State\EnemyEscapeState.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="engine\scenebase\AbstractSceneFactory.h">
@@ -642,6 +653,17 @@
     </ClInclude>
     <ClInclude Include="engine\scene\SampleScene.h" />
     <ClInclude Include="application\ui\guide\GuideUI.h" />
+    <ClInclude Include="engine\scene\GamePlayScene.h" />
+    <ClInclude Include="application\stage\StageManager.h" />
+    <ClInclude Include="application\stage\MapChip.h" />
+    <ClInclude Include="application\stage\StageLoader.h" />
+    <ClInclude Include="application\object\Character\Player.h" />
+    <ClInclude Include="application\object\collision\ObjectCollider.h" />
+    <ClInclude Include="application\object\entity\enemy\BaseEnemy.h" />
+    <ClInclude Include="application\object\entity\enemy\State\EnemyState.h" />
+    <ClInclude Include="application\object\entity\enemy\State\EnemyAttackState.h" />
+    <ClInclude Include="application\object\entity\enemy\State\EnemyMoveState.h" />
+    <ClInclude Include="application\object\entity\enemy\State\EnemyEscapeState.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\shaders\line\Line.hlsli">
