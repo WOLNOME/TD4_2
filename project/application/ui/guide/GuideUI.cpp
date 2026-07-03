@@ -106,9 +106,9 @@ float GuideUI::GetDistanceToMouse() {
 	line.diff = Vector3(mouseWorldPos - cameraPos).Normalized();
 	line.origin = cameraPos;
 
-	//YZ平面を作成
+	//XY平面を作成
 	Plane YZPlane;
-	YZPlane.normal = { 1,0,0 };
+	YZPlane.normal = { 0,0,1 };
 	YZPlane.distance = 0.0f;
 
 	//直線と平面の交点を求める

@@ -38,6 +38,10 @@ void Norm::GamePlayScene::Initialize() {
 	// Enemyの生成と初期化
 	enemy_ = std::make_unique<BaseEnemy>();
 	enemy_->Initialize({ 0.0f, 5.0f, 0.0f });
+
+	guideUI_ = std::make_unique<GuideUI>();
+
+	guideUI_->Initialize(camera_.get(), Input::GetInstance(), { 14.0f,-22.0f,0.0f });
 }
 
 void Norm::GamePlayScene::Finalize() {}
@@ -53,6 +57,8 @@ void Norm::GamePlayScene::Update() {
 
 	// Enemyの更新
 	enemy_->Update();
+
+	guideUI_->Update();
 }
 
 void Norm::GamePlayScene::DebugWithImGui() {
@@ -89,6 +95,8 @@ void Norm::GamePlayScene::DebugWithImGui() {
 
 	// Enemy用デバッグ
 	enemy_->DebugWithImGui();
+
+	guideUI_->ImGui();
 
 #endif
 }
