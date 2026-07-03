@@ -7,6 +7,7 @@
 // Application
 #include <application/object/environment/Skydome.h>
 #include <application/object/environment/Ground.h>
+#include <application/object/entity/enemy/BaseEnemy.h>
 
 #include <application/stage/StageManager.h>
 #include <application/object/Character/Player.h>
@@ -62,5 +63,8 @@ private:
 
 	// プレイヤー
 	std::unique_ptr<Player> player_ = nullptr;
+
+	// Enemy
+	std::unique_ptr<BaseEnemy> enemy_ = nullptr;
 };
 }

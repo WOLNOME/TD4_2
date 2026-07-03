@@ -110,6 +110,11 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
   <ItemGroup>
     <ClCompile Include="application\system\direction\cinematic\Cinematic.cpp" />
     <ClCompile Include="application\system\direction\builder\CinematicBuilder.cpp" />
+    <ClCompile Include="application\object\entity\enemy\BaseEnemy.cpp" />
+    <ClCompile Include="application\object\entity\enemy\State\EnemyState.cpp" />
+    <ClCompile Include="application\object\entity\enemy\State\EnemyAttackState.cpp" />
+    <ClCompile Include="application\object\entity\enemy\State\EnemyMoveState.cpp" />
+    <ClCompile Include="application\object\entity\enemy\State\EnemyEscapeState.cpp" />
     <ClCompile Include="engine\collision\base\AABBColliderBase.cpp" />
     <ClCompile Include="engine\behaviorTree\nodeBase\NodeBase.cpp" />
     <ClCompile Include="engine\behaviorTree\interface\INode.cpp" />
@@ -203,6 +208,11 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
   <ItemGroup>
     <ClInclude Include="application\system\direction\cinematic\Cinematic.h" />
     <ClInclude Include="application\system\direction\builder\CinematicBuilder.h" />
+    <ClInclude Include="application\object\entity\enemy\BaseEnemy.h" />
+    <ClInclude Include="application\object\entity\enemy\State\EnemyState.h" />
+    <ClInclude Include="application\object\entity\enemy\State\EnemyAttackState.h" />
+    <ClInclude Include="application\object\entity\enemy\State\EnemyMoveState.h" />
+    <ClInclude Include="application\object\entity\enemy\State\EnemyEscapeState.h" />
     <ClInclude Include="engine\collision\base\AABBColliderBase.h" />
     <ClInclude Include="engine\behaviorTree\nodeBase\NodeBase.h" />
     <ClInclude Include="engine\behaviorTree\interface\INode.h" />

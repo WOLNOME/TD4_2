@@ -34,6 +34,10 @@ void Norm::GamePlayScene::Initialize() {
 	/* プレイヤー生成 + 初期化 */
 	player_ = std::make_unique<Player>();
 	player_->Initialize();
+
+	// Enemyの生成と初期化
+	enemy_ = std::make_unique<BaseEnemy>();
+	enemy_->Initialize({ 0.0f, 5.0f, 0.0f });
 }
 
 void Norm::GamePlayScene::Finalize() {}
@@ -46,6 +50,9 @@ void Norm::GamePlayScene::Update() {
 
 	/* プレイヤー更新処理 */
 	player_->Update();
+
+	// Enemyの更新
+	enemy_->Update();
 }
 
 void Norm::GamePlayScene::DebugWithImGui() {
@@ -79,6 +86,9 @@ void Norm::GamePlayScene::DebugWithImGui() {
 
 	/* プレイヤーデバッグ用 */
 	player_->Debug();
+
+	// Enemy用デバッグ
+	enemy_->DebugWithImGui();
 
 #endif
 }
