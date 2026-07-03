@@ -11,14 +11,20 @@ public:
 	///		メンバ関数
 	/// ============================== ///
 
-	/// <summary>
-	/// 初期化
-	/// </summary>
-	void Initialize(Norm::BaseCamera* _camera, Norm::Input* _input);
+	void Initialize(Norm::BaseCamera* _camera, Norm::Input* _input, Norm::Vector3 _pos);
 
 	void Update();
 
 	void ImGui();
+
+private:
+	/// ============================== ///
+	///		クラス内関数
+	/// ============================== ///
+
+	void UpdateSpritePos();
+
+	float GetDistanceToMouse();
 
 private:
 	/// ============================== ///
@@ -31,7 +37,6 @@ private:
 	Norm::BaseCamera* camera_;
 	Norm::Input* input_;
 
-	float distance_ = 0.0f;
 	float acceptableLange_ = 4.0f;
 	float alpha_ = 0.0f;
 	float alphaSpeed_ = 0.1f;

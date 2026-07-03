@@ -6,8 +6,6 @@
 #include "application/object/environment/Skydome.h"
 #include "application/object/environment/Ground.h"
 
-#include "application/ui/guide/GuideUI.h"
-
 namespace Norm {
 
 	/// <summary>
@@ -77,8 +75,6 @@ namespace Norm {
 		
 		//パーティクル(Particleクラスがあるけど使わないで！)
 		std::unique_ptr<CombinedParticle> particle_ = nullptr;
-
-		std::unique_ptr<GuideUI> guideUI_ = nullptr;
 
 		//オーディオ
 		bool isDrawSphere_ = false;
