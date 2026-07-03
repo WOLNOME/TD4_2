@@ -95,7 +95,7 @@ private:
 private:
 
 	/// <summary>
-	/// 角度補間
+	/// 角度補間関数
 	/// </summary>
 	/// <param name="a"></param>
 	/// <param name="b"></param>
