@@ -8,8 +8,9 @@
 #include <application/object/environment/Skydome.h>
 #include <application/object/environment/Ground.h>
 
-namespace Norm {
+#include <application/stage/StageManager.h>
 
+namespace Norm {
 // =========================================================
 // ゲームプレイシーンクラス
 // =========================================================
@@ -56,5 +57,9 @@ private:
 	// テスト用オブジェクト
 	std::unique_ptr<Object3d> object_ = nullptr;
 	WorldTransform objectWT_;
+
+	// ステージ管理クラス
+	std::unique_ptr<StageManager> stageManager_ = nullptr;
+
 };
 }

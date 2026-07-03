@@ -347,6 +347,9 @@
     </ClCompile>
     <ClCompile Include="engine\scene\SampleScene.cpp" />
     <ClCompile Include="engine\scene\GamePlayScene.cpp" />
+    <ClCompile Include="application\stage\StageManager.cpp" />
+    <ClCompile Include="application\stage\MapChip.cpp" />
+    <ClCompile Include="application\stage\StageLoader.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="engine\scenebase\AbstractSceneFactory.h">
@@ -642,6 +645,9 @@
     </ClInclude>
     <ClInclude Include="engine\scene\SampleScene.h" />
     <ClInclude Include="engine\scene\GamePlayScene.h" />
+    <ClInclude Include="application\stage\StageManager.h" />
+    <ClInclude Include="application\stage\MapChip.h" />
+    <ClInclude Include="application\stage\StageLoader.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\shaders\line\Line.hlsli">

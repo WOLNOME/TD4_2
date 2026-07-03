@@ -34,6 +34,10 @@ void Norm::GamePlayScene::Initialize() {
 	objectWT_.SetTranslate({0.0f, 0.0f, 0.0f});
 	objectWT_.SetRotate({0.0f, 0.0f, 0.0f});
 	object_->RegistWorldTransform(&objectWT_);
+
+	/* ステージ管理クラス生成 + ステージ読み込み */
+	stageManager_ = std::make_unique<StageManager>();
+	stageManager_->LoadStage("resources/stages/stage1.json");
 }
 
 void Norm::GamePlayScene::Finalize() {}
