@@ -346,6 +346,11 @@
       <Filter>engine</Filter>
     </ClCompile>
     <ClCompile Include="engine\scene\SampleScene.cpp" />
+    <ClCompile Include="engine\scene\GamePlayScene.cpp" />
+    <ClCompile Include="application\stage\StageManager.cpp" />
+    <ClCompile Include="application\stage\MapChip.cpp" />
+    <ClCompile Include="application\stage\StageLoader.cpp" />
+    <ClCompile Include="application\object\Character\Player.cpp" />
     <ClCompile Include="application\object\collision\ObjectCollider.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -641,6 +646,11 @@
       <Filter>engine\3d\particle</Filter>
     </ClInclude>
     <ClInclude Include="engine\scene\SampleScene.h" />
+    <ClInclude Include="engine\scene\GamePlayScene.h" />
+    <ClInclude Include="application\stage\StageManager.h" />
+    <ClInclude Include="application\stage\MapChip.h" />
+    <ClInclude Include="application\stage\StageLoader.h" />
+    <ClInclude Include="application\object\Character\Player.h" />
     <ClInclude Include="application\object\collision\ObjectCollider.h" />
   </ItemGroup>
   <ItemGroup>
