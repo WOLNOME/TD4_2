@@ -198,6 +198,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="engine\collision\base\SphereColliderBase.cpp" />
     <ClCompile Include="application\object\level\collision\LevelObjectCollider.cpp" />
     <ClCompile Include="application\system\direction\shot\base\IShotBase.cpp" />
+    <ClCompile Include="application\ui\guide\GuideUI.cpp" />
     <ClCompile Include="engine\scene\GamePlayScene.cpp" />
     <ClCompile Include="application\stage\MapChip.cpp" />
     <ClCompile Include="application\stage\StageLoader.cpp" />
@@ -308,6 +309,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="engine\collision\base\SphereColliderBase.h" />
     <ClInclude Include="application\object\level\collision\LevelObjectCollider.h" />
     <ClInclude Include="application\system\direction\shot\base\IShotBase.h" />
+    <ClInclude Include="application\ui\guide\GuideUI.h" />
     <ClInclude Include="engine\scene\GamePlayScene.h" />
     <ClInclude Include="application\stage\MapChip.h" />
     <ClInclude Include="application\stage\StageLoader.h" />

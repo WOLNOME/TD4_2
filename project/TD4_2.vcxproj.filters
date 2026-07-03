@@ -346,6 +346,7 @@
       <Filter>engine</Filter>
     </ClCompile>
     <ClCompile Include="engine\scene\SampleScene.cpp" />
+    <ClCompile Include="application\ui\guide\GuideUI.cpp" />
     <ClCompile Include="engine\scene\GamePlayScene.cpp" />
     <ClCompile Include="application\stage\StageManager.cpp" />
     <ClCompile Include="application\stage\MapChip.cpp" />
@@ -651,6 +652,7 @@
       <Filter>engine\3d\particle</Filter>
     </ClInclude>
     <ClInclude Include="engine\scene\SampleScene.h" />
+    <ClInclude Include="application\ui\guide\GuideUI.h" />
     <ClInclude Include="engine\scene\GamePlayScene.h" />
     <ClInclude Include="application\stage\StageManager.h" />
     <ClInclude Include="application\stage\MapChip.h" />
