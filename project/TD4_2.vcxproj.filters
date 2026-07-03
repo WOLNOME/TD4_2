@@ -346,6 +346,11 @@
       <Filter>engine</Filter>
     </ClCompile>
     <ClCompile Include="engine\scene\SampleScene.cpp" />
+    <ClCompile Include="application\object\entity\enemy\BaseEnemy.cpp" />
+    <ClCompile Include="application\object\entity\enemy\State\EnemyState.cpp" />
+    <ClCompile Include="application\object\entity\enemy\State\EnemyAttackState.cpp" />
+    <ClCompile Include="application\object\entity\enemy\State\EnemyMoveState.cpp" />
+    <ClCompile Include="application\object\entity\enemy\State\EnemyEscapeState.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="engine\scenebase\AbstractSceneFactory.h">
@@ -640,6 +645,11 @@
       <Filter>engine\3d\particle</Filter>
     </ClInclude>
     <ClInclude Include="engine\scene\SampleScene.h" />
+    <ClInclude Include="application\object\entity\enemy\BaseEnemy.h" />
+    <ClInclude Include="application\object\entity\enemy\State\EnemyState.h" />
+    <ClInclude Include="application\object\entity\enemy\State\EnemyAttackState.h" />
+    <ClInclude Include="application\object\entity\enemy\State\EnemyMoveState.h" />
+    <ClInclude Include="application\object\entity\enemy\State\EnemyEscapeState.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\shaders\line\Line.hlsli">

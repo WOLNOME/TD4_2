@@ -72,6 +72,11 @@ namespace Norm {
 		backWT_.SetScale({ 30.0f,20.0f,1.0f });
 		back_->RegistWorldTransform(&backWT_);
 
+		// Enemyの生成と初期化
+		enemy_ = std::make_unique<BaseEnemy>();
+		enemy_->Initialize({ 0.0f, 5.0f, 0.0f });
+
+
 		//パーティクルの生成と初期化
 		particle_ = std::make_unique<CombinedParticle>();
 		particle_->Initialize("SampleParticle", "Basic");
@@ -99,6 +104,9 @@ namespace Norm {
 		//オブジェクトの回転
 		modelBaseWT_.SetRotate({ 0.0f,modelBaseWT_.GetRotate().y + 0.01f,0.0f });
 		shapeBaseWT_.SetRotate({ shapeBaseWT_.GetRotate().x + 0.01f,shapeBaseWT_.GetRotate().y + 0.01f,shapeBaseWT_.GetRotate().z + 0.01f });
+
+		// Enemyの更新
+		enemy_->Update();
 	}
 
 	void SampleScene::DebugWithImGui() {
@@ -111,7 +119,8 @@ namespace Norm {
 		camera_->DebugWithImGui();
 		//ポストエフェクト
 		PostEffectManager::GetInstance()->DebugWithImGui();
-
+		// Enemy
+		enemy_->DebugWithImGui();
 
 #endif // _DEBUG
 	}

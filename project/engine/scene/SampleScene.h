@@ -5,6 +5,7 @@
 //アプリケーション
 #include "application/object/environment/Skydome.h"
 #include "application/object/environment/Ground.h"
+#include "application/object/entity/enemy/BaseEnemy.h"
 
 namespace Norm {
 
@@ -73,6 +74,9 @@ namespace Norm {
 		std::unique_ptr<Skydome> skydome_ = nullptr;
 		std::unique_ptr<Ground> ground_ = nullptr;
 		
+		// Enemy
+		std::unique_ptr<BaseEnemy> enemy_ = nullptr;
+
 		//パーティクル(Particleクラスがあるけど使わないで！)
 		std::unique_ptr<CombinedParticle> particle_ = nullptr;
 
