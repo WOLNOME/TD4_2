@@ -48,6 +48,12 @@ void Norm::GamePlayScene::Initialize() {
 	guideUI_ = std::make_unique<GuideUI>();
 
 	guideUI_->Initialize(camera_.get(), Input::GetInstance(), { 14.0f,-22.0f,0.0f });
+
+	// 爆発ギミック
+	explosionGimmick_ = std::make_unique<ExplosionGimmick>();
+	explosionGimmick_->SetLightInfo(&lightInfo_);
+	explosionGimmick_->SetPosition({ 0.0f, 10.0f, 40.0f });
+	explosionGimmick_->Initialize();
 }
 
 void Norm::GamePlayScene::Finalize() {}
@@ -65,6 +71,9 @@ void Norm::GamePlayScene::Update() {
 
 	// Enemyの更新
 	enemy_->Update();
+
+	//爆発ギミック
+	explosionGimmick_->Update();
 
 	guideUI_->Update();
 }
@@ -111,6 +120,8 @@ void Norm::GamePlayScene::DebugWithImGui() {
 	//点光源
 	pointLight_->DebugWithImGui(L"点光源１");
 
+	explosionGimmick_->DebugImGui();
+
 #endif
 }
 
@@ -146,12 +157,12 @@ void Norm::GamePlayScene::LightMoveProcess() {
 	//点光源の座標としてcpを適用する
 	pointLight_->SetPosition(cp);
 
-	//// ギミック判定用ライト情報
-	//lightInfo_.position = cp;
-	//lightInfo_.range = 5.0f;
-	//lightInfo_.isLighting = true;
+	// ギミック判定用ライト情報
+	lightInfo_.position = cp;
+	lightInfo_.range = pointLight_->GetRadius();
+	lightInfo_.isLighting = true;
 
-	//// 左クリックでフラッシュ
-	//lightInfo_.isFlash = input->TriggerMouseButton(MouseButton::LeftButton);
+	// 左クリックでフラッシュ
+	lightInfo_.isFlash = input->TriggerMouseButton(MouseButton::LeftButton);
 
 }
