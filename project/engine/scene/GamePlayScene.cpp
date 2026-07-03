@@ -1,5 +1,8 @@
 #include "GamePlayScene.h"
 
+//エンジン
+#include <Input.h>
+
 void Norm::GamePlayScene::Initialize() {
 	/* シーン共通初期化処理 */
 	BaseScene::Initialize();
@@ -17,11 +20,14 @@ void Norm::GamePlayScene::Initialize() {
 
 	/* ライト生成 + 初期化 */
 	dirLight_ = std::make_unique<DirectionalLight>();
-	dirLight_->SetIntensity(1.0f);
-	dirLight_->SetColor({1.0f, 1.0f, 1.0f, 1.0f});
-	dirLight_->SetDirection({0.0f, -1.0f, 0.0f});
+	dirLight_->SetIntensity(0.05f);
+	dirLight_->SetColor({ 1,0,0,1 });
+	dirLight_->SetDirection({ 0.5f,0.5f,-1.0f });
+	pointLight_ = std::make_unique<PointLight>();
+	pointLight_->SetPosition({ 0.0f,0.0f,0.0f });
 	// ライトを登録
 	sceneLight_->SetLight(dirLight_.get());
+	sceneLight_->SetLight(pointLight_.get());
 
 	/* 天球の生成 + 初期化 */
 	skydome_ = std::make_unique<Skydome>();
@@ -51,6 +57,8 @@ void Norm::GamePlayScene::Update() {
 	BaseScene::Update();
 	/* カメラ更新処理 */
 	camera_->Update();
+	//ライト移動処理
+	LightMoveProcess();
 
 	/* プレイヤー更新処理 */
 	player_->Update();
@@ -70,8 +78,8 @@ void Norm::GamePlayScene::DebugWithImGui() {
 		Vector3 currentRotate = camera_->worldTransform.GetRotate();
 
 		// ImGuiで扱えるようfloatの配列で管理
-		float translate[3] = {currentTranslate.x, currentTranslate.y, currentTranslate.z};
-		float rotate[3] = {currentRotate.x, currentRotate.y, currentRotate.z};
+		float translate[3] = { currentTranslate.x, currentTranslate.y, currentTranslate.z };
+		float rotate[3] = { currentRotate.x, currentRotate.y, currentRotate.z };
 
 		// DragFloat3で編集
 		bool isChanged = false;
@@ -84,8 +92,8 @@ void Norm::GamePlayScene::DebugWithImGui() {
 
 		// 値に変更があった場合のみ、Setterでカメラに書き戻す
 		if (isChanged) {
-			camera_->worldTransform.SetTranslate({translate[0], translate[1], translate[2]});
-			camera_->worldTransform.SetRotate({rotate[0], rotate[1], rotate[2]});
+			camera_->worldTransform.SetTranslate({ translate[0], translate[1], translate[2] });
+			camera_->worldTransform.SetRotate({ rotate[0], rotate[1], rotate[2] });
 		}
 	}
 	ImGui::End();
@@ -98,5 +106,52 @@ void Norm::GamePlayScene::DebugWithImGui() {
 
 	guideUI_->ImGui();
 
+	//平行光源
+	dirLight_->DebugWithImGui(L"平行光源１");
+	//点光源
+	pointLight_->DebugWithImGui(L"点光源１");
+
 #endif
+}
+
+void Norm::GamePlayScene::LightMoveProcess() {
+	//インプットの取得
+	auto* input = Input::GetInstance();
+
+	//ベクトル1を求める
+	Vector3 cameraPos = camera_->worldTransform.GetWorldTranslate();
+	Vector3 pointX;	//マウスのスクリーン座標をワールド座標に変換したときのある点
+	Vector3 mousePos = { input->GetMousePosition().x,input->GetMousePosition().y,0.0f };
+	float ndcX = (2.0f * mousePos.x / WinApp::GetInstance()->kClientWidth) - 1.0f;
+	float ndcY = 1.0f - (2.0f * mousePos.y / WinApp::GetInstance()->kClientHeight);
+	Vector3 pointNDC =
+	{
+		ndcX,
+		ndcY,
+		1.0f
+	};
+	Matrix4x4 invViewProj =
+		MyMath::Inverse(camera_->GetViewProjectionMatrix());
+	pointX = MyMath::Transform(pointNDC, invViewProj);
+	//ベクトル1を直線に変換
+	Line line;
+	line.diff = Vector3(pointX - cameraPos).Normalized();
+	line.origin = cameraPos;
+	//XY平面を作成
+	Plane XYPlane;
+	XYPlane.normal = { 0,0,1 };
+	XYPlane.distance = 0.0f;
+	//直線と平面の交点CPを求める
+	Vector3 cp = MyMath::CollisionPoint(line, XYPlane);
+	//点光源の座標としてcpを適用する
+	pointLight_->SetPosition(cp);
+
+	//// ギミック判定用ライト情報
+	//lightInfo_.position = cp;
+	//lightInfo_.range = 5.0f;
+	//lightInfo_.isLighting = true;
+
+	//// 左クリックでフラッシュ
+	//lightInfo_.isFlash = input->TriggerMouseButton(MouseButton::LeftButton);
+
 }

@@ -44,6 +44,11 @@ public:
 	/// </summary>
 	void DebugWithImGui() override;
 
+	/// <summary>
+	/// 点光源（ライト）の操作処理
+	/// </summary>
+	void LightMoveProcess();
+
 private:
 	// =========================================================
 	// Member Variables
@@ -56,6 +61,8 @@ private:
 
 	// 平行光源
 	std::unique_ptr<DirectionalLight> dirLight_;
+	//点光源
+	std::unique_ptr<PointLight> pointLight_;
 
 	// 天球
 	std::unique_ptr<Skydome> skydome_ = nullptr;
