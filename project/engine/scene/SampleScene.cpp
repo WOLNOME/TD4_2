@@ -83,6 +83,9 @@ namespace Norm {
 		particle_->SetIsPlay(true);
 		particle_->SetIsRepeat(true);
 
+		guideUI_ = std::make_unique<GuideUI>();
+		guideUI_->Initialize(camera_.get());
+
 	}
 
 	void SampleScene::Finalize() {
@@ -95,6 +98,8 @@ namespace Norm {
 		camera_->Update();
 		//ライト移動処理
 		LightMoveProcess();
+
+		guideUI_->Update();
 
 		//オブジェクトの回転
 		modelBaseWT_.SetRotate({ 0.0f,modelBaseWT_.GetRotate().y + 0.01f,0.0f });
@@ -111,7 +116,6 @@ namespace Norm {
 		camera_->DebugWithImGui();
 		//ポストエフェクト
 		PostEffectManager::GetInstance()->DebugWithImGui();
-
 
 #endif // _DEBUG
 	}
