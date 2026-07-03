@@ -9,6 +9,8 @@
 #include <application/object/environment/Ground.h>
 #include <application/object/entity/enemy/BaseEnemy.h>
 
+#include <application/ui/guide/GuideUI.h>
+
 #include <application/stage/StageManager.h>
 #include <application/object/Character/Player.h>
 
@@ -66,5 +68,7 @@ private:
 
 	// Enemy
 	std::unique_ptr<BaseEnemy> enemy_ = nullptr;
+
+	std::unique_ptr<GuideUI> guideUI_ = nullptr;
 };
 }
