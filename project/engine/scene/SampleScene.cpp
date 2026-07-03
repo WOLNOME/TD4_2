@@ -84,7 +84,7 @@ namespace Norm {
 		particle_->SetIsRepeat(true);
 
 		guideUI_ = std::make_unique<GuideUI>();
-		guideUI_->Initialize(camera_.get());
+		guideUI_->Initialize(camera_.get(), input_);
 
 	}
 
@@ -116,6 +116,8 @@ namespace Norm {
 		camera_->DebugWithImGui();
 		//ポストエフェクト
 		PostEffectManager::GetInstance()->DebugWithImGui();
+
+		guideUI_->ImGui();
 
 #endif // _DEBUG
 	}
