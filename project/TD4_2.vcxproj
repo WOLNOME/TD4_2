@@ -198,6 +198,12 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="engine\collision\base\SphereColliderBase.cpp" />
     <ClCompile Include="application\object\level\collision\LevelObjectCollider.cpp" />
     <ClCompile Include="application\system\direction\shot\base\IShotBase.cpp" />
+    <ClCompile Include="engine\scene\GamePlayScene.cpp" />
+    <ClCompile Include="application\stage\MapChip.cpp" />
+    <ClCompile Include="application\stage\StageLoader.cpp" />
+    <ClCompile Include="application\stage\StageManager.cpp" />
+    <ClCompile Include="application\object\Character\Player.cpp" />
+    <ClCompile Include="application\object\collision\ObjectCollider.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="application\system\direction\cinematic\Cinematic.h" />
@@ -302,6 +308,12 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="engine\collision\base\SphereColliderBase.h" />
     <ClInclude Include="application\object\level\collision\LevelObjectCollider.h" />
     <ClInclude Include="application\system\direction\shot\base\IShotBase.h" />
+    <ClInclude Include="engine\scene\GamePlayScene.h" />
+    <ClInclude Include="application\stage\MapChip.h" />
+    <ClInclude Include="application\stage\StageLoader.h" />
+    <ClInclude Include="application\stage\StageManager.h" />
+    <ClInclude Include="application\object\Character\Player.h" />
+    <ClInclude Include="application\object\collision\ObjectCollider.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt" />
