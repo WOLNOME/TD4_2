@@ -9,6 +9,7 @@
 #include <application/object/environment/Ground.h>
 
 #include <application/stage/StageManager.h>
+#include <application/object/Character/Player.h>
 
 namespace Norm {
 // =========================================================
@@ -47,19 +48,19 @@ private:
 
 	// 開発用カメラ
 	std::unique_ptr<DevelopCamera> camera_ = nullptr;
-	Vector3 cameraTranslate_ = {0.0f, 0.0f, -50.0f};
+	Vector3 cameraTranslate_ = {15.0f, -10.0f, -100.0f};
 	Vector3 cameraRotate_ = {0.0f, 0.0f, 0.0f};
+
 	// 平行光源
 	std::unique_ptr<DirectionalLight> dirLight_;
+
 	// 天球
 	std::unique_ptr<Skydome> skydome_ = nullptr;
-
-	// テスト用オブジェクト
-	std::unique_ptr<Object3d> object_ = nullptr;
-	WorldTransform objectWT_;
 
 	// ステージ管理クラス
 	std::unique_ptr<StageManager> stageManager_ = nullptr;
 
+	// プレイヤー
+	std::unique_ptr<Player> player_ = nullptr;
 };
 }

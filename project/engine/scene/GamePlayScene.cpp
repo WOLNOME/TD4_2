@@ -27,17 +27,13 @@ void Norm::GamePlayScene::Initialize() {
 	skydome_ = std::make_unique<Skydome>();
 	skydome_->Initialize();
 
-	/* テスト用オブジェクト生成 */
-	object_ = std::make_unique<Object3d>();
-	object_->Initialize(ModelTag{}, Object3dManager::GetInstance()->GenerateName("normalBlock"), "normalBlock");
-	objectWT_.Initialize();
-	objectWT_.SetTranslate({0.0f, 0.0f, 0.0f});
-	objectWT_.SetRotate({0.0f, 0.0f, 0.0f});
-	object_->RegistWorldTransform(&objectWT_);
-
 	/* ステージ管理クラス生成 + ステージ読み込み */
 	stageManager_ = std::make_unique<StageManager>();
 	stageManager_->LoadStage("resources/stages/stage1.json");
+
+	/* プレイヤー生成 + 初期化 */
+	player_ = std::make_unique<Player>();
+	player_->Initialize();
 }
 
 void Norm::GamePlayScene::Finalize() {}
@@ -47,6 +43,9 @@ void Norm::GamePlayScene::Update() {
 	BaseScene::Update();
 	/* カメラ更新処理 */
 	camera_->Update();
+
+	/* プレイヤー更新処理 */
+	player_->Update();
 }
 
 void Norm::GamePlayScene::DebugWithImGui() {
@@ -77,5 +76,9 @@ void Norm::GamePlayScene::DebugWithImGui() {
 		}
 	}
 	ImGui::End();
+
+	/* プレイヤーデバッグ用 */
+	player_->Debug();
+
 #endif
 }
