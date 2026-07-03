@@ -119,6 +119,13 @@ namespace Norm {
 		particle_->SetIsPlay(true);
 		particle_->SetIsRepeat(true);
 
+
+		// 爆発ギミック
+		explosionGimmick_ = std::make_unique<ExplosionGimmick>();
+		explosionGimmick_->SetLightInfo(&lightInfo_);
+		explosionGimmick_->SetPosition({ 0.0f, 10.0f, 40.0f });
+		explosionGimmick_->Initialize();
+
 	}
 
 	void SampleScene::Finalize() {
@@ -131,6 +138,10 @@ namespace Norm {
 		camera_->Update();
 		//ライト移動処理
 		LightMoveProcess();
+
+		//爆発ギミック
+		explosionGimmick_->Update();
+
 
 		//オブジェクトの回転
 		modelBaseWT_.SetRotate({ 0.0f,modelBaseWT_.GetRotate().y + 0.01f,0.0f });
@@ -148,6 +159,7 @@ namespace Norm {
 		pointLight->DebugWithImGui(L"点光源１");
 		//カメラ
 		camera_->DebugWithImGui();
+		explosionGimmick_->DebugImGui();
 		//ポストエフェクト
 		PostEffectManager::GetInstance()->DebugWithImGui();
 
@@ -192,6 +204,14 @@ namespace Norm {
 		Vector3 cp = MyMath::CollisionPoint(line, YZPlane);
 		//点光源の座標としてcpを適用する
 		pointLight->SetPosition(cp);
+
+		// ギミック判定用ライト情報
+		lightInfo_.position = cp;
+		lightInfo_.range = 5.0f;
+		lightInfo_.isLighting = true;
+
+		// 左クリックでフラッシュ
+		lightInfo_.isFlash = input_->TriggerMouseButton(MouseButton::LeftButton);
 
 	}
 }

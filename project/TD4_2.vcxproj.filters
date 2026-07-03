@@ -358,6 +358,8 @@
     <ClCompile Include="application\object\entity\enemy\State\EnemyAttackState.cpp" />
     <ClCompile Include="application\object\entity\enemy\State\EnemyMoveState.cpp" />
     <ClCompile Include="application\object\entity\enemy\State\EnemyEscapeState.cpp" />
+    <ClCompile Include="GimmickBase.cpp" />
+    <ClCompile Include="ExplosionGimmick.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="engine\scenebase\AbstractSceneFactory.h">
@@ -664,6 +666,8 @@
     <ClInclude Include="application\object\entity\enemy\State\EnemyAttackState.h" />
     <ClInclude Include="application\object\entity\enemy\State\EnemyMoveState.h" />
     <ClInclude Include="application\object\entity\enemy\State\EnemyEscapeState.h" />
+    <ClInclude Include="GimmickBase.h" />
+    <ClInclude Include="ExplosionGimmick.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\shaders\line\Line.hlsli">

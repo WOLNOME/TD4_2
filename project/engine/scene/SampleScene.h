@@ -9,6 +9,8 @@
 #include "application/object/environment/Ground.h"
 #include "application/object/entity/enemy/BaseEnemy.h"
 
+#include "ExplosionGimmick.h"
+
 namespace Norm {
 
 	/// <summary>
@@ -95,6 +97,10 @@ namespace Norm {
 		float volume = 0.5f;
 
 		//テキスト
+
+		//ギミック
+		std::unique_ptr<ExplosionGimmick> explosionGimmick_ = nullptr;
+		LightInfo lightInfo_{};
 		
 	};
 
