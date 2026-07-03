@@ -80,5 +80,8 @@ void Norm::GamePlayScene::DebugWithImGui() {
 	/* プレイヤーデバッグ用 */
 	player_->Debug();
 
+	/* ステージ管理クラスデバッグ用 */
+	stageManager_->Debug();
+
 #endif
 }

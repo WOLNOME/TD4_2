@@ -4,6 +4,7 @@
 #include <Object3d.h>
 #include <WorldTransform.h>
 #include <Input.h>
+#include <ICollider.h>
 
 namespace Norm {
 // =========================================================
@@ -51,10 +52,12 @@ private:
 	std::unique_ptr<Object3d> object_ = nullptr;
 	// ワールドトランスフォーム
 	WorldTransform wt_;
+	// コライダー
+	std::unique_ptr<ICollider> collider_ = nullptr;
 
 	// 速度
 	Vector3 velocity_ = {0.0f, 0.0f, 0.0f};
 	// 移動速度
-	float speed_ = 0.2f;
+	float speed_ = 0.3f;
 };
 } 

@@ -4,6 +4,9 @@
 #include <Object3dManager.h>
 #include <imgui.h>
 
+// Application
+#include <application/object/collision/ObjectCollider.h>
+
 void Norm::Player::Initialize() {
 	// インプットのインスタンス取得
 	input_ = Input::GetInstance();
@@ -14,6 +17,16 @@ void Norm::Player::Initialize() {
 	wt_.Initialize();
 	wt_.SetTranslate({0.0f, 0.0f, 0.0f});
 	object_->RegistWorldTransform(&wt_);
+
+	// コライダーの生成
+	collider_ = std::make_unique<ObjectCollider>(object_.get());
+	auto* playerCollider = dynamic_cast<ObjectCollider*>(collider_.get());
+	if (playerCollider) {
+		playerCollider->SetCollisionAttribute(CollisionAttribute::Player);
+		playerCollider->SetWorldTransform(&wt_);
+		playerCollider->SetOffset({0.0f, 0.0f, 0.0f});
+		playerCollider->SetOBBSize({1.0f, 2.0f, 1.0f}); // プレイヤーのコライダーサイズ
+	}
 }
 
 void Norm::Player::Update() {
@@ -24,6 +37,12 @@ void Norm::Player::Update() {
 	}
 	if (input_->PushKey(DIK_D)) {
 		velocity_.x = speed_;
+	}
+	if (input_->PushKey(DIK_W)) {
+		velocity_.y = speed_;
+	}
+	if (input_->PushKey(DIK_S)) {
+		velocity_.y = -speed_;
 	}
 
 	// 座標の更新
@@ -53,6 +72,14 @@ void Norm::Player::Debug() {
 		// 値に変更があった場合のみ、Setterでカメラに書き戻す
 		if (isChanged) {
 			wt_.SetTranslate({translate[0], translate[1], translate[2]});
+		}
+
+		// コライダーデバッグ
+		if (collider_) {
+			auto* playerCollider = dynamic_cast<ObjectCollider*>(collider_.get());
+			if (playerCollider) {
+				playerCollider->Debug();
+			}
 		}
 	}
 	ImGui::End();
