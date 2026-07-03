@@ -351,6 +351,7 @@
     <ClCompile Include="application\stage\MapChip.cpp" />
     <ClCompile Include="application\stage\StageLoader.cpp" />
     <ClCompile Include="application\object\Character\Player.cpp" />
+    <ClCompile Include="application\object\collision\ObjectCollider.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="engine\scenebase\AbstractSceneFactory.h">
@@ -650,6 +651,7 @@
     <ClInclude Include="application\stage\MapChip.h" />
     <ClInclude Include="application\stage\StageLoader.h" />
     <ClInclude Include="application\object\Character\Player.h" />
+    <ClInclude Include="application\object\collision\ObjectCollider.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\shaders\line\Line.hlsli">
