@@ -346,6 +346,8 @@
       <Filter>engine</Filter>
     </ClCompile>
     <ClCompile Include="engine\scene\SampleScene.cpp" />
+    <ClCompile Include="GimmickBase.cpp" />
+    <ClCompile Include="ExplosionGimmick.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="engine\scenebase\AbstractSceneFactory.h">
@@ -640,6 +642,8 @@
       <Filter>engine\3d\particle</Filter>
     </ClInclude>
     <ClInclude Include="engine\scene\SampleScene.h" />
+    <ClInclude Include="GimmickBase.h" />
+    <ClInclude Include="ExplosionGimmick.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\shaders\line\Line.hlsli">
