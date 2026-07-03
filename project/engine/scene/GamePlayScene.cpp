@@ -52,7 +52,7 @@ void Norm::GamePlayScene::Initialize() {
 	// 爆発ギミック
 	explosionGimmick_ = std::make_unique<ExplosionGimmick>();
 	explosionGimmick_->SetLightInfo(&lightInfo_);
-	explosionGimmick_->SetPosition({ 0.0f, 10.0f, 40.0f });
+	explosionGimmick_->SetPosition({ 14.0f,-25.0f, 0.0f });
 	explosionGimmick_->Initialize();
 }
 
