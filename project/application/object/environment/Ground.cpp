@@ -13,7 +13,7 @@ void Ground::Initialize() {
 	object3d_->SetIsLightProcess(false);
 	//ワールドトランスフォームの初期化
 	worldTransform_.Initialize();
-	worldTransform_.SetScale({ 3.0f, 1.0f, 3.0f });
+	worldTransform_.SetScale({ 1.0f, 1.0f, 1.0f });
 	//オブジェクトにセット
 	object3d_->RegistWorldTransform(&worldTransform_);
 

@@ -110,6 +110,11 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
   <ItemGroup>
     <ClCompile Include="application\system\direction\cinematic\Cinematic.cpp" />
     <ClCompile Include="application\system\direction\builder\CinematicBuilder.cpp" />
+    <ClCompile Include="application\object\entity\enemy\BaseEnemy.cpp" />
+    <ClCompile Include="application\object\entity\enemy\State\EnemyState.cpp" />
+    <ClCompile Include="application\object\entity\enemy\State\EnemyAttackState.cpp" />
+    <ClCompile Include="application\object\entity\enemy\State\EnemyMoveState.cpp" />
+    <ClCompile Include="application\object\entity\enemy\State\EnemyEscapeState.cpp" />
     <ClCompile Include="engine\collision\base\AABBColliderBase.cpp" />
     <ClCompile Include="engine\behaviorTree\nodeBase\NodeBase.cpp" />
     <ClCompile Include="engine\behaviorTree\interface\INode.cpp" />
@@ -146,6 +151,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="engine\scene\SampleScene.cpp" />
     <ClCompile Include="engine\util\RandomStringUtil.cpp" />
     <ClCompile Include="engine\util\StringUtility.cpp" />
+    <ClCompile Include="ExplosionGimmick.cpp" />
     <ClCompile Include="externals\imgui\imgui.cpp" />
     <ClCompile Include="externals\imgui\imgui_demo.cpp" />
     <ClCompile Include="externals\imgui\imgui_draw.cpp" />
@@ -193,16 +199,23 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="engine\collision\base\SphereColliderBase.cpp" />
     <ClCompile Include="application\object\level\collision\LevelObjectCollider.cpp" />
     <ClCompile Include="application\system\direction\shot\base\IShotBase.cpp" />
+    <ClCompile Include="application\ui\guide\GuideUI.cpp" />
     <ClCompile Include="engine\scene\GamePlayScene.cpp" />
     <ClCompile Include="application\stage\MapChip.cpp" />
     <ClCompile Include="application\stage\StageLoader.cpp" />
     <ClCompile Include="application\stage\StageManager.cpp" />
     <ClCompile Include="application\object\Character\Player.cpp" />
     <ClCompile Include="application\object\collision\ObjectCollider.cpp" />
+    <ClCompile Include="GimmickBase.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="application\system\direction\cinematic\Cinematic.h" />
     <ClInclude Include="application\system\direction\builder\CinematicBuilder.h" />
+    <ClInclude Include="application\object\entity\enemy\BaseEnemy.h" />
+    <ClInclude Include="application\object\entity\enemy\State\EnemyState.h" />
+    <ClInclude Include="application\object\entity\enemy\State\EnemyAttackState.h" />
+    <ClInclude Include="application\object\entity\enemy\State\EnemyMoveState.h" />
+    <ClInclude Include="application\object\entity\enemy\State\EnemyEscapeState.h" />
     <ClInclude Include="engine\collision\base\AABBColliderBase.h" />
     <ClInclude Include="engine\behaviorTree\nodeBase\NodeBase.h" />
     <ClInclude Include="engine\behaviorTree\interface\INode.h" />
@@ -243,6 +256,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="engine\util\JsonUtil.h" />
     <ClInclude Include="engine\util\RandomStringUtil.h" />
     <ClInclude Include="engine\util\StringUtility.h" />
+    <ClInclude Include="ExplosionGimmick.h" />
     <ClInclude Include="externals\imgui\imconfig.h" />
     <ClInclude Include="externals\imgui\imgui.h" />
     <ClInclude Include="externals\imgui\imgui_impl_dx12.h" />
@@ -298,6 +312,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="engine\collision\base\SphereColliderBase.h" />
     <ClInclude Include="application\object\level\collision\LevelObjectCollider.h" />
     <ClInclude Include="application\system\direction\shot\base\IShotBase.h" />
+    <ClInclude Include="GimmickBase.h" />
+    <ClInclude Include="application\ui\guide\GuideUI.h" />
     <ClInclude Include="engine\scene\GamePlayScene.h" />
     <ClInclude Include="application\stage\MapChip.h" />
     <ClInclude Include="application\stage\StageLoader.h" />

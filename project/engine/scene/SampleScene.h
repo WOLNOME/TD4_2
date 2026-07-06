@@ -7,6 +7,9 @@
 //アプリケーション
 #include "application/object/environment/Skydome.h"
 #include "application/object/environment/Ground.h"
+#include "application/object/entity/enemy/BaseEnemy.h"
+
+#include "ExplosionGimmick.h"
 
 namespace Norm {
 
@@ -82,6 +85,9 @@ namespace Norm {
 		std::unique_ptr<Skydome> skydome_ = nullptr;
 		std::unique_ptr<Ground> ground_ = nullptr;
 		
+		// Enemy
+		std::unique_ptr<BaseEnemy> enemy_ = nullptr;
+
 		//パーティクル(Particleクラスがあるけど使わないで！)
 		std::unique_ptr<CombinedParticle> particle_ = nullptr;
 
@@ -91,6 +97,10 @@ namespace Norm {
 		float volume = 0.5f;
 
 		//テキスト
+
+		//ギミック
+		std::unique_ptr<ExplosionGimmick> explosionGimmick_ = nullptr;
+		LightInfo lightInfo_{};
 		
 	};
 

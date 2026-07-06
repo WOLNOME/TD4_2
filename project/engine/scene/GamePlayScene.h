@@ -7,9 +7,14 @@
 // Application
 #include <application/object/environment/Skydome.h>
 #include <application/object/environment/Ground.h>
+#include <application/object/entity/enemy/BaseEnemy.h>
+
+#include <application/ui/guide/GuideUI.h>
 
 #include <application/stage/StageManager.h>
 #include <application/object/Character/Player.h>
+
+#include "ExplosionGimmick.h"
 
 namespace Norm {
 // =========================================================
@@ -41,6 +46,11 @@ public:
 	/// </summary>
 	void DebugWithImGui() override;
 
+	/// <summary>
+	/// 点光源（ライト）の操作処理
+	/// </summary>
+	void LightMoveProcess();
+
 private:
 	// =========================================================
 	// Member Variables
@@ -53,6 +63,8 @@ private:
 
 	// 平行光源
 	std::unique_ptr<DirectionalLight> dirLight_;
+	//点光源
+	std::unique_ptr<PointLight> pointLight_;
 
 	// 天球
 	std::unique_ptr<Skydome> skydome_ = nullptr;
@@ -62,5 +74,14 @@ private:
 
 	// プレイヤー
 	std::unique_ptr<Player> player_ = nullptr;
+
+	// Enemy
+	std::unique_ptr<BaseEnemy> enemy_ = nullptr;
+
+	//ギミック
+	std::unique_ptr<ExplosionGimmick> explosionGimmick_ = nullptr;
+	LightInfo lightInfo_{};
+
+	std::unique_ptr<GuideUI> guideUI_ = nullptr;
 };
 }
