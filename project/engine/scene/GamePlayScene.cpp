@@ -1,6 +1,7 @@
 #include "GamePlayScene.h"
 
-//エンジン
+// Engine
+#include <CollisionManager.h>
 #include <Input.h>
 
 void Norm::GamePlayScene::Initialize() {
@@ -76,6 +77,9 @@ void Norm::GamePlayScene::Update() {
 	explosionGimmick_->Update();
 
 	guideUI_->Update();
+  
+  /* 当たり判定処理（全ての移動が終わったあとのため最後）*/
+	CollisionManager::GetInstance()->CheckCollision();
 }
 
 void Norm::GamePlayScene::DebugWithImGui() {
@@ -110,6 +114,9 @@ void Norm::GamePlayScene::DebugWithImGui() {
 	/* プレイヤーデバッグ用 */
 	player_->Debug();
 
+	/* ステージ管理クラスデバッグ用 */
+	stageManager_->Debug();
+
 	// Enemy用デバッグ
 	enemy_->DebugWithImGui();
 
@@ -121,6 +128,7 @@ void Norm::GamePlayScene::DebugWithImGui() {
 	pointLight_->DebugWithImGui(L"点光源１");
 
 	explosionGimmick_->DebugImGui();
+
 
 #endif
 }

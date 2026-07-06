@@ -889,6 +889,18 @@ namespace Norm {
 		/// <param name="color">線の色</param>
 		static void CreateLineOBB(const OBB& obb, Vector4 color);
 
+
+
+		/* ----- Add ----- */
+	    /// <summary>
+	    /// OBB同士のめり込み深さと方向を計算
+	    /// </summary>
+	    /// <param name="obb1"></param>
+	    /// <param name="obb2"></param>
+	    /// <param name="outPushVector"></param>
+	    /// <returns></returns>
+	    static bool CalculatePushVector(const OBB& obb1, const OBB& obb2, Vector3* outPushVector);
+
 	private:
 		///------------------------------------///
 		///          補助関数
@@ -977,8 +989,6 @@ namespace Norm {
 		/// <param name="s2">線分2</param>
 		/// <returns>交点の座標</returns>
 		static Vector3 IntersectionSegmentToSegment(const Segment& s1, const Segment& s2);
-
-
 	};
 
 	///------------------------------------///
