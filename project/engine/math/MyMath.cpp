@@ -2423,6 +2423,67 @@ namespace Norm {
 		}
 	}
 
+	bool MyMath::CalculatePushVector(const OBB& obb1, const OBB& obb2, Vector3* outPushVector) {
+	    if (!outPushVector)
+		    return false;
+
+	    // OBBの各軸を候補とする
+	    Vector3 axes[6] = {obb1.orientations[0], obb1.orientations[1], obb1.orientations[2], obb1.orientations[0], obb1.orientations[1], obb1.orientations[2]};
+
+	    // 頂点配列を作成して射影を計算
+	    auto GetOBBVerticals = [](const OBB& obb, Vector3* vertices) {
+		    int index = 0;
+		    for (int x = -1; x <= 1; x += 2) {
+			    for (int y = -1; y <= 1; y += 2) {
+				    for (int z = -1; z <= 1; z += 2) {
+					    vertices[index++] = obb.center + obb.orientations[0] * (obb.size.x * x) + obb.orientations[1] * (obb.size.y * y) + obb.orientations[2] * (obb.size.z * z);
+				    }
+			    }
+		    }
+	    };
+
+	    Vector3 v1[8], v2[8];
+	    GetOBBVerticals(obb1, v1);
+	    GetOBBVerticals(obb2, v2);
+
+	    float minOverlap = std::numeric_limits<float>::max();
+	    Vector3 minAxis = {0.0f, 0.0f, 0.0f};
+
+	    // 分離軸のテスト
+	    for (const auto& axis : axes) {
+		    // 軸がゼロベクトルに近ければスキップ
+		    if (Length(axis) < epsilon)
+			    continue;
+		    Vector3 nAxis = Normalize(axis);
+
+		    // 射影範囲を取得
+		    auto [min1, max1] = ProjectOntoAxis(v1, 8, nAxis);
+		    auto [min2, max2] = ProjectOntoAxis(v2, 8, nAxis);
+
+		    // 重なりをチェック
+		    float overlap = std::min(max1, max2) - std::max(min1, min2);
+		    if (overlap <= 0.0f) {
+			    return false; // 衝突していない
+		    }
+
+		    // 最小の重なりを探す
+		    if (overlap < minOverlap) {
+			    minOverlap = overlap;
+			    minAxis = nAxis;
+		    }
+	    }
+
+	    // 押し戻す向きの補正
+	    Vector3 dir = Subtract(obb1.center, obb2.center);
+	    if (Dot(minAxis, dir) < 0.0f) {
+		    minAxis = -minAxis;
+	    }
+
+	    // 押し戻しベクトルを格納
+	    *outPushVector = minAxis * minOverlap;
+	    return true;
+    }
+
 	float MyMath::DistancePointToPlane(const Vector3& point, const Plane& plane) {
 		//点と平面の最近接点を求める
 		Vector3 closestPoint = ClosestPoint(point, plane);
@@ -2717,7 +2778,7 @@ namespace Norm {
 
 		// 最短距離が0前提なら、両点はほぼ一致している
 		return (pointOnS1 + pointOnS2) * 0.5f; // 安定化のため中点を採用
-	}
+    }
 
 	///------------------------------------///
 	///      演算子のオーバーロード

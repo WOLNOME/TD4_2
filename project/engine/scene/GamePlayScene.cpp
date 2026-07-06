@@ -1,5 +1,8 @@
 #include "GamePlayScene.h"
 
+// Engine
+#include <CollisionManager.h>
+
 void Norm::GamePlayScene::Initialize() {
 	/* シーン共通初期化処理 */
 	BaseScene::Initialize();
@@ -46,6 +49,9 @@ void Norm::GamePlayScene::Update() {
 
 	/* プレイヤー更新処理 */
 	player_->Update();
+
+	/* 当たり判定処理（全ての移動が終わったあとのため最後）*/
+	CollisionManager::GetInstance()->CheckCollision();
 }
 
 void Norm::GamePlayScene::DebugWithImGui() {

@@ -1,5 +1,8 @@
 #include "MapChip.h"
 
+// Engine
+#include <CollisionManager.h>
+
 // Appliation
 #include <application/object/collision/ObjectCollider.h>
 
@@ -32,6 +35,8 @@ void Norm::MapChip::Initialize(Type type, const Vector3& position) {
 			chipCollider->SetOffset({0.0f, 0.0f, 0.0f});
 			// ブロックのサイズ
 			chipCollider->SetOBBSize({1.0f, 1.0f, 1.0f});
+			// 自身のポインタをセット
+			chipCollider->SetHolder(this);
 		}
 	}
 }
