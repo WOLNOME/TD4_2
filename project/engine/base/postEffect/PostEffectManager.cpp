@@ -60,116 +60,85 @@ namespace Norm {
 	}
 
 	void PostEffectManager::CopySceneToRenderTexture() {
-		//コマンドリストの取得
-		ID3D12GraphicsCommandList* commandList = MainRender::GetInstance()->GetCommandList();
-		//バリアの設定
-		D3D12_RESOURCE_BARRIER barrier{};
-		barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
-		barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
-		barrier.Transition.pResource = renderTextureResource.Get();		//レンダーテクスチャに対して行う
-		barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;			//遷移前の状態
-		barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;		//遷移後の状態
-		commandList->ResourceBarrier(1, &barrier);
-
-		//ルートシグネチャ、パイプラインステートの設定
-		commandList->SetGraphicsRootSignature(rootSignature[(int)currentPostEffectKind].Get());
-		commandList->SetPipelineState(graphicsPipelineState[(int)currentPostEffectKind].Get());
-
-		//個別描画情報記述
-		switch (currentPostEffectKind) {
-		case PostEffectKind::Dissolve:
-			//マスクテクスチャ
-			commandList->SetGraphicsRootDescriptorTable(1, GPUDescriptorManager::GetInstance()->GetGPUDescriptorHandle(TextureManager::GetInstance()->GetSrvIndex(postEffectResource.dissolveResource.textureHandle)));
-			//ディゾルブデータ
-			commandList->SetGraphicsRootConstantBufferView(2, postEffectResource.dissolveResource.resource->GetGPUVirtualAddress());
-			break;
-		case PostEffectKind::Random: {
-			//ランダムエンジンを使ってシードを設定
-			std::random_device rd;
-			std::mt19937 gen(rd());
-			std::uniform_real_distribution<float> dist(0.0f, 1.0f);
-			postEffectResource.randomResource.data->seed = dist(gen);
-			//ランダムデータ
-			commandList->SetGraphicsRootConstantBufferView(1, postEffectResource.randomResource.resource->GetGPUVirtualAddress());
-			break;
+		//ポストエフェクトを順番に回す
+		for (auto& kind : postEffectOrder) {
+			//kindがBloomExtractの場合は、レンダーテクスチャをコピーする
+			if (kind == PostEffectKind::BloomExtract) {
+				//ポストエフェクト描画
+				PostEffectDraw(kind, true);
+			}
+			else {
+				//ポストエフェクト描画
+				PostEffectDraw(kind, false);
+			}
 		}
-		case PostEffectKind::HSVFilter:
-			//HSVフィルターデータ
-			commandList->SetGraphicsRootConstantBufferView(1, postEffectResource.hsvResource.resource->GetGPUVirtualAddress());
-			break;
-		default:
-			break;
-		}
-
-		//共通描画情報記述
-		commandList->SetGraphicsRootDescriptorTable(0, GPUDescriptorManager::GetInstance()->GetGPUDescriptorHandle(srvIndex));
-		commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-
-		//ドローコール
-		commandList->DrawInstanced(3, 1, 0, 0);
-
-		//バリアの設定
-		barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
-		barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
-		barrier.Transition.pResource = renderTextureResource.Get();		//レンダーテクスチャに対して行う
-		barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;	//遷移前の状態
-		barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;			//遷移後の状態
-		commandList->ResourceBarrier(1, &barrier);
 	}
 
 	void PostEffectManager::DebugWithImGui() {
-		ImGui::Begin("ポストエフェクト");
-		//ポストエフェクトの種類を選択する
-		const char* items[] = { "None","Grayscale","Vignette","BoxFilter","GaussianFilter","LuminanceBaseOutline","RadialBlur","Dissolve","Random","HSVFilter" };
-		static int currentItem = 0;
-		if (ImGui::Combo("一覧", &currentItem, items, IM_ARRAYSIZE(items))) {
-			currentPostEffectKind = static_cast<PostEffectKind>(currentItem);
-		}
-		//各処理ごとの値編集
-		switch (currentPostEffectKind) {
-		case PostEffectKind::Dissolve: {
-			//閾値の変更処理
-			ImGui::DragFloat("しきい値", &postEffectResource.dissolveResource.data->threshold, 0.01f, 0.0f, 1.0f);
-			//テクスチャの変更処理
-			const char* textures[] = { "noise0","noise1" };
-			static int currentTexture = 0;
-			if (ImGui::Combo("テクスチャ", &currentTexture, textures, IM_ARRAYSIZE(textures))) {
-				switch (currentTexture) {
-				case 0:
-					postEffectResource.dissolveResource.textureHandle = TextureManager::GetInstance()->LoadTexture("noise0.png");
-					break;
-				case 1:
-					postEffectResource.dissolveResource.textureHandle = TextureManager::GetInstance()->LoadTexture("noise1.png");
-					break;
-				default:
-					break;
-				}
+		//ラムダ式でポストエフェクトの種類を文字列に変換する関数を定義する
+		auto PostEffectKindToString = [](PostEffectKind kind) {
+			switch (kind) {
+			case PostEffectKind::None:
+				return "None";
+			case PostEffectKind::Grayscale:
+				return "Grayscale";
+			case PostEffectKind::Vignette:
+				return "Vignette";
+			case PostEffectKind::BoxFilter:
+				return "BoxFilter";
+			case PostEffectKind::GaussianFilter:
+				return "GaussianFilter";
+			case PostEffectKind::LuminanceBaseOutline:
+				return "LuminanceBaseOutline";
+			case PostEffectKind::RadialBlur:
+				return "RadialBlur";
+			case PostEffectKind::Dissolve:
+				return "Dissolve";
+			case PostEffectKind::Random:
+				return "Random";
+			case PostEffectKind::HSVFilter:
+				return "HSVFilter";
+			case PostEffectKind::BloomExtract:
+				return "BloomExtract";
+			case PostEffectKind::BloomComposite:
+				return "BloomComposite";
+			default:
+				return "Unknown";
 			}
-			break;
-		}
-		case PostEffectKind::HSVFilter:
-			ImGui::DragFloat("Hue", &postEffectResource.hsvResource.data->hsvColor.x, 0.01f, -1.0f, 1.0f);
-			ImGui::DragFloat("Saturation", &postEffectResource.hsvResource.data->hsvColor.y, 0.01f, -1.0f, 1.0f);
-			ImGui::DragFloat("Value", &postEffectResource.hsvResource.data->hsvColor.z, 0.01f, -1.0f, 1.0f);
+			};
 
-			break;
-		default:
-			break;
+
+		ImGui::Begin("ポストエフェクト");
+		//現在入っているポストエフェクトの順番を表示する
+		int index = 0;
+		for (auto& kind : postEffectOrder) {
+			ImGui::Text("%d : %s", index, PostEffectKindToString(kind));
+			index++;
 		}
+		//ブルームの閾値と輝度を調整するDragFloatを表示する
+		ImGui::DragFloat("ブルーム閾値", &postEffectResource.bloomExtractResource.data->threshold, 0.01f, 0.0f, 1.0f);
+		ImGui::DragFloat("ブルーム輝度", &postEffectResource.bloomCompositeResource.data->intensity, 0.01f, 0.0f, 10.0f);
+
 
 		ImGui::End();
 	}
 
 	void PostEffectManager::InitOffScreenRenderingOption() {
+		//リソースの作成
+		renderTextureResource = DirectXCommon::GetInstance()->CreateRenderTextureResource(WinApp::kClientWidth, WinApp::kClientHeight, DXGI_FORMAT_R8G8B8A8_UNORM_SRGB, kRenderTragetClearValue);
+		cpyRenderTextureResource = DirectXCommon::GetInstance()->CreateRenderTextureResource(WinApp::kClientWidth, WinApp::kClientHeight, DXGI_FORMAT_R8G8B8A8_UNORM_SRGB, kRenderTragetClearValue);
+		TransitionState(cpyRenderTextureResource.Get(), D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
 		//RTVデスクリプタハンドルの取得
 		rtvIndex = RTVManager::GetInstance()->Allocate();
 		//RTVの作成
-		renderTextureResource = DirectXCommon::GetInstance()->CreateRenderTextureResource(WinApp::kClientWidth, WinApp::kClientHeight, DXGI_FORMAT_R8G8B8A8_UNORM_SRGB, kRenderTragetClearValue);
 		RTVManager::GetInstance()->CreateRTVDescriptor(rtvIndex, renderTextureResource.Get());
 		//SRVデスクリプタハンドルの取得
 		srvIndex = GPUDescriptorManager::GetInstance()->Allocate();
+		cpySrvIndex = GPUDescriptorManager::GetInstance()->Allocate();
 		//SRVの作成
 		GPUDescriptorManager::GetInstance()->CreateSRVforRenderTexture(srvIndex, renderTextureResource.Get());
+		GPUDescriptorManager::GetInstance()->CreateSRVforRenderTexture(cpySrvIndex, cpyRenderTextureResource.Get());
+
 	}
 
 	void PostEffectManager::GenerateRenderTextureGraphicsPipeline() {
@@ -180,7 +149,6 @@ namespace Norm {
 			//RootSignature作成
 			D3D12_ROOT_SIGNATURE_DESC descriptionRootSignature{};
 			descriptionRootSignature.Flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
-
 
 			//RootParameter格納用変数
 			std::vector<D3D12_ROOT_PARAMETER> rootParameters;
@@ -307,8 +275,76 @@ namespace Norm {
 				}
 				break;
 			}
+			case (int)PostEffectKind::BloomExtract: {
+				//RootParameter作成
+				//レンダーテクスチャの設定
+				{
+					D3D12_DESCRIPTOR_RANGE descriptorRange[1] = {};
+					descriptorRange[0].BaseShaderRegister = 0;
+					descriptorRange[0].NumDescriptors = 1;
+					descriptorRange[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
+					descriptorRange[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
 
+					D3D12_ROOT_PARAMETER rootParameter = {};
+					rootParameter.ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;//Tableを使う
+					rootParameter.ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;//PixelShaderで使う
+					rootParameter.DescriptorTable.pDescriptorRanges = descriptorRange;//Tableの中身の配列を指定
+					rootParameter.DescriptorTable.NumDescriptorRanges = _countof(descriptorRange);
+					rootParameters.push_back(rootParameter);
+				}
+				//閾値データの設定
+				{
+					D3D12_ROOT_PARAMETER rootParameter = {};
+					rootParameter.ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;//CBVを使う
+					rootParameter.ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;//PixelShaderで使う
+					rootParameter.Descriptor.ShaderRegister = 0;
+					rootParameters.push_back(rootParameter);
+				}
 
+				break;
+			}
+			case (int)PostEffectKind::BloomComposite: {
+				//RootParameter作成
+				//ブルームテクスチャの設定
+				{
+					D3D12_DESCRIPTOR_RANGE descriptorRange[1] = {};
+					descriptorRange[0].BaseShaderRegister = 0;
+					descriptorRange[0].NumDescriptors = 1;
+					descriptorRange[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
+					descriptorRange[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
+					D3D12_ROOT_PARAMETER rootParameter = {};
+					rootParameter.ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;//Tableを使う
+					rootParameter.ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;//PixelShaderで使う
+					rootParameter.DescriptorTable.pDescriptorRanges = descriptorRange;//Tableの中身の配列を指定
+					rootParameter.DescriptorTable.NumDescriptorRanges = _countof(descriptorRange);
+					rootParameters.push_back(rootParameter);
+				}
+				//シーンテクスチャの設定
+				{
+					D3D12_DESCRIPTOR_RANGE descriptorRange[1] = {};
+					descriptorRange[0].BaseShaderRegister = 1;
+					descriptorRange[0].NumDescriptors = 1;
+					descriptorRange[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
+					descriptorRange[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
+
+					D3D12_ROOT_PARAMETER rootParameter = {};
+					rootParameter.ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;//Tableを使う
+					rootParameter.ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;//PixelShaderで使う
+					rootParameter.DescriptorTable.pDescriptorRanges = descriptorRange;//Tableの中身の配列を指定
+					rootParameter.DescriptorTable.NumDescriptorRanges = _countof(descriptorRange);
+					rootParameters.push_back(rootParameter);
+				}
+				//輝度データの設定
+				{
+					D3D12_ROOT_PARAMETER rootParameter = {};
+					rootParameter.ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;//CBVを使う
+					rootParameter.ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;//PixelShaderで使う
+					rootParameter.Descriptor.ShaderRegister = 0;
+					rootParameters.push_back(rootParameter);
+				}
+
+				break;
+			}
 			default:
 				break;
 			}
@@ -420,6 +456,14 @@ namespace Norm {
 				pixelShaderBlob = DirectXCommon::GetInstance()->CompileShader(L"Resources/shaders/postEffects/HSVFilter.PS.hlsl",
 					L"ps_6_0");
 				break;
+			case (int)PostEffectKind::BloomExtract:
+				pixelShaderBlob = DirectXCommon::GetInstance()->CompileShader(L"Resources/shaders/postEffects/BloomExtract.PS.hlsl",
+					L"ps_6_0");
+				break;
+			case (int)PostEffectKind::BloomComposite:
+				pixelShaderBlob = DirectXCommon::GetInstance()->CompileShader(L"Resources/shaders/postEffects/BloomComposite.PS.hlsl",
+					L"ps_6_0");
+				break;
 			default:
 				break;
 			}
@@ -472,6 +516,122 @@ namespace Norm {
 		postEffectResource.hsvResource.resource = DirectXCommon::GetInstance()->CreateBufferResource(sizeof(HSVFilterResource));
 		postEffectResource.hsvResource.resource->Map(0, nullptr, reinterpret_cast<void**>(&postEffectResource.hsvResource.data));
 		postEffectResource.hsvResource.data->hsvColor = { 0.0f,0.0f,0.0f };
+		//ブルーム抽出
+		postEffectResource.bloomExtractResource.resource = DirectXCommon::GetInstance()->CreateBufferResource(sizeof(BloomExtractResource));
+		postEffectResource.bloomExtractResource.resource->Map(0, nullptr, reinterpret_cast<void**>(&postEffectResource.bloomExtractResource.data));
+		postEffectResource.bloomExtractResource.data->threshold = 0.0f;
+		//ブルーム加算
+		postEffectResource.bloomCompositeResource.resource = DirectXCommon::GetInstance()->CreateBufferResource(sizeof(BloomCompositeResource));
+		postEffectResource.bloomCompositeResource.resource->Map(0, nullptr, reinterpret_cast<void**>(&postEffectResource.bloomCompositeResource.data));
+		postEffectResource.bloomCompositeResource.data->intensity = 0.0f;
 	}
 
+	void PostEffectManager::AddPostEffectOrder(PostEffectKind peKind, PostEffectKind preKind) {
+		//peKindがすでに存在する場合は追加しない
+		if (std::find(postEffectOrder.begin(), postEffectOrder.end(), peKind) != postEffectOrder.end()) {
+			return;
+		}
+		//preKindが存在する場合はその後に追加、存在しない場合は先頭に追加
+		auto it = std::find(postEffectOrder.begin(), postEffectOrder.end(), preKind);
+		if (it != postEffectOrder.end()) {
+			postEffectOrder.insert(it + 1, peKind);
+		}
+		else {
+			postEffectOrder.insert(postEffectOrder.begin(), peKind);
+		}
+	}
+
+	void PostEffectManager::DeletePostEffectOrder(PostEffectKind peKind) {
+		//peKindが存在する場合は削除
+		auto it = std::find(postEffectOrder.begin(), postEffectOrder.end(), peKind);
+		if (it != postEffectOrder.end()) {
+			postEffectOrder.erase(it);
+		}
+	}
+
+	void PostEffectManager::PostEffectDraw(const PostEffectKind& peKind, bool isRTRCopy) {
+		//コマンドリストの取得
+		ID3D12GraphicsCommandList* commandList = MainRender::GetInstance()->GetCommandList();
+
+		//リソースのコピー処理
+		if (isRTRCopy) {
+			//コピー元リソースの状態をRENDER_TARGET→COPY_SOURCEに変更
+			TransitionState(renderTextureResource.Get(), D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_COPY_SOURCE);
+			//コピー先リソースの状態をPIXEL_SHADER_RESOURCE→COPY_DESTに変更
+			TransitionState(cpyRenderTextureResource.Get(), D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE, D3D12_RESOURCE_STATE_COPY_DEST);
+
+			//リソースのコピー
+			commandList->CopyResource(cpyRenderTextureResource.Get(), renderTextureResource.Get());
+
+			//コピー元リソースの状態をCOPY_SOURCE→PIXEL_SHADER_RESOURCEに変更
+			TransitionState(renderTextureResource.Get(), D3D12_RESOURCE_STATE_COPY_SOURCE, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
+			//コピー先リソースの状態をCOPY_DEST→PIXEL_SHADER_RESOURCEに変更
+			TransitionState(cpyRenderTextureResource.Get(), D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
+		}
+		else {
+			//描画前バリアの設定
+			TransitionState(renderTextureResource.Get(), D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
+		}
+
+		//ルートシグネチャ・パイプラインステートの設定
+		commandList->SetGraphicsRootSignature(rootSignature[(int)peKind].Get());
+		commandList->SetPipelineState(graphicsPipelineState[(int)peKind].Get());
+		//共通描画情報設定
+		commandList->SetGraphicsRootDescriptorTable(0, GPUDescriptorManager::GetInstance()->GetGPUDescriptorHandle(srvIndex));
+		commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+		//個別描画情報設定
+		switch (peKind) {
+		case PostEffectKind::Dissolve:
+			//マスクテクスチャ
+			commandList->SetGraphicsRootDescriptorTable(1, GPUDescriptorManager::GetInstance()->GetGPUDescriptorHandle(TextureManager::GetInstance()->GetSrvIndex(postEffectResource.dissolveResource.textureHandle)));
+			//ディゾルブデータ
+			commandList->SetGraphicsRootConstantBufferView(2, postEffectResource.dissolveResource.resource->GetGPUVirtualAddress());
+			break;
+		case PostEffectKind::Random: {
+			//ランダムエンジンを使ってシードを設定
+			std::random_device rd;
+			std::mt19937 gen(rd());
+			std::uniform_real_distribution<float> dist(0.0f, 1.0f);
+			postEffectResource.randomResource.data->seed = dist(gen);
+			//ランダムデータ
+			commandList->SetGraphicsRootConstantBufferView(1, postEffectResource.randomResource.resource->GetGPUVirtualAddress());
+			break;
+		}
+		case PostEffectKind::HSVFilter:
+			//HSVフィルターデータ
+			commandList->SetGraphicsRootConstantBufferView(1, postEffectResource.hsvResource.resource->GetGPUVirtualAddress());
+			break;
+		case PostEffectKind::BloomExtract:
+			//閾値データ
+			commandList->SetGraphicsRootConstantBufferView(1, postEffectResource.bloomExtractResource.resource->GetGPUVirtualAddress());
+			break;
+		case PostEffectKind::BloomComposite:
+			//シーンテクスチャ
+			commandList->SetGraphicsRootDescriptorTable(1, GPUDescriptorManager::GetInstance()->GetGPUDescriptorHandle(cpySrvIndex));
+			//輝度データ
+			commandList->SetGraphicsRootConstantBufferView(2, postEffectResource.bloomCompositeResource.resource->GetGPUVirtualAddress());
+			break;
+		default:
+			break;
+		}
+		//ドローコール
+		commandList->DrawInstanced(3, 1, 0, 0);
+		//描画後バリアの設定
+		TransitionState(renderTextureResource.Get(), D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE, D3D12_RESOURCE_STATE_RENDER_TARGET);
+	}
+
+	void PostEffectManager::TransitionState(ID3D12Resource* pResource, D3D12_RESOURCE_STATES before, D3D12_RESOURCE_STATES after) {
+		//コマンドリストの取得
+		ID3D12GraphicsCommandList* commandList = MainRender::GetInstance()->GetCommandList();
+		//リソースバリアの設定
+		D3D12_RESOURCE_BARRIER barrier{};
+		barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+		barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
+		barrier.Transition.pResource = pResource;
+		barrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
+		barrier.Transition.StateBefore = before;
+		barrier.Transition.StateAfter = after;
+
+		commandList->ResourceBarrier(1, &barrier);
+	}
 }

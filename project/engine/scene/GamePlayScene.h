@@ -63,7 +63,7 @@ private:
 
 	// 平行光源
 	std::unique_ptr<DirectionalLight> dirLight_;
-	//点光源
+	// 点光源
 	std::unique_ptr<PointLight> pointLight_;
 
 	// 天球

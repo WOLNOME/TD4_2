@@ -54,6 +54,13 @@ void Norm::GamePlayScene::Initialize() {
 	explosionGimmick_->SetLightInfo(&lightInfo_);
 	explosionGimmick_->SetPosition({ 14.0f,-25.0f, 0.0f });
 	explosionGimmick_->Initialize();
+
+	//ポストエフェクト　ブルーム
+	//PostEffectManager::GetInstance()->AddPostEffectOrder(PostEffectKind::None);
+	PostEffectManager::GetInstance()->AddPostEffectOrder(PostEffectKind::BloomExtract);
+	PostEffectManager::GetInstance()->AddPostEffectOrder(PostEffectKind::GaussianFilter, PostEffectKind::BloomExtract);
+	PostEffectManager::GetInstance()->AddPostEffectOrder(PostEffectKind::BloomComposite, PostEffectKind::GaussianFilter);
+
 }
 
 void Norm::GamePlayScene::Finalize() {}
@@ -121,6 +128,8 @@ void Norm::GamePlayScene::DebugWithImGui() {
 	pointLight_->DebugWithImGui(L"点光源１");
 
 	explosionGimmick_->DebugImGui();
+
+	PostEffectManager::GetInstance()->DebugWithImGui();
 
 #endif
 }

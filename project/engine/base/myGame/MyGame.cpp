@@ -27,8 +27,8 @@ void MyGame::Initialize() {
 	//シーンマネージャーに最初のシーンをセット
 	SceneManager::GetInstance()->SetNextScene("GAMEPLAY");
 
-	//パーティクルエディター→PARTICLEEDITOR
-	//サンプルシーン→Sample
+	// パーティクルエディター→PARTICLEEDITOR
+	// サンプルシーン→Sample
 	// ゲームプレイシーン->GAMEPLAY
 }
 
@@ -133,7 +133,7 @@ void MyGame::Draw() {
 
 	//画面切り替え
 	MainRender::GetInstance()->ExchangeScreen();
-	
+
 	///------------------------------///
 	///      レンダーの最終処理
 	///------------------------------///
