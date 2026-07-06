@@ -14,6 +14,8 @@
 #include <application/stage/StageManager.h>
 #include <application/object/Character/Player.h>
 
+#include "ExplosionGimmick.h"
+
 namespace Norm {
 // =========================================================
 // ゲームプレイシーンクラス
@@ -75,6 +77,10 @@ private:
 
 	// Enemy
 	std::unique_ptr<BaseEnemy> enemy_ = nullptr;
+
+	//ギミック
+	std::unique_ptr<ExplosionGimmick> explosionGimmick_ = nullptr;
+	LightInfo lightInfo_{};
 
 	std::unique_ptr<GuideUI> guideUI_ = nullptr;
 };
