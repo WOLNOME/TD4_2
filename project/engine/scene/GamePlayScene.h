@@ -68,7 +68,7 @@ namespace Norm {
 
 		// 天球
 		std::unique_ptr<Skydome> skydome_ = nullptr;
-		//背景
+		// 背景
 		std::unique_ptr<Object3d> background_ = nullptr;
 		WorldTransform backgroundWT_;
 
