@@ -20,11 +20,15 @@ void Norm::GamePlayScene::Initialize() {
 
 	/* ライト生成 + 初期化 */
 	dirLight_ = std::make_unique<DirectionalLight>();
-	dirLight_->SetIntensity(0.05f);
-	dirLight_->SetColor({ 1,0,0,1 });
+	dirLight_->SetIntensity(0.01f);
+	dirLight_->SetColor({ 1,1,1,1 });
 	dirLight_->SetDirection({ 0.5f,0.5f,-1.0f });
 	pointLight_ = std::make_unique<PointLight>();
 	pointLight_->SetPosition({ 0.0f,0.0f,0.0f });
+	pointLight_->SetRadius(8.0f);
+	pointLight_->SetDecay(1.5f);
+	pointLight_->SetIntensity(3.0f);
+
 	// ライトを登録
 	sceneLight_->SetLight(dirLight_.get());
 	sceneLight_->SetLight(pointLight_.get());
@@ -32,6 +36,16 @@ void Norm::GamePlayScene::Initialize() {
 	/* 天球の生成 + 初期化 */
 	skydome_ = std::make_unique<Skydome>();
 	skydome_->Initialize();
+	//背景の生成 + 初期化
+	background_ = std::make_unique<Object3d>();
+	background_->Initialize(ShapeTag{},"background",Shape::ShapeKind::kPlane);
+	background_->SetTexture(TextureManager::GetInstance()->LoadTexture("uvChecker.png"));
+	background_->SetIsLightProcess(true);
+	backgroundWT_.Initialize();
+	backgroundWT_.SetScale({ 100.0f, 100.0f, 1.0f });
+	backgroundWT_.SetRotate({ 0.0f,-pi,0.0f });
+	backgroundWT_.SetTranslate({ 0.0f, 0.0f, 2.5f });
+	background_->RegistWorldTransform(&backgroundWT_);
 
 	/* ステージ管理クラス生成 + ステージ読み込み */
 	stageManager_ = std::make_unique<StageManager>();
@@ -127,6 +141,8 @@ void Norm::GamePlayScene::DebugWithImGui() {
 	//点光源
 	pointLight_->DebugWithImGui(L"点光源１");
 
+	background_->Debug(L"背景");
+
 	explosionGimmick_->DebugImGui();
 
 	PostEffectManager::GetInstance()->DebugWithImGui();
@@ -160,7 +176,7 @@ void Norm::GamePlayScene::LightMoveProcess() {
 	//XY平面を作成
 	Plane XYPlane;
 	XYPlane.normal = { 0,0,1 };
-	XYPlane.distance = 0.0f;
+	XYPlane.distance = -2.0f;
 	//直線と平面の交点CPを求める
 	Vector3 cp = MyMath::CollisionPoint(line, XYPlane);
 	//点光源の座標としてcpを適用する

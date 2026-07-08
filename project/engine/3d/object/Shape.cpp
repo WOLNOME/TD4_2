@@ -305,23 +305,25 @@ namespace Norm {
 		resource.materialResource->Map(0, nullptr, reinterpret_cast<void**>(&resource.materialData));
 		//データに書き込み
 		// 三角形一枚目
-		resource.vertexData[0].position = { -1.0f, 1.0f, 0.0f, 1.0f };
-		resource.vertexData[0].texcoord = { 0.0f, 1.0f };
-		resource.vertexData[1].position = { 1.0f, -1.0f, 0.0f, 1.0f };
-		resource.vertexData[1].texcoord = { 1.0f, 0.0f };
+		resource.vertexData[0].position = { 1.0f, -1.0f, 0.0f, 1.0f };
+		resource.vertexData[0].texcoord = { 1.0f, 0.0f };
+		resource.vertexData[1].position = { -1.0f,  1.0f, 0.0f, 1.0f };
+		resource.vertexData[1].texcoord = { 0.0f, 1.0f };
 		resource.vertexData[2].position = { -1.0f, -1.0f, 0.0f, 1.0f };
 		resource.vertexData[2].texcoord = { 0.0f, 0.0f };
 
 		// 三角形二枚目
-		resource.vertexData[3].position = { -1.0f, 1.0f, 0.0f, 1.0f };
-		resource.vertexData[3].texcoord = { 0.0f, 1.0f };
-		resource.vertexData[4].position = { 1.0f, 1.0f, 0.0f, 1.0f };
+		resource.vertexData[3].position = { 1.0f, -1.0f, 0.0f, 1.0f };
+		resource.vertexData[3].texcoord = { 1.0f, 0.0f };
+		resource.vertexData[4].position = { 1.0f,  1.0f, 0.0f, 1.0f };
 		resource.vertexData[4].texcoord = { 1.0f, 1.0f };
-		resource.vertexData[5].position = { 1.0f, -1.0f, 0.0f, 1.0f };
-		resource.vertexData[5].texcoord = { 1.0f, 0.0f };
+		resource.vertexData[5].position = { -1.0f,  1.0f, 0.0f, 1.0f };
+		resource.vertexData[5].texcoord = { 0.0f, 1.0f };
 
 		//uvフリップ
 		for (uint32_t i = 0; i < 6; i++) {
+			resource.vertexData[i].texcoord.x =
+				1.0f - resource.vertexData[i].texcoord.x;
 			resource.vertexData[i].texcoord.y = 1.0f - resource.vertexData[i].texcoord.y;
 		}
 
