@@ -10,6 +10,7 @@ namespace Norm {
 		Enemy,						//敵	
 		Block, // 通常のブロック
 		Area, // エリアブロック（敵が範囲外に出ないようにするため、ステージ周囲に敷き詰められたブロック）
+		Goal, // ゴール
 
 		Nothingness,				//虚無オブジェクト
 	};

@@ -79,5 +79,8 @@ private:
 	float yVelocity_ = 0.0f;
 	// 接地フラグ
 	bool isGrounded_ = false;
+
+	// ゴール済みフラグ
+	bool isGoaled_ = false;
 };
 } 
