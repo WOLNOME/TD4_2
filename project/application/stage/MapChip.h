@@ -18,6 +18,7 @@ public:
 	enum class Type { 
 		None = 0,
 		NormalBlock = 1,
+		AreaBlock = 2,
 	};
 
 	// =========================================================

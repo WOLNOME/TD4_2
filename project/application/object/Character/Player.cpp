@@ -16,7 +16,7 @@ void Norm::Player::Initialize() {
 	object_ = std::make_unique<Object3d>();
 	object_->Initialize(ModelTag{}, Object3dManager::GetInstance()->GenerateName("player"), "player");
 	wt_.Initialize();
-	wt_.SetTranslate({0.0f, 0.0f, 0.0f});
+	wt_.SetTranslate({0.0f, -10.0f, 0.0f});
 	object_->RegistWorldTransform(&wt_);
 
 	// コライダーの生成 + 登録
@@ -112,8 +112,8 @@ void Norm::Player::Debug() {
 }
 
 void Norm::Player::OnCollision(ICollider* other, CollisionAttribute otherAttr) {
-	// 相手がマップ（ブロック）の場合のみ押し戻し処理を行う
-	if (otherAttr == CollisionAttribute::Block) {
+	// 相手がマップ（ブロック）の場合のみ押し戻し処理を行う（エリアブロックも含めて）
+	if (otherAttr == CollisionAttribute::Block || otherAttr == CollisionAttribute::Area) {
 		// お互いのコライダーを取得
 		auto* playerCollider = dynamic_cast<ObjectCollider*>(this->collider_.get());
 		auto* blockCollider = dynamic_cast<ObjectCollider*>(other);
