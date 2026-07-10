@@ -8,10 +8,9 @@ namespace Norm {
 	enum class CollisionAttribute {
 		Player,						//プレイヤー
 		Enemy,						//敵	
-		Block,
+		Block, // 通常のブロック
+		Area, // エリアブロック（敵が範囲外に出ないようにするため、ステージ周囲に敷き詰められたブロック）
 
 		Nothingness,				//虚無オブジェクト
 	};
-
-
 }
