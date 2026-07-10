@@ -1,13 +1,14 @@
 #pragma once
-/// ===Include=== ///
+/// ===include=== ///
 #include "Base/EnemyState.h"
 
 ///=====================================================/// 
-/// EnemyMoveState
-/// Enemyの移動状態を管理するクラス
+/// EnemyChaseState
+/// Enemyの追跡状態を管理するクラス
 ///=====================================================///
-class EnemyMoveState : public EnemyState {
+class EnemyChaseState : public EnemyState {
 public:
+
 	/// <summary>
 	/// 初期化処理
 	/// </summary>
@@ -17,22 +18,10 @@ public:
 	/// 更新処理
 	/// </summary>
 	void Update() override;
-
+	
 	/// <summary>
 	/// 終了処理
 	/// </summary>
 	void Exit() override;
-
-private:
-
-	/// <summary>
-	/// 移動処理
-	/// </summary>
-	void Move();
-
-	/// <summary>
-	/// 状態遷移の確認
-	/// </summary>
-	void CheckTransition();
 };
 

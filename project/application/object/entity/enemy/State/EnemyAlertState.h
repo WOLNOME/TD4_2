@@ -1,12 +1,12 @@
 #pragma once
-/// ===include=== ///
-#include "EnemyState.h"
+/// ===Include=== ///
+#include "Base/EnemyState.h"
 
 ///=====================================================/// 
-/// EnemyAttackState
-/// Enemyの攻撃状態を管理するクラス
+/// EnemyAlertState
+/// Enemyの警戒状態を管理するクラス
 ///=====================================================///
-class EnemyAttackState : public EnemyState {
+class EnemyAlertState : public EnemyState {
 public:
 
 	/// <summary>
@@ -18,10 +18,9 @@ public:
 	/// 更新処理
 	/// </summary>
 	void Update() override;
-	
+
 	/// <summary>
 	/// 終了処理
 	/// </summary>
 	void Exit() override;
-};
-
+};	

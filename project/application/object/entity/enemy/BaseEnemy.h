@@ -5,7 +5,7 @@
 #include "Object3d.h"
 #include "WorldTransform.h"
 // EnemyState
-#include "State/EnemyState.h"
+#include "State/Base/EnemyState.h"
 // C++標準ライブラリ
 #include <memory>
 
@@ -35,9 +35,9 @@ public:
 	void DebugWithImGui();
 
 	/// <summary>
-	/// 攻撃処理
+	/// 追跡処理
 	/// </summary>
-	void Attack(const Norm::Vector3 playerPos);
+	void Chase(const Norm::Vector3 playerPos);
 
 	/// <summary>
 	/// 状態を変更する
@@ -73,12 +73,12 @@ private:
 	// 現在の状態
 	std::unique_ptr<EnemyState> currentState_ = nullptr;
 
-	// 攻撃関連の変数
-	struct BaseEnemyAttackData {
+	// 追跡関連の変数
+	struct BaseEnemyChaseData {
 		float chargeSpeed = 0.1f; // 突進速度
 		float rotateSpeed = 0.05f; // 回転速度
 	};
-	BaseEnemyAttackData attackData_{};
+	BaseEnemyChaseData chaseData_{};
 
 	// 目標のY軸回転角
 	float targetFacingRotationY_ = 0.0f; 

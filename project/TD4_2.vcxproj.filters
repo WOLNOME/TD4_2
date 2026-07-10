@@ -354,12 +354,13 @@
     <ClCompile Include="application\object\Character\Player.cpp" />
     <ClCompile Include="application\object\collision\ObjectCollider.cpp" />
     <ClCompile Include="application\object\entity\enemy\BaseEnemy.cpp" />
-    <ClCompile Include="application\object\entity\enemy\State\EnemyState.cpp" />
-    <ClCompile Include="application\object\entity\enemy\State\EnemyAttackState.cpp" />
+    <ClCompile Include="application\object\entity\enemy\State\Base\EnemyState.cpp" />
+    <ClCompile Include="application\object\entity\enemy\State\EnemyChaseState.cpp" />
     <ClCompile Include="application\object\entity\enemy\State\EnemyMoveState.cpp" />
     <ClCompile Include="application\object\entity\enemy\State\EnemyEscapeState.cpp" />
     <ClCompile Include="GimmickBase.cpp" />
     <ClCompile Include="ExplosionGimmick.cpp" />
+    <ClCompile Include="application\object\entity\enemy\State\EnemyAlertState.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="engine\scenebase\AbstractSceneFactory.h">
@@ -662,12 +663,13 @@
     <ClInclude Include="application\object\Character\Player.h" />
     <ClInclude Include="application\object\collision\ObjectCollider.h" />
     <ClInclude Include="application\object\entity\enemy\BaseEnemy.h" />
-    <ClInclude Include="application\object\entity\enemy\State\EnemyState.h" />
-    <ClInclude Include="application\object\entity\enemy\State\EnemyAttackState.h" />
+    <ClInclude Include="application\object\entity\enemy\State\Base\EnemyState.h" />
+    <ClInclude Include="application\object\entity\enemy\State\EnemyChaseState.h" />
     <ClInclude Include="application\object\entity\enemy\State\EnemyMoveState.h" />
     <ClInclude Include="application\object\entity\enemy\State\EnemyEscapeState.h" />
     <ClInclude Include="GimmickBase.h" />
     <ClInclude Include="ExplosionGimmick.h" />
+    <ClInclude Include="application\object\entity\enemy\State\EnemyAlertState.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\shaders\line\Line.hlsli">

@@ -7,7 +7,7 @@
 // EnemyState
 #include "State/EnemyMoveState.h"
 #ifdef _DEBUG
-#include "State/EnemyAttackState.h"
+#include "State/EnemyChaseState.h"
 #include "State/EnemyEscapeState.h"
 #endif // _DEBUG
 
@@ -61,14 +61,13 @@ void BaseEnemy::DebugWithImGui() {
 
 	Vector3 worldPos = worldTransform_.GetWorldTranslate();
 	ImGui::DragFloat3("position", &worldPos.x, 0.1f);
-//	worldTransform_.SetTranslate(worldPos);
 
 	ImGui::End();
 
 	// 攻撃状態が変化した場合の処理
 	if (!preIsAttack_ && isAttack_) {
 		isEscape_ = false; // 攻撃状態に入るときは逃走状態を解除
-		ChangeState(std::make_unique<EnemyAttackState>());
+		ChangeState(std::make_unique<EnemyChaseState>());
 	}
 	// 逃走状態が変化した場合の処理
 	if (!preIsEscape_ && isEscape_) {
@@ -80,9 +79,9 @@ void BaseEnemy::DebugWithImGui() {
 }
 
 ///-------------------------------------------/// 
-/// 攻撃処理
+/// 追跡処理
 ///-------------------------------------------///
-void BaseEnemy::Attack(const Vector3 playerPos) {
+void BaseEnemy::Chase(const Vector3 playerPos) {
 	// Playerの方向を計算
 	Vector3 toPlayer = playerPos - worldTransform_.GetWorldTranslate();
 	float distance = toPlayer.Length();
@@ -91,8 +90,8 @@ void BaseEnemy::Attack(const Vector3 playerPos) {
 	if (distance > 0.0001f) {
 		Norm::Vector3 dir = { toPlayer.x / distance, toPlayer.y / distance, 0.0f };
 		Norm::Vector3 newPos = worldTransform_.GetWorldTranslate();
-		newPos.x += dir.x * attackData_.chargeSpeed;
-		newPos.y += dir.y * attackData_.chargeSpeed;
+		newPos.x += dir.x * chaseData_.chargeSpeed;
+		newPos.y += dir.y * chaseData_.chargeSpeed;
 		worldTransform_.SetTranslate(newPos);
 	}
 
@@ -127,7 +126,7 @@ void BaseEnemy::UpdateFacing(float directionX) {
 	}
 
 	// 決定した左右の向きへ滑らかに回転させる
-	float currentRotationY_ = LerpAngle(worldTransform_.GetRotate().y, targetFacingRotationY_, attackData_.rotateSpeed);
+	float currentRotationY_ = LerpAngle(worldTransform_.GetRotate().y, targetFacingRotationY_, chaseData_.rotateSpeed);
 	worldTransform_.SetRotate({ 0.0f, currentRotationY_, 0.0f });
 }
 
