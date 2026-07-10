@@ -4,7 +4,7 @@
 #include <application/stage/StageLoader.h>
 
 void Norm::StageManager::LoadStage(const std::string& jsonPath) {
-	chips_.clear(); 
+	chips_.clear();
 
 	// ローダーを使ってデータを取得
 	StageData data = StageLoader::LoadJson(jsonPath);
@@ -18,14 +18,14 @@ void Norm::StageManager::LoadStage(const std::string& jsonPath) {
 				int32_t index = y * data.width + x;
 				int32_t chipID = layer.tiles[index];
 
-				if (chipID == 0) continue; // 空白ならスキップ
+				if (chipID == 0)
+					continue; // 空白ならスキップ
 
 				// 座標計算
 				Vector3 position = {
 				    x * data.tileSize,
 				    -y * data.tileSize, // エディタと合わせるためY軸を反対に
-				    0.0f
-				};
+				    0.0f};
 
 				// チップの生成・登録
 				auto chip = std::make_unique<MapChip>();
@@ -34,4 +34,12 @@ void Norm::StageManager::LoadStage(const std::string& jsonPath) {
 			}
 		}
 	}
+}
+
+void Norm::StageManager::Debug() {
+#ifdef _DEBUG
+	for (auto& chip : chips_) {
+		chip->Debug();
+	}
+#endif
 }
