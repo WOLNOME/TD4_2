@@ -48,6 +48,12 @@ public:
 	/// <returns></returns>
 	Vector3 GetTranslate() const { return wt_.GetTranslate(); }
 
+	/// <summary>
+	/// ゴール済みフラグを取得
+	/// </summary>
+	/// <returns></returns>
+	bool IsGoaled() const { return isGoaled_; }
+
 private:
 	// =========================================================
 	// Constants
