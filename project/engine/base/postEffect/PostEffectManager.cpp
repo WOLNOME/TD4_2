@@ -55,8 +55,8 @@ namespace Norm {
 			kRenderTragetClearValue.w
 		};
 		commandList->ClearRenderTargetView(RTVManager::GetInstance()->GetCPUDescriptorHandle(rtvIndex), clearColor, 0, nullptr);
-		//指定した深度で画面全体をクリアする
-		commandList->ClearDepthStencilView(dsvHandle, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
+		//指定した深度とステンシルで画面全体をクリアする
+		commandList->ClearDepthStencilView(dsvHandle, D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1.0f, 0, 0, nullptr);
 	}
 
 	void PostEffectManager::CopySceneToRenderTexture() {

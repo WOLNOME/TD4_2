@@ -129,11 +129,11 @@ namespace Norm {
 		return outputName;
 	}
 
-	void Object3dManager::SettingCommonDrawing(NameGPS index) {
+	void Object3dManager::SettingCommonDrawing(NameGPS indexNG,ObjKind indexOK) {
 		//ルートシグネチャをセットするコマンド
-		MainRender::GetInstance()->GetCommandList()->SetGraphicsRootSignature(rootSignature_[(int)index].Get());
+		MainRender::GetInstance()->GetCommandList()->SetGraphicsRootSignature(rootSignature_[(int)indexNG].Get());
 		//グラフィックスパイプラインステートをセットするコマンド
-		MainRender::GetInstance()->GetCommandList()->SetPipelineState(graphicsPipelineState_[(int)index].Get());
+		MainRender::GetInstance()->GetCommandList()->SetPipelineState(graphicsPipelineState_[(int)indexNG][(int)indexOK].Get());
 		//プリミティブトポロジーをセットするコマンド
 		MainRender::GetInstance()->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	}
@@ -473,7 +473,7 @@ namespace Norm {
 		depthStencilDesc.DepthEnable = true;
 		//書き込みします
 		depthStencilDesc.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL;
-		//比較関数はLessEqual。つまり、近ければ描画される
+		//比較関数はLessEqual(<=)。つまり、近ければ描画される
 		depthStencilDesc.DepthFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL;
 
 		//PSO情報を書き込む

@@ -32,6 +32,17 @@ namespace Norm {
 			kMaxNumNameGPS,	//最大数
 		};
 
+		/// <summary>
+		/// オブジェクトの種類
+		/// </summary>
+		enum class ObjKind {
+			Normal,				//通常モデル
+			OlTarget,			//アウトライン適用モデル
+			Outline,			//アウトラインモデル
+
+			kMaxNumObjectKind,	//最大数
+		};
+
 	private:
 		static std::unique_ptr<Object3dManager> instance_;
 
@@ -91,8 +102,9 @@ namespace Norm {
 		/// <summary>
 		/// 共通のグラフィックスパイプライン設定
 		/// </summary>
-		/// <param name="index">番号</param>
-		void SettingCommonDrawing(NameGPS index = NameGPS::Normal);
+		/// <param name="indexNG">NameGPSの番号</param>
+		/// <param name="indexOK">ObjKindの番号</param>
+		void SettingCommonDrawing(NameGPS index = NameGPS::Normal, ObjKind indexOK = ObjKind::Normal);
 		/// <summary>
 		/// アニメーション用のグラフィックスパイプライン設定
 		/// </summary>
@@ -150,7 +162,11 @@ namespace Norm {
 		//ルートシグネチャ
 		std::array<Microsoft::WRL::ComPtr<ID3D12RootSignature>, (int)NameGPS::kMaxNumNameGPS> rootSignature_;
 		//グラフィックスパイプライン
-		std::array<Microsoft::WRL::ComPtr<ID3D12PipelineState>, (int)NameGPS::kMaxNumNameGPS> graphicsPipelineState_;
+		std::array<
+			std::array<Microsoft::WRL::ComPtr<ID3D12PipelineState>,
+			(int)ObjKind::kMaxNumObjectKind>,
+			(int)NameGPS::kMaxNumNameGPS>
+			graphicsPipelineState_;
 
 		//コンピュートルートシグネチャ
 		Microsoft::WRL::ComPtr<ID3D12RootSignature> computeRootSignature_ = nullptr;
