@@ -3,6 +3,8 @@
 #include "Vector3.h"
 #include "WorldTransform.h"
 #include "Object3d.h"
+#include "engine/3d/camera/BaseCamera.h"
+#include "application/ui/guide/GuideUI.h"
 
 using namespace Norm;
 
@@ -28,7 +30,7 @@ public:
 	GimmickBase() = default;
 	virtual ~GimmickBase() = default;
 
-	virtual void Initialize() = 0;
+	virtual void Initialize(Norm::BaseCamera* _camera) = 0;
 	virtual void Update();
 
 	/// <summary>
@@ -54,12 +56,17 @@ protected:
 	virtual void OnFlashHit() {}
 
 protected:
+
 	const LightInfo* lightInfo_ = nullptr;
 
 	GimmickState gimmickState_ = GimmickState::Hidden;
 
 	std::unique_ptr<Object3d> gimmickObject_ = nullptr;
 	WorldTransform worldTransform_{};
+
+	std::unique_ptr<GuideUI> guideUI_ = nullptr;
+
+	Vector3 uiOffset_ = { 0.0f,4.0f,0.0f };
 
 	Vector3 position_{};
 	float radius_ = 1.0f;

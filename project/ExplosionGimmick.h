@@ -10,7 +10,7 @@ public:
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	void Initialize() override;
+	void Initialize(Norm::BaseCamera* _camera) override;
 	/// <summary>
 	///	更新
 	/// </summary>

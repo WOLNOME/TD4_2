@@ -7,7 +7,7 @@
 
 
 
-void ExplosionGimmick::Initialize()
+void ExplosionGimmick::Initialize(Norm::BaseCamera* _camera)
 {
 	gimmickState_ = GimmickState::Hidden;
 
@@ -25,7 +25,8 @@ void ExplosionGimmick::Initialize()
 	gimmickObject_ = std::make_unique<Object3d>();
 	gimmickObject_->Initialize(ModelTag{}, Object3dManager::GetInstance()->GenerateName("ExplosionGimmick"), "cube");
 
-	
+	guideUI_ = std::make_unique<GuideUI>();
+	guideUI_->Initialize(_camera, Input::GetInstance(), "mouse.png", position_);
 
 	gimmickObject_->RegistWorldTransform(&worldTransform_);
 }
