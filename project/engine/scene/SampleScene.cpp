@@ -124,7 +124,7 @@ namespace Norm {
 		explosionGimmick_ = std::make_unique<ExplosionGimmick>();
 		explosionGimmick_->SetLightInfo(&lightInfo_);
 		explosionGimmick_->SetPosition({ 0.0f, 10.0f, 40.0f });
-		explosionGimmick_->Initialize();
+		explosionGimmick_->Initialize(camera_.get());
 
 	}
 

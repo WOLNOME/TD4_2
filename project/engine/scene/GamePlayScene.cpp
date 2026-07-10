@@ -45,15 +45,11 @@ void Norm::GamePlayScene::Initialize() {
 	enemy_ = std::make_unique<BaseEnemy>();
 	enemy_->Initialize({ 0.0f, 5.0f, 0.0f });
 
-	guideUI_ = std::make_unique<GuideUI>();
-
-	guideUI_->Initialize(camera_.get(), Input::GetInstance(), { 14.0f,-22.0f,0.0f });
-
 	// 爆発ギミック
 	explosionGimmick_ = std::make_unique<ExplosionGimmick>();
 	explosionGimmick_->SetLightInfo(&lightInfo_);
 	explosionGimmick_->SetPosition({ 14.0f,-25.0f, 0.0f });
-	explosionGimmick_->Initialize();
+	explosionGimmick_->Initialize(camera_.get());
 }
 
 void Norm::GamePlayScene::Finalize() {}
@@ -74,8 +70,6 @@ void Norm::GamePlayScene::Update() {
 
 	//爆発ギミック
 	explosionGimmick_->Update();
-
-	guideUI_->Update();
 }
 
 void Norm::GamePlayScene::DebugWithImGui() {
@@ -112,8 +106,6 @@ void Norm::GamePlayScene::DebugWithImGui() {
 
 	// Enemy用デバッグ
 	enemy_->DebugWithImGui();
-
-	guideUI_->ImGui();
 
 	//平行光源
 	dirLight_->DebugWithImGui(L"平行光源１");
