@@ -2,6 +2,7 @@
 
 // Application
 #include <application/object/Character/Player.h>
+#include <application/object/entity/enemy/BaseEnemy.h>
 
 using namespace Norm;
 
@@ -43,5 +44,8 @@ void ObjectCollider::OnCollision(ICollider* _other, CollisionAttribute _attribut
 	if (holder) {
 		Player* player = static_cast<Player*>(holder);
 		player->OnCollision(_other, _attribute);
+
+		BaseEnemy* enemy = static_cast<BaseEnemy*>(holder);
+		enemy->OnCollision(_other, _attribute);
 	}
 }

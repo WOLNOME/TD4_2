@@ -1,12 +1,17 @@
 #include "BaseEnemy.h"
 /// ===Include=== ///
-#include "TextureManager.h"
+// Engine
 #include "Object3dManager.h"
-#include "ImGuiManager.h"
-#include "MyMath.h"
+#include "CollisionManager.h"
+// Application
+#include <application/object/collision/ObjectCollider.h>
 // EnemyState
 #include "State/EnemyMoveState.h"
+// Math
+#include "MyMath.h"
+// Debug
 #ifdef _DEBUG
+#include <imgui.h>
 #include "State/EnemyChaseState.h"
 #include "State/EnemyEscapeState.h"
 #endif // _DEBUG
@@ -17,20 +22,32 @@ using namespace Norm;
 /// 初期化処理
 ///-------------------------------------------///
 void BaseEnemy::Initialize(Norm::Vector3 position) {
-	// オブジェクトの生成・初期化
-	textureHandle_ = TextureManager::GetInstance()->LoadTexture("uvChecker.png");
+	/// ===オブジェクト=== ///
+	// 生成・初期化
 	object3d_ = std::make_unique<Object3d>();
-	object3d_->Initialize(ModelTag{}, Object3dManager::GetInstance()->GenerateName("ModelBase"), "cube");
-	object3d_->SetTexture(textureHandle_);
-	object3d_->SetIsLightProcess(true);
-	//ワールドトランスフォームの初期化
+	object3d_->Initialize(ModelTag{}, Object3dManager::GetInstance()->GenerateName("enemy"), "enemy");
+
+	/// ===ワールドトランスフォーム=== ///
+	// 初期化
 	worldTransform_.Initialize();
-	worldTransform_.SetScale({ 1.0f, 1.0f, 1.0f });
 	worldTransform_.SetTranslate(position);
 	//オブジェクトにセット
 	object3d_->RegistWorldTransform(&worldTransform_);
 
-	// 初期状態をMoveStateに設定
+	/// ===コライダー=== ///
+	// 生成 + 登録
+	collider_ = std::make_unique<ObjectCollider>(object3d_.get());
+	auto* enemyCollider = dynamic_cast<ObjectCollider*>(collider_.get());
+	if (enemyCollider) {
+		enemyCollider->SetCollisionAttribute(CollisionAttribute::Enemy);
+		enemyCollider->SetWorldTransform(&worldTransform_);
+		enemyCollider->SetOffset({ 0.0f, 0.0f, 0.0f });
+		enemyCollider->SetOBBSize({ 1.0f, 1.0f, 1.0f }); // 敵のコライダーサイズ
+		enemyCollider->SetHolder(this); // 自身のポインタをセット
+	}
+	
+
+	/// ===Stateの設定=== ///
 	ChangeState(std::make_unique<EnemyMoveState>());
 }
 
@@ -73,6 +90,14 @@ void BaseEnemy::DebugWithImGui() {
 	if (!preIsEscape_ && isEscape_) {
 		isAttack_ = false; // 逃走状態に入るときは攻撃状態を解除
 		ChangeState(std::make_unique<EnemyEscapeState>());
+	}
+
+	// コライダーデバッグ
+	if (collider_) {
+		auto* enemyCollider = dynamic_cast<ObjectCollider*>(collider_.get());
+		if (enemyCollider) {
+			enemyCollider->Debug();
+		}
 	}
 
 #endif // _DEBUG
@@ -119,7 +144,7 @@ void BaseEnemy::ChangeState(std::unique_ptr<EnemyState> newState) {
 /// 向きを更新する
 ///-------------------------------------------///
 void BaseEnemy::UpdateFacing(float directionX) {
-	// Playerの方向を向くための目標Y軸回転角を決定
+	// directionXの方向を向くための目標Y軸回転角を決定
 	constexpr float kFacingThreshold = 0.01f;
 	if (std::fabs(directionX) > kFacingThreshold) {
 		targetFacingRotationY_ = (directionX > 0.0f) ? 0.0f : pi;
@@ -128,6 +153,13 @@ void BaseEnemy::UpdateFacing(float directionX) {
 	// 決定した左右の向きへ滑らかに回転させる
 	float currentRotationY_ = LerpAngle(worldTransform_.GetRotate().y, targetFacingRotationY_, chaseData_.rotateSpeed);
 	worldTransform_.SetRotate({ 0.0f, currentRotationY_, 0.0f });
+}
+
+///-------------------------------------------/// 
+/// 衝突時コールバック
+///-------------------------------------------///
+void BaseEnemy::OnCollision(ICollider* other, CollisionAttribute otherAttr) {
+	other, otherAttr; // 未使用の引数を無視するためのダミー
 }
 
 ///-------------------------------------------/// 

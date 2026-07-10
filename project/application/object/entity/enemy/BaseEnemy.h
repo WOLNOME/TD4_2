@@ -1,13 +1,11 @@
 #pragma once
 /// ===Include=== ///
 // Object
-#include "BaseCamera.h"
 #include "Object3d.h"
 #include "WorldTransform.h"
+#include "ICollider.h"
 // EnemyState
 #include "State/Base/EnemyState.h"
-// C++標準ライブラリ
-#include <memory>
 
 ///=====================================================/// 
 /// BaseEnemy
@@ -52,6 +50,14 @@ public:
 	void UpdateFacing(float directionX);
 
 public:
+	/// <summary>
+	/// 衝突時コールバック
+	/// </summary>
+	/// <param name="other"></param>
+	/// <param name="otherAttr"></param>
+	void OnCollision(Norm::ICollider* other, Norm::CollisionAttribute otherAttr);
+
+public:
 	/// ============================== ///
 	///		getter
 	/// ============================== ///
@@ -66,9 +72,9 @@ private:
 	/// ============================== ///
 	///		メンバ変数
 	/// ============================== ///
-	int32_t textureHandle_ = EOF;
 	std::unique_ptr<Norm::Object3d> object3d_ = nullptr;
 	Norm::WorldTransform worldTransform_;
+	std::unique_ptr<Norm::ICollider> collider_ = nullptr;
 
 	// 現在の状態
 	std::unique_ptr<EnemyState> currentState_ = nullptr;
@@ -90,7 +96,6 @@ private:
 	bool isEscape_ = false;
 	bool preIsEscape_ = false;
 #endif // _DEBUG
-
 
 private:
 
