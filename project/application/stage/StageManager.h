@@ -22,6 +22,11 @@ public:
 	/// <param name="jsonPath"></param>
 	void LoadStage(const std::string& jsonPath);
 
+	/// <summary>
+	/// デバッグ表示
+	/// </summary>
+	void Debug();
+
 private:
 	// =========================================================
 	// Member Variables

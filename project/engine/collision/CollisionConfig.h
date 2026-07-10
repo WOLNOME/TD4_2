@@ -8,6 +8,7 @@ namespace Norm {
 	enum class CollisionAttribute {
 		Player,						//プレイヤー
 		Enemy,						//敵	
+		Block,
 
 		Nothingness,				//虚無オブジェクト
 	};
