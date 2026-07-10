@@ -8,7 +8,7 @@ namespace Norm {
 	enum class CollisionAttribute {
 		Player,						//プレイヤー
 		Enemy,						//敵	
-
+		Gimmick,					//ギミック
 		Nothingness,				//虚無オブジェクト
 	};
 

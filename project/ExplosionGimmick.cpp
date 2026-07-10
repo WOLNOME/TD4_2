@@ -25,9 +25,14 @@ void ExplosionGimmick::Initialize()
 	gimmickObject_ = std::make_unique<Object3d>();
 	gimmickObject_->Initialize(ModelTag{}, Object3dManager::GetInstance()->GenerateName("ExplosionGimmick"), "cube");
 
-	
-
 	gimmickObject_->RegistWorldTransform(&worldTransform_);
+
+	
+	CreateCollider(
+		CollisionAttribute::Player,
+		{ 0.0f, 1.0f, 0.0f },
+		worldTransform_.GetScale()
+	);
 }
 
 void ExplosionGimmick::Update()
@@ -99,7 +104,12 @@ void ExplosionGimmick::DebugImGui()
 		}
 
 		ImGui::TreePop();
+
 	}
+	gimmickObject_->Debug(L"GimmickObjct");
+	auto* collider1 = dynamic_cast<ObjectCollider*>(collider_.get());
+	collider1->Debug();
+	
 #endif
 }
 

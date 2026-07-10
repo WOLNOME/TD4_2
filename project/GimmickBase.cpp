@@ -26,6 +26,27 @@ void GimmickBase::HitLight()
 	OnLightHit();
 }
 
+void GimmickBase::CreateCollider(CollisionAttribute attribute, const Vector3& offset, const Vector3& size)
+{
+	if (!gimmickObject_) {
+		return;
+	}
+
+	collider_ = std::make_unique<ObjectCollider>(gimmickObject_.get());
+
+	auto* collider = dynamic_cast<ObjectCollider*>(collider_.get());
+	if (!collider) {
+		return;
+	}
+
+	collider->SetCollisionAttribute(attribute);
+	collider->SetWorldTransform(&worldTransform_);
+	collider->SetOffset(offset);
+	collider->SetOBBSize(size);
+
+
+}
+
 bool GimmickBase::IsHitLightCircle() const
 {
 	if (!lightInfo_) {

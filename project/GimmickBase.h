@@ -3,6 +3,8 @@
 #include "Vector3.h"
 #include "WorldTransform.h"
 #include "Object3d.h"
+#include "application/object/collision/ObjectCollider.h"
+
 
 using namespace Norm;
 
@@ -49,6 +51,9 @@ public:
 	const Vector3& GetPosition() const { return position_; }
 	float GetRadius() const { return radius_; }
 
+	void CreateCollider(CollisionAttribute attribute,const Vector3& offset,const Vector3& size);
+	ObjectCollider* GetCollider() const { return collider_.get(); }
+
 protected:
 	virtual void OnLightHit() {}
 	virtual void OnFlashHit() {}
@@ -63,4 +68,6 @@ protected:
 
 	Vector3 position_{};
 	float radius_ = 1.0f;
+
+	std::unique_ptr<ObjectCollider> collider_ = nullptr;
 };
