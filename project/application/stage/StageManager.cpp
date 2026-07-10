@@ -35,6 +35,8 @@ void Norm::StageManager::LoadStage(const std::string& jsonPath) {
 					type = MapChip::Type::NormalBlock;
 				} else if (blockTypeStr == "areaBlock") {
 					type = MapChip::Type::AreaBlock;
+				} else if (blockTypeStr == "goalBlock") {
+					type = MapChip::Type::GoalBlock;
 				}
 
 				// 該当するタイプが無い、またはNoneなら生成スキップ
