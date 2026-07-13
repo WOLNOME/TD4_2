@@ -51,7 +51,6 @@ namespace Norm {
 		//オブジェクトの生成と初期化
 		modelBase_ = std::make_unique<Object3d>();
 		modelBase_->Initialize(ModelTag{}, Object3dManager::GetInstance()->GenerateName("ModelBase"), "cube");
-		modelBase_->SetIsOutline(true);
 		modelBaseWT_.Initialize();
 		modelBaseWT_.SetTranslate({ -5.0f,5.0f,0.0f });
 		modelBase_->RegistWorldTransform(&modelBaseWT_);
@@ -62,6 +61,7 @@ namespace Norm {
 		shapeBase_->RegistWorldTransform(&shapeBaseWT_);
 		sampleMap_ = std::make_unique<Object3d>();
 		sampleMap_->Initialize(ModelTag{}, Object3dManager::GetInstance()->GenerateName("SampleMap"), "sampleMap");
+		
 		sampleMapWT_.Initialize();
 		sampleMapWT_.SetTranslate({ 0.0f,5.0f,40.0f });
 		sampleMapWT_.SetRotate({ 0.0f,0.0f,0.0f });
@@ -71,6 +71,8 @@ namespace Norm {
 		{
 			cObject_ = std::make_unique<Object3d>();
 			cObject_->Initialize(ModelTag{}, Object3dManager::GetInstance()->GenerateName("CObject"), "cube");
+			cObject_->SetIsOutline(true);
+			cObject_->SetOutlineParam(TextureManager::GetInstance()->LoadTexture("green.png"), 1.1f);
 
 			cObject1WT_.Initialize();
 			cObject1WT_.SetTranslate({ 0.0f,5.0f,20.0f });
@@ -100,7 +102,7 @@ namespace Norm {
 		back_->SetTexture(TextureManager::GetInstance()->LoadTexture("uvChecker.png"));
 		backWT_.Initialize();
 		backWT_.SetTranslate({ 4.6f,20.0f,41.0f });
-		backWT_.SetRotate({ 0.0f,1.58f,0.0f });
+		backWT_.SetRotate({ 0.0f,-pi/2.0f,0.0f });
 		backWT_.SetScale({ 30.0f,20.0f,1.0f });
 		back_->RegistWorldTransform(&backWT_);
 

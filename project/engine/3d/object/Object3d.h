@@ -163,9 +163,9 @@ namespace Norm {
 		/// <summary>
 		/// アウトラインのパラメータセット
 		/// </summary>
-		/// <param name="_color">カラー</param>
+		/// <param name="_textureHandle">テクスチャハンドル</param>
 		/// <param name="_size">大きさ</param>
-		void SetOutlineParam(const Vector4& _color, float _size);
+		void SetOutlineParam(uint32_t textureHandle, float _size);
 		/// <summary>
 		/// ステンシルの役割をセット
 		/// </summary>
@@ -264,6 +264,7 @@ namespace Norm {
 		std::unique_ptr<Object3d> outlineObject_ = nullptr;
 		WorldTransform olWT_;
 		bool isOutline_ = false;
+		float olSize_ = 1.1f;
 
 	};
 

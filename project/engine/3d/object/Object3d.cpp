@@ -168,12 +168,14 @@ namespace Norm {
 		if (outlineObject_) {
 			//worldTransforms_の先頭のワールドトランスフォームを取得
 			auto it = worldTransforms_.begin();
-			//座標と回転をアウトラインオブジェクトに反映
+			//トランスフォームをアウトラインオブジェクトに反映
 			if (it != worldTransforms_.end() && it->second) {
 				Vector3 translate = it->second->GetTranslate();
 				Vector3 rotate = it->second->GetRotate();
+				Vector3 scale = it->second->GetScale() * olSize_;
 				olWT_.SetTranslate(translate);
 				olWT_.SetRotate(rotate);
+				olWT_.SetScale(scale);
 			}
 		}
 
@@ -209,7 +211,10 @@ namespace Norm {
 
 		//ステンシルRef
 		{
-			if(stencilRole_ == StencilRole::Outline && stencilRole_ == StencilRole::OlTarget) {
+			if(stencilRole_ == StencilRole::OlTarget) {
+				MainRender::GetInstance()->GetCommandList()->OMSetStencilRef(2);
+			}
+			else if (stencilRole_ == StencilRole::Outline) {
 				MainRender::GetInstance()->GetCommandList()->OMSetStencilRef(1);
 			}
 			else {
@@ -380,6 +385,8 @@ namespace Norm {
 			outlineObject_->SetTexture(TextureManager::GetInstance()->LoadTexture("white.png"));
 			//ライト処理
 			outlineObject_->SetIsLightProcess(false);
+			//描画
+			outlineObject_->SetIsDisplay(true);
 
 			//ステンシルの役割をアウトライン適用モデルにする
 			SetStencilRole(StencilRole::OlTarget);
@@ -393,13 +400,12 @@ namespace Norm {
 		}
 	}
 
-	void Object3d::SetOutlineParam(const Vector4& _color, float _size) {
+	void Object3d::SetOutlineParam(uint32_t textureHandle, float _size) {
 		if (outlineObject_) {
 			//アウトラインオブジェクトの色をセット
-			outlineObject_->SetColor(_color);
+			outlineObject_->SetTexture(textureHandle);
 			//アウトラインオブジェクトのスケールをセット
-			Vector3 originelScale = worldTransforms_.begin()->second->GetScale();
-			olWT_.SetScale(originelScale * _size);
+			olSize_ = _size;
 		}
 	}
 

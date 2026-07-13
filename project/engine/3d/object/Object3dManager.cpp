@@ -497,7 +497,7 @@ namespace Norm {
 					depthStencilDesc.StencilEnable = TRUE;
 					depthStencilDesc.StencilReadMask = D3D12_DEFAULT_STENCIL_READ_MASK;
 					depthStencilDesc.StencilWriteMask = D3D12_DEFAULT_STENCIL_WRITE_MASK;
-					depthStencilDesc.FrontFace.StencilFunc = D3D12_COMPARISON_FUNC_ALWAYS;
+					depthStencilDesc.FrontFace.StencilFunc = D3D12_COMPARISON_FUNC_EQUAL;
 					depthStencilDesc.FrontFace.StencilPassOp = D3D12_STENCIL_OP_KEEP;
 					depthStencilDesc.FrontFace.StencilFailOp = D3D12_STENCIL_OP_KEEP;
 					depthStencilDesc.FrontFace.StencilDepthFailOp = D3D12_STENCIL_OP_KEEP;
@@ -535,9 +535,9 @@ namespace Norm {
 					depthStencilDesc.StencilReadMask = D3D12_DEFAULT_STENCIL_READ_MASK;
 					depthStencilDesc.StencilWriteMask = D3D12_DEFAULT_STENCIL_WRITE_MASK;
 
-					// Stencil != Ref の場所だけ描画
-					depthStencilDesc.FrontFace.StencilFunc = D3D12_COMPARISON_FUNC_NOT_EQUAL;
-					depthStencilDesc.FrontFace.StencilPassOp = D3D12_STENCIL_OP_KEEP;
+					// StencilBuffer < Ref の場所だけ描画
+					depthStencilDesc.FrontFace.StencilFunc = D3D12_COMPARISON_FUNC_GREATER;
+					depthStencilDesc.FrontFace.StencilPassOp = D3D12_STENCIL_OP_REPLACE;
 					depthStencilDesc.FrontFace.StencilFailOp = D3D12_STENCIL_OP_KEEP;
 					depthStencilDesc.FrontFace.StencilDepthFailOp = D3D12_STENCIL_OP_KEEP;
 
