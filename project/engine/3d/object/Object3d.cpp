@@ -35,14 +35,17 @@ namespace Norm {
 	}
 
 	void Object3d::Initialize(ModelTag, const std::string& name, const std::string& filePath) {
-		//オブジェクトの種類を決定
-		objKind_ = ObjectKind::Model;
+		//メッシュの種類を決定
+		meshType_ = MeshType::Model;
 		//名前
 		name_ = name;
+		//ファイルパスをセット
+		filePath_ = filePath;
+
 		//モデルマネージャーでモデルを生成
-		ModelManager::GetInstance()->LoadModel(filePath, ModelFormat::OBJ);
+		ModelManager::GetInstance()->LoadModel(filePath_, ModelFormat::OBJ);
 		//モデルマネージャーから検索してセットする
-		model_ = ModelManager::GetInstance()->FindModel(filePath);
+		model_ = ModelManager::GetInstance()->FindModel(filePath_);
 
 
 		//マネージャーに登録
@@ -50,23 +53,27 @@ namespace Norm {
 	}
 
 	void Object3d::Initialize(AnimationModelTag, const std::string& name, const std::string& filePath) {
-		//オブジェクトの種類を決定
-		objKind_ = ObjectKind::AnimationModel;
+		//メッシュの種類を決定
+		meshType_ = MeshType::AnimationModel;
 		//名前
 		name_ = name;
+		//ファイルパスをセット
+		filePath_ = filePath;
+
 		//アニメーションモデルの生成と初期化
 		animationModel_ = std::make_unique<AnimationModel>();
-		animationModel_->Initialize(filePath, ModelFormat::GLTF);
+		animationModel_->Initialize(filePath_, ModelFormat::GLTF);
 
 		//マネージャーに登録
 		Object3dManager::GetInstance()->RegisterObject(name_, this);
 	}
 
 	void Object3d::Initialize(ShapeTag, const std::string& name, Shape::ShapeKind kind) {
-		//オブジェクトの種類を決定
-		objKind_ = ObjectKind::Shape;
+		//メッシュの種類を決定
+		meshType_ = MeshType::Shape;
 		//名前
 		name_ = name;
+
 		//形状の生成と初期化
 		shape_ = std::make_unique<Shape>();
 		shape_->Initialize(kind);
@@ -78,7 +85,7 @@ namespace Norm {
 	void Object3d::Debug(const std::wstring& _name) {
 #ifdef _DEBUG
 		ImGui::Begin("3Dオブジェクト");
-		if(ImGui::CollapsingHeader(StringUtility::ConvertString(_name).c_str())){
+		if (ImGui::CollapsingHeader(StringUtility::ConvertString(_name).c_str())) {
 			//トランスフォームの編集
 			if (!worldTransforms_.empty()) {
 				auto& worldTransform = *worldTransforms_.begin()->second;
@@ -157,19 +164,31 @@ namespace Norm {
 				worldTransform->UpdateMatrix();
 			}
 		}
+		//アウトラインオブジェクト更新
+		if (outlineObject_) {
+			//worldTransforms_の先頭のワールドトランスフォームを取得
+			auto it = worldTransforms_.begin();
+			//座標と回転をアウトラインオブジェクトに反映
+			if (it != worldTransforms_.end() && it->second) {
+				Vector3 translate = it->second->GetTranslate();
+				Vector3 rotate = it->second->GetRotate();
+				olWT_.SetTranslate(translate);
+				olWT_.SetRotate(rotate);
+			}
+		}
 
-		//オブジェクトの種類ごとの処理
-		switch (objKind_) {
-		case ObjectKind::Model:
+		//メッシュの種類ごとの処理
+		switch (meshType_) {
+		case MeshType::Model:
 			//何もなし
 			break;
-		case ObjectKind::AnimationModel:
+		case MeshType::AnimationModel:
 			//アニメーション反映処理
 			animationModel_->Update();
 			//CS前処理（スキニング）
 			animationModel_->SettingCSPreDraw();
 			break;
-		case ObjectKind::Shape:
+		case MeshType::Shape:
 			//形状の更新処理
 			shape_->Update();
 			break;
@@ -179,56 +198,70 @@ namespace Norm {
 	}
 
 	void Object3d::Draw(BaseCamera* _camera, SceneLight* _sceneLight) {
-		//オブジェクトの種類ごとの処理
-		switch (objKind_) {
-		case ObjectKind::Model:
+		//使用するPSOを決定
+		NameGPS nameGPS = NameGPS::Normal;
+		if(meshType_ == MeshType::Shape && shape_->GetShapeKind()==Shape::kSkyBox) {
+			nameGPS = NameGPS::SkyBox;
+		}
+
+		//共通描画設定
+		Object3dManager::GetInstance()->SettingCommonDrawing(nameGPS, stencilRole_);
+
+		//ステンシルRef
 		{
-			//通常モデル用共通描画の設定
-			Object3dManager::GetInstance()->SettingCommonDrawing(Object3dManager::NameGPS::Normal);
+			if(stencilRole_ == StencilRole::Outline && stencilRole_ == StencilRole::OlTarget) {
+				MainRender::GetInstance()->GetCommandList()->OMSetStencilRef(1);
+			}
+			else {
+				MainRender::GetInstance()->GetCommandList()->OMSetStencilRef(0);
+			}
+		}
+		//ライト
+		{
 			//シーンライト有無設定
 			objectResource_.lightFlagData->isActiveLights = (isLightProcess_) ? true : false;
-
 			//lightFlagCbufferの場所を設定
 			MainRender::GetInstance()->GetCommandList()->SetGraphicsRootConstantBufferView(6, objectResource_.lightFlagResource->GetGPUVirtualAddress());
-
 			//SceneLightCBufferの場所を設定
 			if (objectResource_.lightFlagData->isActiveLights) {
 				MainRender::GetInstance()->GetCommandList()->SetGraphicsRootConstantBufferView(5, _sceneLight->GetSceneLightConstBuffer()->GetGPUVirtualAddress());
 			}
-
-			//WorldTransformの設定
-			{
-				//データに入れる処理
-				uint32_t index = 0u;
-				for (auto it = worldTransforms_.begin(); it != worldTransforms_.end(); ) {
-					WorldTransform* worldTransform = it->second;
-					//nullptrなら削除
-					if (worldTransform == nullptr) {
-						it = worldTransforms_.erase(it);
-						continue;
-					}
-					//ワールド行列
-					Matrix4x4 matWorld = worldTransform->GetWorldMatrix();
-					objectResource_.instancingData[index].matWorld =
-						matWorld;
-					objectResource_.instancingData[index].matWorldInverseTranspose =
-						MyMath::Transpose(MyMath::Inverse(matWorld));
-
-					++index;
-					++it;
+		}
+		//ワールドトランスフォーム
+		{
+			//データに入れる処理
+			uint32_t index = 0u;
+			for (auto it = worldTransforms_.begin(); it != worldTransforms_.end(); ) {
+				WorldTransform* worldTransform = it->second;
+				//nullptrなら削除
+				if (worldTransform == nullptr) {
+					it = worldTransforms_.erase(it);
+					continue;
 				}
-				//一つも登録されていなかったらassert
-				assert(index && "WorldTransform情報がセットされていません");
-				//GPUに送信
-				MainRender::GetInstance()->GetCommandList()->SetGraphicsRootDescriptorTable(1,GPUDescriptorManager::GetInstance()->GetGPUDescriptorHandle(objectResource_.instancingSrvIndex));
-			}
+				//ワールド行列
+				Matrix4x4 matWorld = worldTransform->GetWorldMatrix();
+				objectResource_.instancingData[index].matWorld =
+					matWorld;
+				objectResource_.instancingData[index].matWorldInverseTranspose =
+					MyMath::Transpose(MyMath::Inverse(matWorld));
 
+				++index;
+				++it;
+			}
+			//一つも登録されていなかったらassert
+			assert(index && "WorldTransform情報がセットされていません");
+			//GPUに送信
+			MainRender::GetInstance()->GetCommandList()->SetGraphicsRootDescriptorTable(1, GPUDescriptorManager::GetInstance()->GetGPUDescriptorHandle(objectResource_.instancingSrvIndex));
+		}
+		//カメラ
+		{
 			//CameraからビュープロジェクションCBufferの場所設定
 			MainRender::GetInstance()->GetCommandList()->SetGraphicsRootConstantBufferView(2, _camera->GetViewProjectionConstBuffer()->GetGPUVirtualAddress());
-
 			//Cameraからカメラ座標CBufferの場所を設定
 			MainRender::GetInstance()->GetCommandList()->SetGraphicsRootConstantBufferView(4, _camera->GetCameraPositionConstBuffer()->GetGPUVirtualAddress());
-
+		}
+		//環境光テクスチャ
+		{
 			//環境光テクスチャの設定
 			if (environmentLightTextureHandle_ != EOF) {
 				objectResource_.lightFlagData->isActiveEnvironment = true;
@@ -238,140 +271,28 @@ namespace Norm {
 			else {
 				objectResource_.lightFlagData->isActiveEnvironment = false;
 			}
+		}
 
+		//メッシュの種類ごとの処理
+		switch (meshType_) {
+		case MeshType::Model:
+		{
 			//モデルを描画する
 			model_->Draw(color_, 0, 3, (uint32_t)worldTransforms_.size(), textureHandle_);
+
 			break;
 		}
-		case ObjectKind::AnimationModel:
+		case MeshType::AnimationModel:
 		{
-			//通常モデル用共通描画の設定
-			Object3dManager::GetInstance()->SettingCommonDrawing(Object3dManager::NameGPS::Normal);
-
-			//シーンライト有無設定
-			objectResource_.lightFlagData->isActiveLights = (isLightProcess_) ? true : false;
-
-			//lightFlagCbufferの場所を設定
-			MainRender::GetInstance()->GetCommandList()->SetGraphicsRootConstantBufferView(6, objectResource_.lightFlagResource->GetGPUVirtualAddress());
-
-			//SceneLightCBufferの場所を設定
-			if (objectResource_.lightFlagData->isActiveLights) {
-				MainRender::GetInstance()->GetCommandList()->SetGraphicsRootConstantBufferView(5, _sceneLight->GetSceneLightConstBuffer()->GetGPUVirtualAddress());
-			}
-
-			//WorldTransformの設定
-			{
-				//データに入れる処理
-				uint32_t index = 0u;
-				for (auto it = worldTransforms_.begin(); it != worldTransforms_.end(); ) {
-					WorldTransform* worldTransform = it->second;
-					//nullptrなら削除
-					if (worldTransform == nullptr) {
-						it = worldTransforms_.erase(it);
-						continue;
-					}
-					//ワールド行列
-					Matrix4x4 matWorld = worldTransform->GetWorldMatrix();
-					objectResource_.instancingData[index].matWorld =
-						matWorld;
-					objectResource_.instancingData[index].matWorldInverseTranspose =
-						MyMath::Transpose(MyMath::Inverse(matWorld));
-
-					++index;
-					++it;
-				}
-				//一つも登録されていなかったらassert
-				assert(index && "WorldTransform情報がセットされていません");
-				//GPUに送信
-				MainRender::GetInstance()->GetCommandList()->SetGraphicsRootDescriptorTable(1, GPUDescriptorManager::GetInstance()->GetGPUDescriptorHandle(objectResource_.instancingSrvIndex));
-			}
-
-			//CameraからビュープロジェクションCBufferの場所設定
-			MainRender::GetInstance()->GetCommandList()->SetGraphicsRootConstantBufferView(2, _camera->GetViewProjectionConstBuffer()->GetGPUVirtualAddress());
-
-			//Cameraからカメラ座標CBufferの場所を設定
-			MainRender::GetInstance()->GetCommandList()->SetGraphicsRootConstantBufferView(4, _camera->GetCameraPositionConstBuffer()->GetGPUVirtualAddress());
-
-			//環境光テクスチャの設定
-			if (environmentLightTextureHandle_ != EOF) {
-				objectResource_.lightFlagData->isActiveEnvironment = true;
-				//PSにテクスチャ情報を送る
-				MainRender::GetInstance()->GetCommandList()->SetGraphicsRootDescriptorTable(7, TextureManager::GetInstance()->GetSrvHandleGPU(environmentLightTextureHandle_));
-			}
-			else {
-				objectResource_.lightFlagData->isActiveEnvironment = false;
-			}
-
 			//モデルを描画する
 			animationModel_->Draw(0, 3, (uint32_t)worldTransforms_.size(), textureHandle_);
-
 			//CS描画後処理(スキニング)
 			animationModel_->SettingCSPostDraw();
 
 			break;
 		}
-		case ObjectKind::Shape:
+		case MeshType::Shape:
 		{
-			//描画前設定
-			if (shape_->GetShapeKind() == Shape::kSkyBox) {
-				//SkyBoxの描画設定
-				Object3dManager::GetInstance()->SettingCommonDrawing(Object3dManager::NameGPS::SkyBox);
-			}
-			else {
-				//通常の描画設定
-				Object3dManager::GetInstance()->SettingCommonDrawing(Object3dManager::NameGPS::Normal);
-			}
-
-			//シーンライト有無設定
-			objectResource_.lightFlagData->isActiveLights = (isLightProcess_) ? true : false;
-			//lightFlagCbufferの場所を設定
-			MainRender::GetInstance()->GetCommandList()->SetGraphicsRootConstantBufferView(6, objectResource_.lightFlagResource->GetGPUVirtualAddress());
-			//SceneLightCBufferの場所を設定
-			if (objectResource_.lightFlagData->isActiveLights) {
-				MainRender::GetInstance()->GetCommandList()->SetGraphicsRootConstantBufferView(5, _sceneLight->GetSceneLightConstBuffer()->GetGPUVirtualAddress());
-			}
-
-			//WorldTransformの設定
-			{
-				//データに入れる処理
-				uint32_t index = 0u;
-				for (auto it = worldTransforms_.begin(); it != worldTransforms_.end(); ) {
-					WorldTransform* worldTransform = it->second;
-					//nullptrなら削除
-					if (worldTransform == nullptr) {
-						it = worldTransforms_.erase(it);
-						continue;
-					}
-					//ワールド行列
-					Matrix4x4 matWorld = worldTransform->GetWorldMatrix();
-					objectResource_.instancingData[index].matWorld =
-						matWorld;
-					objectResource_.instancingData[index].matWorldInverseTranspose =
-						MyMath::Transpose(MyMath::Inverse(matWorld));
-
-					++index;
-					++it;
-				}
-				//一つも登録されていなかったらassert
-				assert(index && "WorldTransform情報がセットされていません");
-				//GPUに送信
-				MainRender::GetInstance()->GetCommandList()->SetGraphicsRootDescriptorTable(1, GPUDescriptorManager::GetInstance()->GetGPUDescriptorHandle(objectResource_.instancingSrvIndex));
-			}
-
-			//CameraからビュープロジェクションCBufferの場所設定
-			MainRender::GetInstance()->GetCommandList()->SetGraphicsRootConstantBufferView(2, _camera->GetViewProjectionConstBuffer()->GetGPUVirtualAddress());
-			//Cameraからカメラ座標CBufferの場所を設定
-			MainRender::GetInstance()->GetCommandList()->SetGraphicsRootConstantBufferView(4, _camera->GetCameraPositionConstBuffer()->GetGPUVirtualAddress());
-			//環境光テクスチャの設定
-			if (environmentLightTextureHandle_ != EOF) {
-				objectResource_.lightFlagData->isActiveEnvironment = true;
-				//PSにテクスチャ情報を送る
-				MainRender::GetInstance()->GetCommandList()->SetGraphicsRootDescriptorTable(7, TextureManager::GetInstance()->GetSrvHandleGPU(environmentLightTextureHandle_));
-			}
-			else {
-				objectResource_.lightFlagData->isActiveEnvironment = false;
-			}
-
 			//形状を描画する
 			shape_->Draw(0, 3, (uint32_t)worldTransforms_.size(), textureHandle_);
 
@@ -384,7 +305,7 @@ namespace Norm {
 
 	void Object3d::SetNewAnimation(const std::string& _name, const std::string& _filePath) {
 		//アニメーションモデル以外のオブジェクトで初期化していた場合警告
-		if (objKind_ != ObjectKind::AnimationModel) {
+		if (meshType_ != MeshType::AnimationModel) {
 			assert(0 && "アニメーションモデル以外の初期化を確認しました。");
 			return;
 		}
@@ -394,7 +315,7 @@ namespace Norm {
 
 	void Object3d::SetCurrentAnimation(const std::string& _name) {
 		//アニメーションモデル以外のオブジェクトで初期化していた場合警告
-		if (objKind_ != ObjectKind::AnimationModel) {
+		if (meshType_ != MeshType::AnimationModel) {
 			assert(0 && "アニメーションモデル以外の初期化を確認しました。");
 			return;
 		}
@@ -406,20 +327,20 @@ namespace Norm {
 		//色をセット
 		color_ = _color;
 
-		//オブジェクトの種類ごとに分けてセット
-		switch (objKind_) {
-		case ObjectKind::Model:
+		//メッシュの種類ごとに分けてセット
+		switch (meshType_) {
+		case MeshType::Model:
 		{
 			//モデルは個別で色を持たないためDrawでセットする
 			break;
 		}
-		case ObjectKind::AnimationModel:
+		case MeshType::AnimationModel:
 		{
 			//色をセット
 			animationModel_->SetColor(color_);
 			break;
 		}
-		case ObjectKind::Shape:
+		case MeshType::Shape:
 		{
 			//色をセット
 			shape_->SetColor(color_);
@@ -427,6 +348,58 @@ namespace Norm {
 		}
 		default:
 			break;
+		}
+	}
+
+	void Object3d::SetIsOutline(bool _isOutline) {
+		isOutline_ = _isOutline;
+
+		if (isOutline_) {
+			//アウトラインオブジェクトを生成
+			outlineObject_ = std::make_unique<Object3d>();
+			//ステンシルの役割をセット
+			outlineObject_->SetStencilRole(StencilRole::Outline);
+			//WTの登録
+			olWT_.Initialize();
+			outlineObject_->RegistWorldTransform(&olWT_);
+			//meshType_に合わせて初期化
+			switch (meshType_) {
+			case MeshType::Model:
+				outlineObject_->Initialize(ModelTag{}, name_ + "_outline", filePath_);
+				break;
+			case MeshType::AnimationModel:
+				outlineObject_->Initialize(AnimationModelTag{}, name_ + "_outline", filePath_);
+				break;
+			case MeshType::Shape:
+				outlineObject_->Initialize(ShapeTag{}, name_ + "_outline", shape_->GetShapeKind());
+				break;
+			default:
+				break;
+			}
+			//テクスチャ
+			outlineObject_->SetTexture(TextureManager::GetInstance()->LoadTexture("white.png"));
+			//ライト処理
+			outlineObject_->SetIsLightProcess(false);
+
+			//ステンシルの役割をアウトライン適用モデルにする
+			SetStencilRole(StencilRole::OlTarget);
+
+		}
+		else {
+			//アウトラインオブジェクトを破棄
+			outlineObject_.reset();
+			//ステンシルの役割を通常にする
+			SetStencilRole(StencilRole::Normal);
+		}
+	}
+
+	void Object3d::SetOutlineParam(const Vector4& _color, float _size) {
+		if (outlineObject_) {
+			//アウトラインオブジェクトの色をセット
+			outlineObject_->SetColor(_color);
+			//アウトラインオブジェクトのスケールをセット
+			Vector3 originelScale = worldTransforms_.begin()->second->GetScale();
+			olWT_.SetScale(originelScale * _size);
 		}
 	}
 

@@ -51,6 +51,7 @@ namespace Norm {
 		//オブジェクトの生成と初期化
 		modelBase_ = std::make_unique<Object3d>();
 		modelBase_->Initialize(ModelTag{}, Object3dManager::GetInstance()->GenerateName("ModelBase"), "cube");
+		modelBase_->SetIsOutline(true);
 		modelBaseWT_.Initialize();
 		modelBaseWT_.SetTranslate({ -5.0f,5.0f,0.0f });
 		modelBase_->RegistWorldTransform(&modelBaseWT_);
@@ -125,6 +126,9 @@ namespace Norm {
 		explosionGimmick_->SetLightInfo(&lightInfo_);
 		explosionGimmick_->SetPosition({ 0.0f, 10.0f, 40.0f });
 		explosionGimmick_->Initialize();
+
+		//ポストエフェクトの初期化
+		PostEffectManager::GetInstance()->AddPostEffectOrder(PostEffectKind::None);
 
 	}
 

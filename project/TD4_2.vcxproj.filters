@@ -671,6 +671,7 @@
     <ClInclude Include="application\object\entity\enemy\State\EnemyEscapeState.h" />
     <ClInclude Include="GimmickBase.h" />
     <ClInclude Include="ExplosionGimmick.h" />
+    <ClInclude Include="engine\3d\object\ObjectEnum.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\shaders\line\Line.hlsli">

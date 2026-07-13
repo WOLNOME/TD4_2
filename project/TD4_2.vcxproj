@@ -320,6 +320,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="application\stage\StageManager.h" />
     <ClInclude Include="application\object\Character\Player.h" />
     <ClInclude Include="application\object\collision\ObjectCollider.h" />
+    <ClInclude Include="engine\3d\object\ObjectEnum.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt" />

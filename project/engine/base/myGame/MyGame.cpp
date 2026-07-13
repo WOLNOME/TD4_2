@@ -25,7 +25,7 @@ void MyGame::Initialize() {
 	Framework::Initialize();
 
 	//シーンマネージャーに最初のシーンをセット
-	SceneManager::GetInstance()->SetNextScene("GAMEPLAY");
+	SceneManager::GetInstance()->SetNextScene("Sample");
 
 	// パーティクルエディター→PARTICLEEDITOR
 	// サンプルシーン→Sample
