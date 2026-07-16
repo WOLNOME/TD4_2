@@ -6,18 +6,18 @@
 /// ===前方宣言=== ///
 class BaseEnemy;
 
-///-------------------------------------------/// 
-/// EnemyMoveCollider
-/// エネミーの足用コライダー
-///-------------------------------------------///
-class EnemyMoveCollider : public Norm::OBBColliderBase {
+///=====================================================/// 
+/// EnemyAreaCollider
+/// Enemyの行動範囲用コライダー
+///=====================================================///
+class EnemyAreaCollider : public Norm::OBBColliderBase {
 public:
-	/// ============================== ///
-	///		メンバ関数
-	/// ============================== ///
-	
-	EnemyMoveCollider(BaseEnemy* enemy);
-	~EnemyMoveCollider() override = default;
+	///-------------------------------------------/// 
+	/// メンバ関数
+	///-------------------------------------------///
+
+	EnemyAreaCollider(BaseEnemy* enemy);
+	~EnemyAreaCollider() override = default;
 
 	/// <summary>
 	/// デバッグ

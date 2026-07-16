@@ -7,6 +7,7 @@
 #include "ICollider.h"
 // Collider
 #include "collider/EnemyMoveCollider.h"
+#include "collider/EnemyAreaCollider.h"
 // EnemyState
 #include "State/Base/EnemyState.h"
 // C++標準ライブラリ
@@ -104,6 +105,18 @@ public:
 	/// <returns></returns>
 	bool IsFootColliding() const { return isFootColliding_; }
 
+	/// <summary>
+	/// エリアと衝突中かどうかを取得する
+	/// </summary>
+	/// <returns></returns>
+	bool IsAreaColliding() const { return isAreaColliding_; }
+
+	/// <summary>
+	/// 回転中かどうかを取得
+	/// </summary>
+	/// <returns></returns>
+	bool IsRotating() const { return isRotating_; }
+
 #ifdef _DEBUG
 	Norm::Vector3 GetDebugPlayerPos() const { return debugPlayerPos_; }
 	bool GetIsTurning() const { return isTurning_; }
@@ -131,6 +144,12 @@ public:
 	/// <param name="isColliding"></param>
 	void SetFootColliding(bool isColliding) { isFootColliding_ = isColliding; }
 
+	/// <summary>
+	/// 衝突中かどうかを設定する(エリア)
+	/// </summary>
+	/// <param name="isColliding"></param>
+	void SetAreaColliding(bool isColliding) { isAreaColliding_ = isColliding; }
+
 #ifdef _DEBUG
 	void SetIsTurning(bool isFlag) { isTurning_ = isFlag; }
 #endif // _DEBUG
@@ -143,6 +162,7 @@ private:
 	std::unique_ptr<Norm::Object3d> object3d_ = nullptr;
 	Norm::WorldTransform worldTransform_;
 	std::unique_ptr<Norm::ICollider> collider_ = nullptr;
+	std::unique_ptr<EnemyAreaCollider> areaCollider_ = nullptr;
 	std::unique_ptr<EnemyMoveCollider> moveCollider_ = nullptr;
 
 	// 現在の状態
@@ -164,6 +184,10 @@ private:
 
 	// 衝突中かどうかを保持するフラグ
 	bool isFootColliding_ = false;
+	bool isAreaColliding_ = false;
+
+	// 回転中かどうかのフラグ
+	bool isRotating_ = false; 
 
 #ifdef _DEBUG
 	Norm::Vector3 debugPlayerPos_ = { 0.0f, 0.0f, 0.0f };

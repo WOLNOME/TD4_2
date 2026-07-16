@@ -39,15 +39,6 @@ void EnemyMoveState::Move() {
 		enemy_->SetCurrentDirection(Opposite(enemy_->GetCurrentDirection()));
 		enemy_->SetIsTurning(false);
 	}
-
-#else
-
-	// 足元(二マス下)の地面判定を確認
-	if (!enemy_->IsFootColliding()) {
-		// 地面が無い場合はY軸を180度回転させる
-		enemy_->SetCurrentDirection(Opposite(enemy_->GetCurrentDirection()));
-	}
-
 #endif // _DEBUG
 
 	// 進行方向への速度を設定

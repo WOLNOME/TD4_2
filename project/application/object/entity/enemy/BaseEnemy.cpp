@@ -46,13 +46,25 @@ void BaseEnemy::Initialize(Norm::Vector3 position, EnemyDirection FirstDirection
 		enemyCollider->SetHolder(this); // 自身のポインタをセット
 	}
 
+	// Area
+	areaCollider_ = std::make_unique<EnemyAreaCollider>(this);
+	auto* enemyAreaCollider = dynamic_cast<EnemyAreaCollider*>(areaCollider_.get());
+	if (enemyAreaCollider) {
+		enemyAreaCollider->SetCollisionAttribute(CollisionAttribute::EnemyArea);
+		enemyAreaCollider->SetWorldTransform(&worldTransform_);
+		enemyAreaCollider->SetOffset({ 0.0f, 0.0f, 0.0f });
+		enemyAreaCollider->SetOBBSize({ 1.3f, 1.0f, 1.3f }); // Areaのコライダーサイズ
+		enemyAreaCollider->SetHolder(this); // 自身のポインタをセット
+	}
+
+	// 足場
 	moveCollider_ = std::make_unique<EnemyMoveCollider>(this);
 	auto* enemyMoveCollider = dynamic_cast<EnemyMoveCollider*>(moveCollider_.get());
 	if (enemyMoveCollider) {
 		enemyMoveCollider->SetCollisionAttribute(CollisionAttribute::EnemyFoot);
 		enemyMoveCollider->SetWorldTransform(&worldTransform_);
-		enemyMoveCollider->SetOffset({ -1.0f, -1.0f, 0.0f });
-		enemyMoveCollider->SetOBBSize({ 0.5f, 1.5f, 0.5f }); // 敵のコライダーサイズ
+		enemyMoveCollider->SetOffset({ -1.5f, -1.0f, 0.0f });
+		enemyMoveCollider->SetOBBSize({ 0.8f, 1.5f, 0.8f }); // 敵のコライダーサイズ
 		enemyMoveCollider->SetHolder(this); // 自身のポインタをセット
 	}
 
@@ -73,9 +85,15 @@ void BaseEnemy::Update() {
 		currentState_->Update();
 	}
 
+	/// ===回転の処理=== ///
+	if (!isFootColliding_ || isAreaColliding_) {
+		// Y軸を180度回転させる
+		SetCurrentDirection(Opposite(currentDirection_));
+	}
+
 	/// ===ColliderのOffsetの更新=== ///
 	if (auto* enemyMoveCollider = dynamic_cast<EnemyMoveCollider*>(moveCollider_.get())) {
-		float offsetX = (currentDirection_ == EnemyDirection::Right) ? -1.0f : 1.0f;
+		float offsetX = (currentDirection_ == EnemyDirection::Right) ? -1.5f : 1.5f;
 		enemyMoveCollider->SetOffset({ offsetX, -1.0f, 0.0f });
 	}
 
@@ -93,6 +111,12 @@ void BaseEnemy::Update() {
 	/// ===フラグの更新=== ///
 	// 衝突中かどうかのフラグをリセット
 	isFootColliding_ = false;
+	isAreaColliding_ = false;
+	// 回転中のフラグの状態を設定
+	if (isRotating_) {
+		isFootColliding_ = true; // 回転中は衝突中とみなす
+		isAreaColliding_ = false;
+	}
 }
 
 ///-------------------------------------------/// 
@@ -109,11 +133,11 @@ void BaseEnemy::DebugWithImGui() {
 	ImGui::Checkbox("isAttack_", &isAttack_);
 	ImGui::Checkbox("isEscape_", &isEscape_);
 	ImGui::Checkbox("isTurning_", &isTurning_);
+	ImGui::Checkbox("isAreaColliding_", &isAreaColliding_);
+	ImGui::Checkbox("isFootColliding_", &isFootColliding_);
 
 	Vector3 worldPos = worldTransform_.GetWorldTranslate();
 	ImGui::DragFloat3("position", &worldPos.x, 0.1f);
-
-	ImGui::Checkbox("isFootColliding_", &isFootColliding_);
 
 	ImGui::End();
 
@@ -133,6 +157,12 @@ void BaseEnemy::DebugWithImGui() {
 		auto* enemyCollider = dynamic_cast<ObjectCollider*>(collider_.get());
 		if (enemyCollider) {
 			enemyCollider->Debug();
+		}
+	}
+	if (areaCollider_) {
+		auto* enemyAreaCollider = dynamic_cast<EnemyAreaCollider*>(areaCollider_.get());
+		if (enemyAreaCollider) {
+			enemyAreaCollider->Debug();
 		}
 	}
 	if (moveCollider_) {
@@ -195,6 +225,16 @@ void BaseEnemy::UpdateFacing(float directionX) {
 	// 決定した左右の向きへ滑らかに回転させる
 	float currentRotationY_ = LerpAngle(worldTransform_.GetRotate().y, targetFacingRotationY_, chaseData_.rotateSpeed);
 	worldTransform_.SetRotate({ 0.0f, currentRotationY_, 0.0f });
+
+	// 回転がほぼ完了したかを判定するための許容誤差
+	constexpr float kRotationFinishEpsilon = 0.01f;
+
+	// 目標角度と現在の角度の差が許容誤差以内なら回転完了とする
+	if (std::fabs(currentRotationY_ - targetFacingRotationY_) < kRotationFinishEpsilon) {
+		isRotating_ = false;
+	} else {
+		isRotating_ = true; // 回転中
+	}
 }
 
 ///-------------------------------------------/// 
@@ -202,8 +242,6 @@ void BaseEnemy::UpdateFacing(float directionX) {
 ///-------------------------------------------///
 void BaseEnemy::OnCollision(ICollider* other, CollisionAttribute otherAttr) {
 	other, otherAttr; // 未使用の引数を無視するためのダミー
-	// 外枠の壁に当たった時の処理
-
 }
 
 ///-------------------------------------------/// 

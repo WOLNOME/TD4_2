@@ -26,9 +26,12 @@ void EnemyMoveCollider::Debug() {
 /// 衝突時のコールバック
 ///-------------------------------------------///
 void EnemyMoveCollider::OnCollision(Norm::ICollider * _other, Norm::CollisionAttribute _attribute) {
+	// カラーを戻す
+	debugLineColor_ = { 1,0,0,1 };
+	
 	// 衝突時の処理
-	if (_attribute == Norm::CollisionAttribute::Block) {
-		// 衝突時の処理
+	if (_attribute == Norm::CollisionAttribute::Block || _attribute == Norm::CollisionAttribute::Area) {
+		// フラグを有効化
 		enemy_->SetFootColliding(true);
 	}
 }
