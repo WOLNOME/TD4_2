@@ -11,14 +11,15 @@ using namespace Norm;
 
 #include <algorithm>
 
-void GuideUI::Initialize(BaseCamera* _camera, Input* _input, Vector3 _pos) {
+void GuideUI::Initialize(BaseCamera* _camera, Input* _input, std::string _textureName, Vector3 _pos) {
 
 	camera_ = _camera;
 	input_ = _input;
 
-	textureHandle_ = TextureManager::GetInstance()->LoadTexture("mouse.png");
+	textureHandle_ = TextureManager::GetInstance()->LoadTexture(_textureName);
+
 	sprite_ = std::make_unique<Sprite>();
-	sprite_->Initialize(SpriteTag{}, SpriteManager::GetInstance()->GenerateName("testUI"), Order::Front2, textureHandle_);
+	sprite_->Initialize(SpriteTag{}, SpriteManager::GetInstance()->GenerateName("guideUI"), Order::Front2, textureHandle_);
 	sprite_->SetAnchorPoint({ 0.5f,0.5f });
 	sprite_->SetPosition({ 0.0f,0.0f });
 

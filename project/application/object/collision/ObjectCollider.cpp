@@ -40,12 +40,12 @@ void ObjectCollider::OnCollision(ICollider* _other, CollisionAttribute _attribut
 		break;
 	}
 
-	void* holder = GetHolder();
-	if (holder) {
-		Player* player = static_cast<Player*>(holder);
-		player->OnCollision(_other, _attribute);
-
-		BaseEnemy* enemy = static_cast<BaseEnemy*>(holder);
-		enemy->OnCollision(_other, _attribute);
+	// 自身がPlayerの場合の処理
+	if (GetCollisionAttribute() == CollisionAttribute::Player) {
+		void* holder = GetHolder();
+		if (holder) {
+			Player* player = static_cast<Player*>(holder);
+			player->OnCollision(_other, _attribute);
+		}
 	}
 }

@@ -11,11 +11,13 @@ public:
 	///		メンバ関数
 	/// ============================== ///
 
-	void Initialize(Norm::BaseCamera* _camera, Norm::Input* _input, Norm::Vector3 _pos);
+	void Initialize(Norm::BaseCamera* _camera, Norm::Input* _input, std::string _textureName, Norm::Vector3 _pos);
 
 	void Update();
 
 	void ImGui();
+
+	void SetPosition(const Norm::Vector3 _pos) { worldTransform_.SetTranslate(_pos); }
 
 private:
 	/// ============================== ///
