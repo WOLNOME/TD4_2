@@ -1,6 +1,6 @@
 #pragma once
 /// ===Include=== ///
-#include "EnemyState.h"
+#include "Base/EnemyState.h"
 
 ///=====================================================/// 
 /// EnemyMoveState
@@ -22,5 +22,24 @@ public:
 	/// 終了処理
 	/// </summary>
 	void Exit() override;
+
+private:
+	/// ============================== ///
+	///		メンバ変数
+	/// ============================== ///
+	// 移動速度
+	float moveSpeed_ = 0.05f;
+
+private:
+
+	/// <summary>
+	/// 移動処理
+	/// </summary>
+	void Move();
+
+	/// <summary>
+	/// 状態遷移の確認
+	/// </summary>
+	void CheckTransition();
 };
 

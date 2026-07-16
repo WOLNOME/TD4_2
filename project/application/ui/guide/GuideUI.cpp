@@ -62,9 +62,11 @@ void GuideUI::ImGui() {
 
 	ImGui::End();
 
+	worldTransform_.SetTranslate(translate);
+
 #endif // _DEBUG
 
-	worldTransform_.SetTranslate(translate);
+	
 }
 
 void GuideUI::UpdateSpritePos() {
