@@ -44,7 +44,7 @@ void Norm::GamePlayScene::Initialize() {
 
 	// Enemyの生成と初期化
 	enemy_ = std::make_unique<BaseEnemy>();
-	enemy_->Initialize({ 0.0f, 0.0f, 0.0f });
+	enemy_->Initialize({ 25.0f, -25.0f, 0.0f });
 
 	guideUI_ = std::make_unique<GuideUI>();
 

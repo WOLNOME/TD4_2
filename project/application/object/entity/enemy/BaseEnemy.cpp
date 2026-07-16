@@ -21,7 +21,7 @@ using namespace Norm;
 ///-------------------------------------------/// 
 /// 初期化処理
 ///-------------------------------------------///
-void BaseEnemy::Initialize(Norm::Vector3 position) {
+void BaseEnemy::Initialize(Norm::Vector3 position, EnemyDirection FirstDirection) {
 	/// ===オブジェクト=== ///
 	// 生成・初期化
 	object3d_ = std::make_unique<Object3d>();
@@ -45,7 +45,19 @@ void BaseEnemy::Initialize(Norm::Vector3 position) {
 		enemyCollider->SetOBBSize({ 1.0f, 1.0f, 1.0f }); // 敵のコライダーサイズ
 		enemyCollider->SetHolder(this); // 自身のポインタをセット
 	}
-	
+
+	moveCollider_ = std::make_unique<EnemyMoveCollider>(this);
+	auto* enemyMoveCollider = dynamic_cast<EnemyMoveCollider*>(moveCollider_.get());
+	if (enemyMoveCollider) {
+		enemyMoveCollider->SetCollisionAttribute(CollisionAttribute::EnemyFoot);
+		enemyMoveCollider->SetWorldTransform(&worldTransform_);
+		enemyMoveCollider->SetOffset({ -1.0f, -1.0f, 0.0f });
+		enemyMoveCollider->SetOBBSize({ 0.5f, 1.5f, 0.5f }); // 敵のコライダーサイズ
+		enemyMoveCollider->SetHolder(this); // 自身のポインタをセット
+	}
+
+	/// ===方向の設定=== ///
+	currentDirection_ = FirstDirection;
 
 	/// ===Stateの設定=== ///
 	ChangeState(std::make_unique<EnemyMoveState>());
@@ -60,6 +72,27 @@ void BaseEnemy::Update() {
 		// 各Stateの更新
 		currentState_->Update();
 	}
+
+	/// ===ColliderのOffsetの更新=== ///
+	if (auto* enemyMoveCollider = dynamic_cast<EnemyMoveCollider*>(moveCollider_.get())) {
+		float offsetX = (currentDirection_ == EnemyDirection::Right) ? -1.0f : 1.0f;
+		enemyMoveCollider->SetOffset({ offsetX, -1.0f, 0.0f });
+	}
+
+	/// ===座標の更新=== ///
+	Vector3 currentPos = worldTransform_.GetTranslate();
+	worldTransform_.SetTranslate({
+		currentPos.x + velocity_.x,
+		currentPos.y + velocity_.y,
+		currentPos.z + velocity_.z
+	});
+
+	// 行列の更新
+	worldTransform_.UpdateMatrix();
+
+	/// ===フラグの更新=== ///
+	// 衝突中かどうかのフラグをリセット
+	isFootColliding_ = false;
 }
 
 ///-------------------------------------------/// 
@@ -75,9 +108,12 @@ void BaseEnemy::DebugWithImGui() {
 	ImGui::DragFloat3("debugPlayerPos_", &debugPlayerPos_.x, 0.1f);
 	ImGui::Checkbox("isAttack_", &isAttack_);
 	ImGui::Checkbox("isEscape_", &isEscape_);
+	ImGui::Checkbox("isTurning_", &isTurning_);
 
 	Vector3 worldPos = worldTransform_.GetWorldTranslate();
 	ImGui::DragFloat3("position", &worldPos.x, 0.1f);
+
+	ImGui::Checkbox("isFootColliding_", &isFootColliding_);
 
 	ImGui::End();
 
@@ -97,6 +133,12 @@ void BaseEnemy::DebugWithImGui() {
 		auto* enemyCollider = dynamic_cast<ObjectCollider*>(collider_.get());
 		if (enemyCollider) {
 			enemyCollider->Debug();
+		}
+	}
+	if (moveCollider_) {
+		auto* enemyMoveCollider = dynamic_cast<EnemyMoveCollider*>(moveCollider_.get());
+		if (enemyMoveCollider) {
+			enemyMoveCollider->Debug();
 		}
 	}
 
@@ -160,6 +202,8 @@ void BaseEnemy::UpdateFacing(float directionX) {
 ///-------------------------------------------///
 void BaseEnemy::OnCollision(ICollider* other, CollisionAttribute otherAttr) {
 	other, otherAttr; // 未使用の引数を無視するためのダミー
+	// 外枠の壁に当たった時の処理
+
 }
 
 ///-------------------------------------------/// 
@@ -176,3 +220,4 @@ float BaseEnemy::LerpAngle(float a, float b, float t) {
 	}
 	return a + diff * t;
 }
+

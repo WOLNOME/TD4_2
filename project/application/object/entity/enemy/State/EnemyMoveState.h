@@ -24,6 +24,13 @@ public:
 	void Exit() override;
 
 private:
+	/// ============================== ///
+	///		メンバ変数
+	/// ============================== ///
+	// 移動速度
+	float moveSpeed_ = 0.05f;
+
+private:
 
 	/// <summary>
 	/// 移動処理

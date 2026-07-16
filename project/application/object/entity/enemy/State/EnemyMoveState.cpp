@@ -32,7 +32,30 @@ void EnemyMoveState::Exit() {
 /// 移動処理
 ///-------------------------------------------///
 void EnemyMoveState::Move() {
-	// 移動先の座標の二マス下に地面があるかどうかを確認。有ればそのまま進む、なければY軸を180度回転して進む。
+#ifdef _DEBUG
+
+	// フラグがtrueなら180度回転させる
+	if (enemy_->GetIsTurning()) {
+		enemy_->SetCurrentDirection(Opposite(enemy_->GetCurrentDirection()));
+		enemy_->SetIsTurning(false);
+	}
+
+#else
+
+	// 足元(二マス下)の地面判定を確認
+	if (!enemy_->IsFootColliding()) {
+		// 地面が無い場合はY軸を180度回転させる
+		enemy_->SetCurrentDirection(Opposite(enemy_->GetCurrentDirection()));
+	}
+
+#endif // _DEBUG
+
+	// 進行方向への速度を設定
+	float sign = DirectionToSign(enemy_->GetCurrentDirection());
+	enemy_->SetVelocity({ sign * moveSpeed_, 0.0f, 0.0f });
+
+	// 向きの更新
+	enemy_->UpdateFacing(sign);
 }
  
 ///-------------------------------------------/// 
