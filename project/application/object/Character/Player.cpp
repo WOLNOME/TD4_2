@@ -99,6 +99,9 @@ void Norm::Player::Debug() {
 		// 接地中フラグ
 		ImGui::Checkbox("IsGrounded", &isGrounded_);
 
+		// ゴール済みフラグ
+		ImGui::Checkbox("IsGoaled", &isGoaled_);
+
 		// コライダーデバッグ
 		if (collider_) {
 			auto* playerCollider = dynamic_cast<ObjectCollider*>(collider_.get());
@@ -143,5 +146,10 @@ void Norm::Player::OnCollision(ICollider* other, CollisionAttribute otherAttr) {
 				}
 			}
 		}
+	}
+
+	// 相手がゴールブロックならゴール済みフラグを立てる
+	if (otherAttr == CollisionAttribute::Goal) {
+		isGoaled_ = true;
 	}
 }

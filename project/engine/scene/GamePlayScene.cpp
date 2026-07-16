@@ -8,13 +8,17 @@ void Norm::GamePlayScene::Initialize() {
 	/* シーン共通初期化処理 */
 	BaseScene::Initialize();
 
-	/* 開発用カメラ生成 + 初期化 */
-	camera_ = std::make_unique<DevelopCamera>();
-	camera_->Initialize();
+	/* プレイヤー生成 + 初期化 */
+	player_ = std::make_unique<Player>();
+	player_->Initialize();
+
+	/* カメラ生成 + 初期化（プレイヤー生成の後） */
+	camera_ = std::make_unique<FollowCamera>();
+	camera_->Initialize(player_.get());
 	camera_->SetFarClip(1000.0f);
 	camera_->worldTransform.SetTranslate(cameraTranslate_);
 	camera_->worldTransform.SetRotate(cameraRotate_);
-	// 開発用カメラをセット
+	// カメラをセット
 	Object3dManager::GetInstance()->SetCamera(camera_.get());
 	LineManager::GetInstance()->SetCamera(camera_.get());
 	ParticleManager::GetInstance()->SetCamera(camera_.get());
@@ -38,10 +42,6 @@ void Norm::GamePlayScene::Initialize() {
 	stageManager_ = std::make_unique<StageManager>();
 	stageManager_->LoadStage("resources/stages/stage1.json");
 
-	/* プレイヤー生成 + 初期化 */
-	player_ = std::make_unique<Player>();
-	player_->Initialize();
-
 	// Enemyの生成と初期化
 	enemy_ = std::make_unique<BaseEnemy>();
 	enemy_->Initialize({ 25.0f, -25.0f, 0.0f });
@@ -58,13 +58,13 @@ void Norm::GamePlayScene::Finalize() {}
 void Norm::GamePlayScene::Update() {
 	/* シーン共通更新処理 */
 	BaseScene::Update();
-	/* カメラ更新処理 */
-	camera_->Update();
 	//ライト移動処理
 	LightMoveProcess();
 
 	/* プレイヤー更新処理 */
 	player_->Update();
+	/* カメラ更新処理 */
+	camera_->Update();
 
 	// Enemyの更新
 	enemy_->Update();
@@ -72,9 +72,8 @@ void Norm::GamePlayScene::Update() {
 	//爆発ギミック
 	explosionGimmick_->Update();
 
-  /* 当たり判定処理（全ての移動が終わったあとのため最後）*/
+    /* 当たり判定処理（全ての移動が終わったあとのため最後）*/
 	CollisionManager::GetInstance()->CheckCollision();
-  
 }
 
 void Norm::GamePlayScene::DebugWithImGui() {
@@ -106,10 +105,13 @@ void Norm::GamePlayScene::DebugWithImGui() {
 	}
 	ImGui::End();
 
-	/* プレイヤーデバッグ用 */
+	/* カメラデバッグ */
+	camera_->DebugWithImGui();
+
+	/* プレイヤーデバッグ */
 	player_->Debug();
 
-	/* ステージ管理クラスデバッグ用 */
+	/* ステージ管理クラスデバッグ */
 	stageManager_->Debug();
 
 	// Enemy用デバッグ

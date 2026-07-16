@@ -209,6 +209,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="application\stage\StageManager.cpp" />
     <ClCompile Include="application\object\Character\Player.cpp" />
     <ClCompile Include="application\object\collision\ObjectCollider.cpp" />
+    <ClCompile Include="application\object\camera\FollowCamera.cpp" />
     <ClCompile Include="GimmickBase.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -318,6 +319,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="engine\collision\base\SphereColliderBase.h" />
     <ClInclude Include="application\object\level\collision\LevelObjectCollider.h" />
     <ClInclude Include="application\system\direction\shot\base\IShotBase.h" />
+    <ClInclude Include="application\object\camera\FollowCamera.h" />
     <ClInclude Include="GimmickBase.h" />
     <ClInclude Include="application\ui\guide\GuideUI.h" />
     <ClInclude Include="engine\scene\GamePlayScene.h" />

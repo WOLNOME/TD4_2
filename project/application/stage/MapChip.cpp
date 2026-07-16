@@ -20,6 +20,9 @@ void Norm::MapChip::Initialize(Type type, const Vector3& position) {
 	} else if (type_ == MapChip::Type::AreaBlock) {
 		modelName = "areaBlock";
 		attribute = CollisionAttribute::Area;
+	} else if (type_ == MapChip::Type::GoalBlock) {
+		modelName = "goalBlock";
+		attribute = CollisionAttribute::Goal;
 	}
 
 	/* オブジェクト生成 + 初期化 */
