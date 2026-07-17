@@ -1,26 +1,22 @@
-#include "EnemyAttackState.h"
-//// ===include=== ///
-#include "application/object/entity/enemy/BaseEnemy.h"
+#include "EnemyAlertState.h"
 
 ///-------------------------------------------/// 
 /// 初期化処理
 ///-------------------------------------------///
-void EnemyAttackState::Enter(BaseEnemy* enemy) {
+void EnemyAlertState::Enter(BaseEnemy* enemy) {
 	enemy_ = enemy;
 }
 
 ///-------------------------------------------/// 
 /// 更新処理
 ///-------------------------------------------///
-void EnemyAttackState::Update() {
-#ifdef _DEBUG
-	enemy_->Attack(enemy_->GetDebugPlayerPos());
-#endif // _DEBUG
+void EnemyAlertState::Update() {
+
 }
 
 ///-------------------------------------------/// 
 /// 終了処理
 ///-------------------------------------------///
-void EnemyAttackState::Exit() {
+void EnemyAlertState::Exit() {
 	EnemyState::Exit();
 }

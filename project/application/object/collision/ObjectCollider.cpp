@@ -2,6 +2,7 @@
 
 // Application
 #include <application/object/Character/Player.h>
+#include <application/object/entity/enemy/BaseEnemy.h>
 
 using namespace Norm;
 
