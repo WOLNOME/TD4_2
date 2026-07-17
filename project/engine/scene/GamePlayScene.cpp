@@ -61,6 +61,10 @@ void Norm::GamePlayScene::Initialize() {
 	backgroundWT_.Initialize();
 	backgroundWT_.SetScale({150.0f, 100.0f, 1.0f}); // 画面全体を覆うように
 	background_->RegistWorldTransform(&backgroundWT_);
+
+	// ポーズメニュー生成 + 初期化
+	pauseMenu_ = std::make_unique<PauseMenu>();
+	pauseMenu_->Initialize();
 }
 
 void Norm::GamePlayScene::Finalize() {}
@@ -68,6 +72,18 @@ void Norm::GamePlayScene::Finalize() {}
 void Norm::GamePlayScene::Update() {
 	/* シーン共通更新処理 */
 	BaseScene::Update();
+
+	/* ポーズメニュー更新処理 */
+	pauseMenu_->Update();
+	// タイトルへ戻るが押されていたらシーンを切り替える
+	if (pauseMenu_->IsRequestedReturnToTitle()) {
+		sceneManager_->SetNextScene("TITLE");
+	}
+	// ポーズ中なら以降の更新をスキップ
+	if (pauseMenu_->IsPaused()) { 
+		return;
+	}
+
 	//ライト移動処理
 	LightMoveProcess();
 

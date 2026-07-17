@@ -15,6 +15,7 @@
 #include <application/stage/StageManager.h>
 #include <application/object/Character/Player.h>
 #include <application/object/camera/FollowCamera.h>
+#include <application/ui/pause/PauseMenu.h>
 
 #include "ExplosionGimmick.h"
 
@@ -87,5 +88,8 @@ private:
 	// 背景オブジェクト
 	std::unique_ptr<Object3d> background_;
 	WorldTransform backgroundWT_;
+
+	// ポーズメニュー
+	std::unique_ptr<PauseMenu> pauseMenu_;
 };
 }
