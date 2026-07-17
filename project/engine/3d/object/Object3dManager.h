@@ -5,6 +5,7 @@
 #include <array>
 #include <unordered_map>
 #include <memory>
+#include "ObjectEnum.h"
 
 namespace Norm {
 
@@ -17,21 +18,6 @@ namespace Norm {
 	/// シングルトンパターンで実装
 	/// </summary>
 	class Object3dManager {
-	public:
-		/// ============================== ///
-		///		列挙体
-		/// ============================== ///
-
-		/// <summary>
-		/// オブジェクト名用グラフィックスパイプラインの種類
-		/// </summary>
-		enum class NameGPS {
-			Normal,			//通常
-			SkyBox,			//スカイボックス
-
-			kMaxNumNameGPS,	//最大数
-		};
-
 	private:
 		static std::unique_ptr<Object3dManager> instance_;
 
@@ -91,8 +77,9 @@ namespace Norm {
 		/// <summary>
 		/// 共通のグラフィックスパイプライン設定
 		/// </summary>
-		/// <param name="index">番号</param>
-		void SettingCommonDrawing(NameGPS index = NameGPS::Normal);
+		/// <param name="indexNG">NameGPSの番号</param>
+		/// <param name="indexOK">StencilRoleの番号</param>
+		void SettingCommonDrawing(NameGPS index = NameGPS::Normal, StencilRole indexSR = StencilRole::Normal);
 		/// <summary>
 		/// アニメーション用のグラフィックスパイプライン設定
 		/// </summary>
@@ -128,13 +115,9 @@ namespace Norm {
 		void GenerateComputePipeline();
 
 		/// <summary>
-		/// 通常用のPSO設定
+		/// PSO設定
 		/// </summary>
-		void NormalPSOOption();
-		/// <summary>
-		/// スカイボックス用のPSO設定
-		/// </summary>
-		void SkyBoxPSOOption();
+		void SettingPSO();
 
 		/// ============================== ///
 		///		インスタンス
@@ -150,7 +133,11 @@ namespace Norm {
 		//ルートシグネチャ
 		std::array<Microsoft::WRL::ComPtr<ID3D12RootSignature>, (int)NameGPS::kMaxNumNameGPS> rootSignature_;
 		//グラフィックスパイプライン
-		std::array<Microsoft::WRL::ComPtr<ID3D12PipelineState>, (int)NameGPS::kMaxNumNameGPS> graphicsPipelineState_;
+		std::array<
+			std::array<Microsoft::WRL::ComPtr<ID3D12PipelineState>,
+			(int)StencilRole::kMaxNumStencilRole>,
+			(int)NameGPS::kMaxNumNameGPS>
+			graphicsPipelineState_;
 
 		//コンピュートルートシグネチャ
 		Microsoft::WRL::ComPtr<ID3D12RootSignature> computeRootSignature_ = nullptr;

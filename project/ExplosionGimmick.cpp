@@ -1,5 +1,6 @@
 #include "ExplosionGimmick.h"
 #include "Object3dManager.h"
+#include "TextureManager.h"
 
 #ifdef _DEBUG
 #include "imgui.h"
@@ -23,7 +24,9 @@ void ExplosionGimmick::Initialize(Norm::BaseCamera* _camera)
 
 	// とりあえず見た目用オブジェクト
 	gimmickObject_ = std::make_unique<Object3d>();
-	gimmickObject_->Initialize(ModelTag{}, Object3dManager::GetInstance()->GenerateName("ExplosionGimmick"), "cube");
+	gimmickObject_->Initialize(ModelTag{}, Object3dManager::GetInstance()->GenerateName("ExplosionGimmick"), "bomb");
+	gimmickObject_->SetIsOutline(true);
+	gimmickObject_->SetOutlineParam(TextureManager::GetInstance()->LoadTexture("green.png"), 1.1f);
 
 	guideUI_ = std::make_unique<GuideUI>();
 	guideUI_->Initialize(_camera, Input::GetInstance(), "mouse.png", position_);

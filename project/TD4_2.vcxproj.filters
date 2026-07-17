@@ -91,6 +91,9 @@
     <FxCompile Include="Resources\shaders\textTexture\TextTexture.PS.hlsl">
       <Filter>Resources\shaders\textTexture</Filter>
     </FxCompile>
+    <FxCompile Include="Resources\shaders\postEffects\BloomExtract.PS.hlsl" />
+    <FxCompile Include="Resources\shaders\postEffects\BloomBlur.PS.hlsl" />
+    <FxCompile Include="Resources\shaders\postEffects\BloomComposite.PS.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="engine\scenebase\AbstractSceneFactory.cpp">
@@ -682,6 +685,7 @@
     <ClInclude Include="application\object\camera\FollowCamera.h" />
     <ClInclude Include="engine\scene\ResultScene.h" />
     <ClInclude Include="application\ui\pause\PauseMenu.h" />
+    <ClInclude Include="engine\3d\object\ObjectEnum.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\shaders\line\Line.hlsli">

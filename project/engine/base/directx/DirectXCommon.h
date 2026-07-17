@@ -93,7 +93,7 @@ namespace Norm {
 		/// テクスチャリソースの生成
 		/// </summary>
 		/// <param name="metadata">メタデータ</param>
-		/// <returns>tテクスチャリソース</returns>
+		/// <returns>テクスチャリソース</returns>
 		Microsoft::WRL::ComPtr<ID3D12Resource> CreateTextureResource(const DirectX::TexMetadata& metadata);
 		/// <summary>
 		/// レンダーターゲット用テクスチャリソースの生成

@@ -12,23 +12,9 @@
 #include "Shape.h"
 #include "ModelFormat.h"
 #include "WorldTransform.h"
+#include "ObjectEnum.h"
 
 namespace Norm {
-
-	/// ============================== ///
-	///		列挙体
-	/// ============================== ///
-
-	/// <summary>
-	/// オブジェクトの種類
-	/// </summary>
-	enum class ObjectKind {
-		Model,				//通常モデル
-		AnimationModel,		//アニメーションモデル
-		Shape,				//単純形状
-
-		kMaxNumObjectKind,
-	};
 
 	//初期化用のタグ
 	struct ModelTag {};
@@ -173,13 +159,18 @@ namespace Norm {
 		/// アウトラインを付けるか
 		/// </summary>
 		/// <param name="_isOutline">フラグ</param>
-		void SetIsOutline(bool _isOutline) { isOutline_ = _isOutline; }
+		void SetIsOutline(bool _isOutline);
 		/// <summary>
 		/// アウトラインのパラメータセット
 		/// </summary>
-		/// <param name="_color">カラー</param>
-		/// <param name="_width">幅</param>
-		void SetOutlineParam(const Vector4& _color, int _width) { outlineColor_ = _color; outlineWidth_ = _width; }
+		/// <param name="_textureHandle">テクスチャハンドル</param>
+		/// <param name="_size">大きさ</param>
+		void SetOutlineParam(uint32_t textureHandle, float _size);
+		/// <summary>
+		/// ステンシルの役割をセット
+		/// </summary>
+		/// <param name="_stencilRole">ステンシルの役割</param>
+		void SetStencilRole(StencilRole _stencilRole) { stencilRole_ = _stencilRole; }
 
 		/// <summary>
 		/// 新しいアニメーションを追加
@@ -234,6 +225,8 @@ namespace Norm {
 
 		//名前
 		std::string name_;
+		//ファイルパス
+		std::string filePath_;
 		//シーンタグ
 		std::string sceneTag_;
 
@@ -250,8 +243,11 @@ namespace Norm {
 		uint32_t nextIndex_ = 0u;
 		std::vector<uint32_t> freeIndices_;
 
-		//オブジェクトの種類
-		ObjectKind objKind_;
+		//メッシュの種類
+		MeshType meshType_;
+		//ステンシルの役割
+		StencilRole stencilRole_ = StencilRole::Normal;
+
 
 		//オブジェクト用リソース
 		ObjectResource objectResource_;
@@ -263,10 +259,12 @@ namespace Norm {
 
 		//色
 		Vector4 color_ = { 1,1,1,1 };
+
 		//アウトライン
+		std::unique_ptr<Object3d> outlineObject_ = nullptr;
+		WorldTransform olWT_;
 		bool isOutline_ = false;
-		Vector4 outlineColor_ = { 1,1,1,1 };
-		int outlineWidth_ = 0;
+		float olSize_ = 1.1f;
 
 	};
 
