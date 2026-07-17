@@ -56,15 +56,27 @@ public:
 
 private:
 	// =========================================================
+	// Internal Methods
+	// =========================================================
+
+	/// <summary>
+	/// 移動入力処理
+	/// </summary>
+	void Move();
+
+private:
+	// =========================================================
 	// Constants
 	// =========================================================
 
 	// 移動速度
 	const float kSpeed = 0.3f;
 	// 重力
-	const float kGravity = -0.02f;
+	const float kGravity = -0.03f;
 	// ジャンプの初速
-	const float kJumpPower = 0.4f;
+	const float kJumpPower = 0.55f;
+	// 慣性
+	const float kAcceleration = 0.325f;
 
 	// =========================================================
 	// Member Variables

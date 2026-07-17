@@ -40,8 +40,8 @@ void Norm::ResultScene::Update() {
 	/* カメラ更新処理 */
 	camera_->Update();
 
-	// スペースキーでタイトルへ（仮）
-	if (Input::GetInstance()->PushKey(DIK_SPACE)) {
+	// 左クリックでタイトルへ（仮）
+	if (Input::GetInstance()->TriggerMouseButton(MouseButton::LeftButton)) {
 		sceneManager_->SetNextScene("TITLE");
 	}
 }
