@@ -3,6 +3,7 @@
 // Engine
 #include <BaseScene.h>
 #include <DevelopCamera.h>
+#include <Object3d.h>
 
 // Application
 #include <application/object/environment/Skydome.h>
@@ -14,6 +15,7 @@
 #include <application/stage/StageManager.h>
 #include <application/object/Character/Player.h>
 #include <application/object/camera/FollowCamera.h>
+#include <application/ui/pause/PauseMenu.h>
 
 #include "ExplosionGimmick.h"
 
@@ -86,6 +88,17 @@ namespace Norm {
 		std::unique_ptr<ExplosionGimmick> explosionGimmick_ = nullptr;
 		LightInfo lightInfo_{};
 
+	//ギミック
+	std::unique_ptr<ExplosionGimmick> explosionGimmick_ = nullptr;
+	LightInfo lightInfo_{};
+
+	// 背景オブジェクト
+	std::unique_ptr<Object3d> background_;
+	WorldTransform backgroundWT_;
+
+	// ポーズメニュー
+	std::unique_ptr<PauseMenu> pauseMenu_;
+};
 		std::unique_ptr<GuideUI> guideUI_ = nullptr;
 	};
 }

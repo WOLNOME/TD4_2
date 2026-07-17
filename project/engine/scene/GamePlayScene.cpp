@@ -4,6 +4,7 @@
 #include <CollisionManager.h>
 #include <Input.h>
 #include <SceneManager.h>
+#include <Object3dManager.h>
 
 void Norm::GamePlayScene::Initialize() {
 	/* シーン共通初期化処理 */
@@ -67,6 +68,18 @@ void Norm::GamePlayScene::Initialize() {
 	explosionGimmick_->SetPosition({ 14.0f,-25.0f, 0.0f });
 	explosionGimmick_->Initialize(camera_.get());
 
+	// 背景オブジェクト生成 + 初期化
+	background_ = std::make_unique<Object3d>();
+	background_->Initialize(ShapeTag{}, Object3dManager::GetInstance()->GenerateName("background"), Shape::ShapeKind::kPlane);
+	background_->SetColor({0.2f, 0.2f, 0.2f, 1.0f});
+	backgroundWT_.Initialize();
+	backgroundWT_.SetScale({150.0f, 100.0f, 1.0f}); // 画面全体を覆うように
+	background_->RegistWorldTransform(&backgroundWT_);
+
+	// ポーズメニュー生成 + 初期化
+	pauseMenu_ = std::make_unique<PauseMenu>();
+	pauseMenu_->Initialize();
+
 	//ポストエフェクト　ブルーム
 	//PostEffectManager::GetInstance()->AddPostEffectOrder(PostEffectKind::None);
 	PostEffectManager::GetInstance()->AddPostEffectOrder(PostEffectKind::BloomExtract);
@@ -80,6 +93,18 @@ void Norm::GamePlayScene::Finalize() {}
 void Norm::GamePlayScene::Update() {
 	/* シーン共通更新処理 */
 	BaseScene::Update();
+
+	/* ポーズメニュー更新処理 */
+	pauseMenu_->Update();
+	// タイトルへ戻るが押されていたらシーンを切り替える
+	if (pauseMenu_->IsRequestedReturnToTitle()) {
+		sceneManager_->SetNextScene("TITLE");
+	}
+	// ポーズ中なら以降の更新をスキップ
+	if (pauseMenu_->IsPaused()) { 
+		return;
+	}
+
 	//ライト移動処理
 	LightMoveProcess();
 
@@ -89,6 +114,11 @@ void Norm::GamePlayScene::Update() {
 	if (player_->IsGoaled()) {
 		sceneManager_->SetNextScene("RESULT");
 	}
+	backgroundWT_.SetTranslate({ // 背景オブジェクトをプレイヤーに追従させる
+		player_->GetTranslate().x, 
+		player_->GetTranslate().y, 
+		player_->GetTranslate().z + 4.0f // ちょっと奥に配置
+	});
 	/* カメラ更新処理 */
 	camera_->Update();
 
