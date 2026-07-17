@@ -360,6 +360,7 @@
     <ClCompile Include="application\object\entity\enemy\State\EnemyEscapeState.cpp" />
     <ClCompile Include="GimmickBase.cpp" />
     <ClCompile Include="ExplosionGimmick.cpp" />
+    <ClCompile Include="engine\scene\TitleScene.cpp" />
     <ClCompile Include="application\object\entity\enemy\State\EnemyAlertState.cpp" />
     <ClCompile Include="application\object\entity\enemy\collider\EnemyMoveCollider.cpp" />
     <ClCompile Include="application\object\entity\enemy\collider\EnemyAreaCollider.cpp" />
@@ -673,6 +674,7 @@
     <ClInclude Include="application\object\entity\enemy\State\EnemyEscapeState.h" />
     <ClInclude Include="GimmickBase.h" />
     <ClInclude Include="ExplosionGimmick.h" />
+    <ClInclude Include="engine\scene\TitleScene.h" />
     <ClInclude Include="application\object\entity\enemy\State\EnemyAlertState.h" />
     <ClInclude Include="application\object\entity\enemy\collider\EnemyMoveCollider.h" />
     <ClInclude Include="application\object\entity\enemy\collider\EnemyAreaCollider.h" />
