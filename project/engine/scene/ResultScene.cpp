@@ -1,5 +1,9 @@
 #include "ResultScene.h"
 
+// Engine
+#include <Input.h>
+#include <SceneManager.h>
+
 void Norm::ResultScene::Initialize() {
 	/* シーン共通初期化処理 */
 	BaseScene::Initialize();
@@ -35,6 +39,11 @@ void Norm::ResultScene::Update() {
 	BaseScene::Update();
 	/* カメラ更新処理 */
 	camera_->Update();
+
+	// スペースキーでタイトルへ（仮）
+	if (Input::GetInstance()->PushKey(DIK_SPACE)) {
+		sceneManager_->SetNextScene("TITLE");
+	}
 }
 
 void Norm::ResultScene::DebugWithImGui() {}
