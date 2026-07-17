@@ -4,6 +4,7 @@
 #include <Object3d.h>
 #include <Object3dManager.h>
 #include <WorldTransform.h>
+#include <ICollider.h>
 
 namespace Norm {
 // =========================================================
@@ -17,6 +18,8 @@ public:
 	enum class Type { 
 		None = 0,
 		NormalBlock = 1,
+		AreaBlock = 2,
+		GoalBlock = 3,
 	};
 
 	// =========================================================
@@ -30,6 +33,11 @@ public:
 	/// <param name="position">位置</param>
 	void Initialize(Type type, const Vector3& position);
 
+	/// <summary>
+	/// デバッグ表示
+	/// </summary>
+	void Debug();
+
 private:
 	// =========================================================
 	// Member Variables
@@ -41,5 +49,7 @@ private:
 	std::unique_ptr<Object3d> object_ = nullptr;
 	// ワールドトランスフォーム
 	WorldTransform wt_;
+	// コライダー
+	std::unique_ptr<ICollider> collider_ = nullptr;
 };
 }

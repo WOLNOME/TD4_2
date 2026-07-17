@@ -13,6 +13,7 @@
 
 #include <application/stage/StageManager.h>
 #include <application/object/Character/Player.h>
+#include <application/object/camera/FollowCamera.h>
 
 #include "ExplosionGimmick.h"
 
@@ -56,10 +57,10 @@ namespace Norm {
 		// Member Variables
 		// =========================================================
 
-		// 開発用カメラ
-		std::unique_ptr<DevelopCamera> camera_ = nullptr;
-		Vector3 cameraTranslate_ = { 15.0f, -10.0f, -100.0f };
-		Vector3 cameraRotate_ = { 0.0f, 0.0f, 0.0f };
+	// カメラ
+	std::unique_ptr<FollowCamera> camera_ = nullptr;
+	Vector3 cameraTranslate_ = {15.0f, -10.0f, -100.0f};
+	Vector3 cameraRotate_ = {0.0f, 0.0f, 0.0f};
 
 		// 平行光源
 		std::unique_ptr<DirectionalLight> dirLight_;

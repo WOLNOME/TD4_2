@@ -1,5 +1,8 @@
 #include "ObjectCollider.h"
 
+// Application
+#include <application/object/Character/Player.h>
+
 using namespace Norm;
 
 ObjectCollider::ObjectCollider(Norm::Object3d* _holder) : OBBColliderBase(), holder_(_holder) {
@@ -34,5 +37,14 @@ void ObjectCollider::OnCollision(ICollider* _other, CollisionAttribute _attribut
 	}
 	default:
 		break;
+	}
+
+	// 自身がPlayerの場合の処理
+	if (GetCollisionAttribute() == CollisionAttribute::Player) {
+		void* holder = GetHolder();
+		if (holder) {
+			Player* player = static_cast<Player*>(holder);
+			player->OnCollision(_other, _attribute);
+		}
 	}
 }
