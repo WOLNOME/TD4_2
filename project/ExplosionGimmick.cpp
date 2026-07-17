@@ -26,7 +26,7 @@ void ExplosionGimmick::Initialize(Norm::BaseCamera* _camera)
 	gimmickObject_ = std::make_unique<Object3d>();
 	gimmickObject_->Initialize(ModelTag{}, Object3dManager::GetInstance()->GenerateName("ExplosionGimmick"), "bomb");
 	gimmickObject_->SetIsOutline(true);
-	gimmickObject_->SetOutlineParam(TextureManager::GetInstance()->LoadTexture("green.png"), 1.05f);
+	gimmickObject_->SetOutlineParam(TextureManager::GetInstance()->LoadTexture("green.png"), 1.1f);
 
 	guideUI_ = std::make_unique<GuideUI>();
 	guideUI_->Initialize(_camera, Input::GetInstance(), "mouse.png", position_);

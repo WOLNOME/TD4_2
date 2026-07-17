@@ -17,7 +17,7 @@ void Norm::Player::Initialize() {
 	object_ = std::make_unique<Object3d>();
 	object_->Initialize(ModelTag{}, Object3dManager::GetInstance()->GenerateName("player"), "player");
 	object_->SetIsOutline(true);
-	object_->SetOutlineParam(TextureManager::GetInstance()->LoadTexture("green.png"), 1.05f);
+	object_->SetOutlineParam(TextureManager::GetInstance()->LoadTexture("green.png"), 1.1f);
 	wt_.Initialize();
 	wt_.SetTranslate({0.0f, -10.0f, 0.0f});
 	object_->RegistWorldTransform(&wt_);

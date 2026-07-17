@@ -3,6 +3,7 @@
 // Engine
 #include "Object3dManager.h"
 #include "CollisionManager.h"
+#include "TextureManager.h"
 // Application
 #include <application/object/collision/ObjectCollider.h>
 // EnemyState
@@ -25,7 +26,9 @@ void BaseEnemy::Initialize(Norm::Vector3 position, EnemyDirection FirstDirection
 	/// ===オブジェクト=== ///
 	// 生成・初期化
 	object3d_ = std::make_unique<Object3d>();
-	object3d_->Initialize(ModelTag{}, Object3dManager::GetInstance()->GenerateName("enemy"), "enemy");
+	object3d_->Initialize(ModelTag{}, Object3dManager::GetInstance()->GenerateName("enemy"), "ghost");
+	object3d_->SetIsOutline(true);
+	object3d_->SetOutlineParam(TextureManager::GetInstance()->LoadTexture("red.png"), 1.1f);
 
 	/// ===ワールドトランスフォーム=== ///
 	// 初期化

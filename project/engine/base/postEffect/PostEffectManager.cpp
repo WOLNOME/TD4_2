@@ -146,7 +146,7 @@ namespace Norm {
 		//全てのポストエフェクト分のGraphicsPipelineを生成する
 		for (int i = 0; i < (int)PostEffectKind::kMaxNumPostEffectKind; i++) {
 
-			//RootSignature作成
+			// RootSignature作成
 			D3D12_ROOT_SIGNATURE_DESC descriptionRootSignature{};
 			descriptionRootSignature.Flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
 
@@ -156,34 +156,39 @@ namespace Norm {
 			// DescriptorRange格納（寿命保持用）
 			std::vector<D3D12_DESCRIPTOR_RANGE> descriptorRanges;
 
+			// 再確保によるポインタ無効化を防ぐ
+			rootParameters.reserve(4);
+			descriptorRanges.reserve(4);
 
 			// SRV RootParameter追加
 			auto AddSRV = [&](UINT shaderRegister) {
-				descriptorRanges.push_back({});
+
+				descriptorRanges.emplace_back();
 				auto& range = descriptorRanges.back();
 
-				range.BaseShaderRegister = shaderRegister;
-				range.NumDescriptors = 1;
 				range.RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
+				range.NumDescriptors = 1;
+				range.BaseShaderRegister = shaderRegister;
+				range.RegisterSpace = 0;
 				range.OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
 
 				D3D12_ROOT_PARAMETER param{};
 				param.ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
 				param.ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
-				param.DescriptorTable.pDescriptorRanges = &range;
 				param.DescriptorTable.NumDescriptorRanges = 1;
+				param.DescriptorTable.pDescriptorRanges = &range;
 
 				rootParameters.push_back(param);
 				};
 
-
 			// CBV RootParameter追加
 			auto AddCBV = [&](UINT shaderRegister) {
-				D3D12_ROOT_PARAMETER param{};
 
+				D3D12_ROOT_PARAMETER param{};
 				param.ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
 				param.ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
 				param.Descriptor.ShaderRegister = shaderRegister;
+				param.Descriptor.RegisterSpace = 0;
 
 				rootParameters.push_back(param);
 				};
