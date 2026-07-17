@@ -4,6 +4,7 @@
 #include <Object3dManager.h>
 #include <imgui.h>
 #include <CollisionManager.h>
+#include <TextureManager.h>
 
 // Application
 #include <application/object/collision/ObjectCollider.h>
@@ -15,6 +16,8 @@ void Norm::Player::Initialize() {
 	// 3Dモデルの生成 + 初期化
 	object_ = std::make_unique<Object3d>();
 	object_->Initialize(ModelTag{}, Object3dManager::GetInstance()->GenerateName("player"), "player");
+	object_->SetIsOutline(true);
+	object_->SetOutlineParam(TextureManager::GetInstance()->LoadTexture("green.png"), 1.05f);
 	wt_.Initialize();
 	wt_.SetTranslate({0.0f, -10.0f, 0.0f});
 	object_->RegistWorldTransform(&wt_);

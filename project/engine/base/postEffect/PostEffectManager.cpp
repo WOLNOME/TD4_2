@@ -150,8 +150,45 @@ namespace Norm {
 			D3D12_ROOT_SIGNATURE_DESC descriptionRootSignature{};
 			descriptionRootSignature.Flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
 
-			//RootParameter格納用変数
+			// RootParameter格納
 			std::vector<D3D12_ROOT_PARAMETER> rootParameters;
+
+			// DescriptorRange格納（寿命保持用）
+			std::vector<D3D12_DESCRIPTOR_RANGE> descriptorRanges;
+
+
+			// SRV RootParameter追加
+			auto AddSRV = [&](UINT shaderRegister) {
+				descriptorRanges.push_back({});
+				auto& range = descriptorRanges.back();
+
+				range.BaseShaderRegister = shaderRegister;
+				range.NumDescriptors = 1;
+				range.RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
+				range.OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
+
+				D3D12_ROOT_PARAMETER param{};
+				param.ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
+				param.ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
+				param.DescriptorTable.pDescriptorRanges = &range;
+				param.DescriptorTable.NumDescriptorRanges = 1;
+
+				rootParameters.push_back(param);
+				};
+
+
+			// CBV RootParameter追加
+			auto AddCBV = [&](UINT shaderRegister) {
+				D3D12_ROOT_PARAMETER param{};
+
+				param.ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
+				param.ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
+				param.Descriptor.ShaderRegister = shaderRegister;
+
+				rootParameters.push_back(param);
+				};
+
+
 			switch (i) {
 			case (int)PostEffectKind::None:
 			case (int)PostEffectKind::Grayscale:
@@ -159,194 +196,43 @@ namespace Norm {
 			case (int)PostEffectKind::BoxFilter:
 			case (int)PostEffectKind::GaussianFilter:
 			case (int)PostEffectKind::LuminanceBaseOutline:
-			case (int)PostEffectKind::RadialBlur: {
-				//RootParameter作成
-				//レンダーテクスチャの設定
-				{
-					D3D12_DESCRIPTOR_RANGE descriptorRange[1] = {};
-					descriptorRange[0].BaseShaderRegister = 0;
-					descriptorRange[0].NumDescriptors = 1;
-					descriptorRange[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
-					descriptorRange[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
-
-					D3D12_ROOT_PARAMETER rootParameter = {};
-					rootParameter.ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;//Tableを使う
-					rootParameter.ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;//PixelShaderで使う
-					rootParameter.DescriptorTable.pDescriptorRanges = descriptorRange;//Tableの中身の配列を指定
-					rootParameter.DescriptorTable.NumDescriptorRanges = _countof(descriptorRange);
-					rootParameters.push_back(rootParameter);
-				}
+			case (int)PostEffectKind::RadialBlur:
+			{
+				AddSRV(0);
 				break;
 			}
-			case (int)PostEffectKind::Dissolve: {
-				//DescriptorRangeの配列を作成
-				D3D12_DESCRIPTOR_RANGE descriptorRange[2] = {};
-				//レンダーテクスチャの設定
-				descriptorRange[0].BaseShaderRegister = 0;
-				descriptorRange[0].NumDescriptors = 1;
-				descriptorRange[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
-				descriptorRange[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
-				//マスクテクスチャの設定
-				descriptorRange[1].BaseShaderRegister = 1;
-				descriptorRange[1].NumDescriptors = 1;
-				descriptorRange[1].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
-				descriptorRange[1].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
-
-				//RootParameter作成
-				//レンダーテクスチャの設定
-				{
-					D3D12_ROOT_PARAMETER rootParameter = {};
-					rootParameter.ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;//Tableを使う
-					rootParameter.ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;//PixelShaderで使う
-					rootParameter.DescriptorTable.pDescriptorRanges = &descriptorRange[0];//Tableの中身の配列を指定
-					rootParameter.DescriptorTable.NumDescriptorRanges = 1;
-					rootParameters.push_back(rootParameter);
-				}
-				//マスクテクスチャの設定
-				{
-					D3D12_ROOT_PARAMETER rootParameter = {};
-					rootParameter.ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;//Tableを使う
-					rootParameter.ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;//PixelShaderで使う
-					rootParameter.DescriptorTable.pDescriptorRanges = &descriptorRange[1];//Tableの中身の配列を指定
-					rootParameter.DescriptorTable.NumDescriptorRanges = 1;
-					rootParameters.push_back(rootParameter);
-				}
-				//ディゾルブデータの設定
-				{
-					D3D12_ROOT_PARAMETER rootParameter = {};
-					rootParameter.ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;//CBVを使う
-					rootParameter.ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;//PixelShaderで使う
-					rootParameter.Descriptor.ShaderRegister = 0;
-					rootParameters.push_back(rootParameter);
-				}
+			case (int)PostEffectKind::Dissolve:
+			{
+				AddSRV(0); // SceneTexture
+				AddSRV(1); // MaskTexture
+				AddCBV(0); // DissolveData
 				break;
 			}
-			case (int)PostEffectKind::Random: {
-				//RootParameter作成
-				//レンダーテクスチャの設定
-				{
-					D3D12_DESCRIPTOR_RANGE descriptorRange[1] = {};
-					descriptorRange[0].BaseShaderRegister = 0;
-					descriptorRange[0].NumDescriptors = 1;
-					descriptorRange[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
-					descriptorRange[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
-
-					D3D12_ROOT_PARAMETER rootParameter = {};
-					rootParameter.ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;//Tableを使う
-					rootParameter.ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;//PixelShaderで使う
-					rootParameter.DescriptorTable.pDescriptorRanges = descriptorRange;//Tableの中身の配列を指定
-					rootParameter.DescriptorTable.NumDescriptorRanges = _countof(descriptorRange);
-					rootParameters.push_back(rootParameter);
-				}
-				//ランダムデータの設定
-				{
-					D3D12_ROOT_PARAMETER rootParameter = {};
-					rootParameter.ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;//CBVを使う
-					rootParameter.ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;//PixelShaderで使う
-					rootParameter.Descriptor.ShaderRegister = 0;
-					rootParameters.push_back(rootParameter);
-				}
+			case (int)PostEffectKind::Random:
+			{
+				AddSRV(0);
+				AddCBV(0);
 				break;
 			}
-			case (int)PostEffectKind::HSVFilter: {
-				//RootParameter作成
-				//レンダーテクスチャの設定
-				{
-					D3D12_DESCRIPTOR_RANGE descriptorRange[1] = {};
-					descriptorRange[0].BaseShaderRegister = 0;
-					descriptorRange[0].NumDescriptors = 1;
-					descriptorRange[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
-					descriptorRange[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
-
-					D3D12_ROOT_PARAMETER rootParameter = {};
-					rootParameter.ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;//Tableを使う
-					rootParameter.ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;//PixelShaderで使う
-					rootParameter.DescriptorTable.pDescriptorRanges = descriptorRange;//Tableの中身の配列を指定
-					rootParameter.DescriptorTable.NumDescriptorRanges = _countof(descriptorRange);
-					rootParameters.push_back(rootParameter);
-				}
-				//HSVフィルターデータの設定
-				{
-					D3D12_ROOT_PARAMETER rootParameter = {};
-					rootParameter.ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;//CBVを使う
-					rootParameter.ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;//PixelShaderで使う
-					rootParameter.Descriptor.ShaderRegister = 0;
-					rootParameters.push_back(rootParameter);
-				}
+			case (int)PostEffectKind::HSVFilter:
+			{
+				AddSRV(0);
+				AddCBV(0);
 				break;
 			}
-			case (int)PostEffectKind::BloomExtract: {
-				//RootParameter作成
-				//レンダーテクスチャの設定
-				{
-					D3D12_DESCRIPTOR_RANGE descriptorRange[1] = {};
-					descriptorRange[0].BaseShaderRegister = 0;
-					descriptorRange[0].NumDescriptors = 1;
-					descriptorRange[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
-					descriptorRange[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
-
-					D3D12_ROOT_PARAMETER rootParameter = {};
-					rootParameter.ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;//Tableを使う
-					rootParameter.ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;//PixelShaderで使う
-					rootParameter.DescriptorTable.pDescriptorRanges = descriptorRange;//Tableの中身の配列を指定
-					rootParameter.DescriptorTable.NumDescriptorRanges = _countof(descriptorRange);
-					rootParameters.push_back(rootParameter);
-				}
-				//閾値データの設定
-				{
-					D3D12_ROOT_PARAMETER rootParameter = {};
-					rootParameter.ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;//CBVを使う
-					rootParameter.ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;//PixelShaderで使う
-					rootParameter.Descriptor.ShaderRegister = 0;
-					rootParameters.push_back(rootParameter);
-				}
-
+			case (int)PostEffectKind::BloomExtract:
+			{
+				AddSRV(0);
+				AddCBV(0);
 				break;
 			}
-			case (int)PostEffectKind::BloomComposite: {
-				//RootParameter作成
-				//ブルームテクスチャの設定
-				{
-					D3D12_DESCRIPTOR_RANGE descriptorRange[1] = {};
-					descriptorRange[0].BaseShaderRegister = 0;
-					descriptorRange[0].NumDescriptors = 1;
-					descriptorRange[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
-					descriptorRange[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
-					D3D12_ROOT_PARAMETER rootParameter = {};
-					rootParameter.ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;//Tableを使う
-					rootParameter.ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;//PixelShaderで使う
-					rootParameter.DescriptorTable.pDescriptorRanges = descriptorRange;//Tableの中身の配列を指定
-					rootParameter.DescriptorTable.NumDescriptorRanges = _countof(descriptorRange);
-					rootParameters.push_back(rootParameter);
-				}
-				//シーンテクスチャの設定
-				{
-					D3D12_DESCRIPTOR_RANGE descriptorRange[1] = {};
-					descriptorRange[0].BaseShaderRegister = 1;
-					descriptorRange[0].NumDescriptors = 1;
-					descriptorRange[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
-					descriptorRange[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
-
-					D3D12_ROOT_PARAMETER rootParameter = {};
-					rootParameter.ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;//Tableを使う
-					rootParameter.ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;//PixelShaderで使う
-					rootParameter.DescriptorTable.pDescriptorRanges = descriptorRange;//Tableの中身の配列を指定
-					rootParameter.DescriptorTable.NumDescriptorRanges = _countof(descriptorRange);
-					rootParameters.push_back(rootParameter);
-				}
-				//輝度データの設定
-				{
-					D3D12_ROOT_PARAMETER rootParameter = {};
-					rootParameter.ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;//CBVを使う
-					rootParameter.ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;//PixelShaderで使う
-					rootParameter.Descriptor.ShaderRegister = 0;
-					rootParameters.push_back(rootParameter);
-				}
-
+			case (int)PostEffectKind::BloomComposite:
+			{
+				AddSRV(0); // BloomTexture
+				AddSRV(1); // SceneTexture
+				AddCBV(0); // LuminanceData
 				break;
 			}
-			default:
-				break;
 			}
 
 			//Samplerの設定
