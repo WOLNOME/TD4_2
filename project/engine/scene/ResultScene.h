@@ -3,6 +3,7 @@
 // Engine
 #include <BaseScene.h>
 #include <DevelopCamera.h>
+#include <Sprite.h>
 
 // Application
 #include <application/object/environment/Skydome.h>
@@ -52,5 +53,9 @@ private:
 
 	// 天球
 	std::unique_ptr<Skydome> skydome_ = nullptr;
+
+	// スプライト
+	uint32_t texResult_ = 0u;
+	std::unique_ptr<Sprite> spriteResult_ = nullptr;
 };
 }

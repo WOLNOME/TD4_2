@@ -3,6 +3,7 @@
 // Engine
 #include <BaseScene.h>
 #include <DevelopCamera.h>
+#include <Object3d.h>
 
 // Application
 #include <application/object/environment/Skydome.h>
@@ -82,5 +83,9 @@ private:
 	//ギミック
 	std::unique_ptr<ExplosionGimmick> explosionGimmick_ = nullptr;
 	LightInfo lightInfo_{};
+
+	// 背景オブジェクト
+	std::unique_ptr<Object3d> background_;
+	WorldTransform backgroundWT_;
 };
 }

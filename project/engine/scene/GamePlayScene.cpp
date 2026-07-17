@@ -4,6 +4,7 @@
 #include <CollisionManager.h>
 #include <Input.h>
 #include <SceneManager.h>
+#include <Object3dManager.h>
 
 void Norm::GamePlayScene::Initialize() {
 	/* シーン共通初期化処理 */
@@ -52,6 +53,14 @@ void Norm::GamePlayScene::Initialize() {
 	explosionGimmick_->SetLightInfo(&lightInfo_);
 	explosionGimmick_->SetPosition({ 14.0f,-25.0f, 0.0f });
 	explosionGimmick_->Initialize(camera_.get());
+
+	// 背景オブジェクト生成 + 初期化
+	background_ = std::make_unique<Object3d>();
+	background_->Initialize(ShapeTag{}, Object3dManager::GetInstance()->GenerateName("background"), Shape::ShapeKind::kPlane);
+	background_->SetColor({0.2f, 0.2f, 0.2f, 1.0f});
+	backgroundWT_.Initialize();
+	backgroundWT_.SetScale({150.0f, 100.0f, 1.0f}); // 画面全体を覆うように
+	background_->RegistWorldTransform(&backgroundWT_);
 }
 
 void Norm::GamePlayScene::Finalize() {}
@@ -68,6 +77,11 @@ void Norm::GamePlayScene::Update() {
 	if (player_->IsGoaled()) {
 		sceneManager_->SetNextScene("RESULT");
 	}
+	backgroundWT_.SetTranslate({ // 背景オブジェクトをプレイヤーに追従させる
+		player_->GetTranslate().x, 
+		player_->GetTranslate().y, 
+		player_->GetTranslate().z + 4.0f // ちょっと奥に配置
+	});
 	/* カメラ更新処理 */
 	camera_->Update();
 
