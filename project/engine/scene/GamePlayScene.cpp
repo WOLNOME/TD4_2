@@ -3,6 +3,7 @@
 // Engine
 #include <CollisionManager.h>
 #include <Input.h>
+#include <SceneManager.h>
 
 void Norm::GamePlayScene::Initialize() {
 	/* シーン共通初期化処理 */
@@ -84,6 +85,10 @@ void Norm::GamePlayScene::Update() {
 
 	/* プレイヤー更新処理 */
 	player_->Update();
+	// ゴールに触れたらリザルトへ移行（仮）
+	if (player_->IsGoaled()) {
+		sceneManager_->SetNextScene("RESULT");
+	}
 	/* カメラ更新処理 */
 	camera_->Update();
 

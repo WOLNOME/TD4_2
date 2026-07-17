@@ -2,6 +2,8 @@
 #include "ParticleEditorScene.h"
 #include "SampleScene.h"
 #include "GamePlayScene.h"
+#include "TitleScene.h"
+#include "ResultScene.h"
 
 //アプリケーション
 
@@ -21,6 +23,12 @@ namespace Norm {
 	    } else if (sceneName == "GAMEPLAY") {
 			// ゲームプレイシーン
 		    newScene = std::make_unique<GamePlayScene>();
+		} else if (sceneName == "TITLE") {
+			// タイトルシーン
+			newScene = std::make_unique<TitleScene>();
+	    } else if (sceneName == "RESULT") {
+			// リザルトシーン
+		    newScene = std::make_unique<ResultScene>();
 		}
 
 		//シーン名をセット

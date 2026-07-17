@@ -27,9 +27,11 @@ void MyGame::Initialize() {
 	//シーンマネージャーに最初のシーンをセット
 	SceneManager::GetInstance()->SetNextScene("GAMEPLAY");
 
-	// パーティクルエディター→PARTICLEEDITOR
-	// サンプルシーン→Sample
+	//パーティクルエディター→PARTICLEEDITOR
+	//サンプルシーン→Sample
+	// タイトルシーン->TITLE
 	// ゲームプレイシーン->GAMEPLAY
+	// リザルトシーン->RESULT
 }
 
 void MyGame::Finalize() {

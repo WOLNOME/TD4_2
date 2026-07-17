@@ -31,6 +31,6 @@ private:
 
 	// カメラのパラメーター
 	Vector3 offset_ = {0.0f, 0.0f, -50.0f}; // プレイヤーからの相対位置
-	float interpolationRate_ = 0.2f; // 補間係数（0.0~1.0f）
+	float interpolationRate_ = 0.15f; // 補間係数（0.0~1.0f）
 };
 }

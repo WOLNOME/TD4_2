@@ -1,9 +1,9 @@
 #include "Player.h"
 
 // Engine
+#include <CollisionManager.h>
 #include <Object3dManager.h>
 #include <imgui.h>
-#include <CollisionManager.h>
 #include <TextureManager.h>
 
 // Application
@@ -19,7 +19,7 @@ void Norm::Player::Initialize() {
 	object_->SetIsOutline(true);
 	object_->SetOutlineParam(TextureManager::GetInstance()->LoadTexture("green.png"), 1.1f);
 	wt_.Initialize();
-	wt_.SetTranslate({0.0f, -10.0f, 0.0f});
+	wt_.SetTranslate({0.0f, -52.0f, 0.0f});
 	object_->RegistWorldTransform(&wt_);
 
 	// コライダーの生成 + 登録
@@ -30,34 +30,19 @@ void Norm::Player::Initialize() {
 		playerCollider->SetWorldTransform(&wt_);
 		playerCollider->SetOffset({0.0f, 0.0f, 0.0f});
 		playerCollider->SetOBBSize({1.0f, 2.0f, 1.0f}); // プレイヤーのコライダーサイズ
-		playerCollider->SetHolder(this); // 自身のポインタをセット
+		playerCollider->SetHolder(this);                // 自身のポインタをセット
 	}
 }
 
 void Norm::Player::Update() {
-	// 左右入力移動
-	velocity_.x = 0.0f;
-	if (input_->PushKey(DIK_A)) {
-		velocity_.x = -kSpeed;
-	}
-	if (input_->PushKey(DIK_D)) {
-		velocity_.x = kSpeed;
-	}
-	
+	// 移動入力処理
+	Move();
+
 	// 重力の計算（自由落下）
 	yVelocity_ += kGravity;
 	// 最大落下速度の制限（貫通防止）
-	if (yVelocity_ < -0.5f) {
-		yVelocity_ = -0.5f;
-	}
-
-	// ジャンプ入力
-	if (input_->PushKey(DIK_W)) {
-		// 接地中のみ可能
-		if (isGrounded_) {
-			yVelocity_ = kJumpPower;
-			isGrounded_ = false;
-		}
+	if (yVelocity_ < -1.0f) {
+		yVelocity_ = -1.0f;
 	}
 
 	// Y軸の速度を反映
@@ -66,11 +51,7 @@ void Norm::Player::Update() {
 
 	// 座標の更新
 	Vector3 currentPos = wt_.GetTranslate();
-	wt_.SetTranslate({ 
-		currentPos.x + velocity_.x, 
-		currentPos.y + velocity_.y, 
-		currentPos.z + velocity_.z
-	});
+	wt_.SetTranslate({currentPos.x + velocity_.x, currentPos.y + velocity_.y, currentPos.z + velocity_.z});
 
 	// 行列の更新
 	wt_.UpdateMatrix();
@@ -79,7 +60,7 @@ void Norm::Player::Update() {
 	isGrounded_ = false;
 }
 
-void Norm::Player::Debug() { 
+void Norm::Player::Debug() {
 #ifdef _DEBUG
 	if (ImGui::Begin("Player")) {
 		// 現在の値を取得
@@ -131,6 +112,23 @@ void Norm::Player::OnCollision(ICollider* other, CollisionAttribute otherAttr) {
 			Vector3 pushVector = {0.0f, 0.0f, 0.0f};
 
 			if (MyMath::CalculatePushVector(playerOBB, blockOBB, &pushVector)) {
+				// ブロック吸い付き対策
+				// 上方向の押し戻しであり、かつ落下中の場合のみ天面への接地とみなす
+				if (pushVector.y > 0.0f && pushVector.y >= std::abs(pushVector.x) && yVelocity_ < 0.0f) {
+					pushVector.x = 0.0f;
+				}
+				// 天井へ頭突きした際
+				else if (pushVector.y < 0.0f && std::abs(pushVector.y) >= std::abs(pushVector.x)) {
+					pushVector.x = 0.0f;
+				}
+				// それ以外は側面衝突として処理する
+				else {
+					pushVector.y = 0.0f;
+
+					if ((pushVector.x > 0.0f && velocity_.x < 0.0f) || (pushVector.x < 0.0f && velocity_.x > 0.0f)) {
+						velocity_.x = 0.0f;
+					}
+				}
 				// プレイヤーの座標を押し戻しベクトル分だけ戻す
 				Vector3 currentPos = wt_.GetTranslate();
 				wt_.SetTranslate(MyMath::Add(currentPos, pushVector));
@@ -154,5 +152,37 @@ void Norm::Player::OnCollision(ICollider* other, CollisionAttribute otherAttr) {
 	// 相手がゴールブロックならゴール済みフラグを立てる
 	if (otherAttr == CollisionAttribute::Goal) {
 		isGoaled_ = true;
+	}
+}
+
+void Norm::Player::Move() {
+	// 目標とするX方向の速度
+	float targetVelocityX = 0.0f;
+
+	// ゴールしていない場合のみキー入力を受け付ける
+	if (!IsGoaled()) {
+		// 左右入力移動
+		if (input_->PushKey(DIK_A)) {
+			targetVelocityX = -kSpeed;
+		}
+		if (input_->PushKey(DIK_D)) {
+			targetVelocityX = kSpeed;
+		}
+
+		// ジャンプ入力
+		if (input_->TriggerKey(DIK_W)) {
+			// 接地中のみ可能
+			if (isGrounded_) {
+				yVelocity_ = kJumpPower;
+				isGrounded_ = false;
+			}
+		}
+	}
+
+	// 現在の速度を目標速度に近づける
+	velocity_.x = MyMath::Lerp(velocity_.x, targetVelocityX, kAcceleration);
+	// 微小な値になったら完全に停止させる
+	if (std::abs(velocity_.x) < 0.001f) {
+		velocity_.x = 0.0f;
 	}
 }

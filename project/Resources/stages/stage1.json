@@ -91,7 +91,7 @@
                 }, 
                 {
                  "id":2,
-                 "image":"..\/models\/goal\/goal_icon.png",
+                 "image":"..\/models\/goalBlock\/goal_icon.png",
                  "imageheight":64,
                  "imagewidth":64,
                  "properties":[
