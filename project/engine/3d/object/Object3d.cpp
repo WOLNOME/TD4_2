@@ -166,6 +166,9 @@ namespace Norm {
 		}
 		//アウトラインオブジェクト更新
 		if (outlineObject_) {
+			//アウトラインの表示は元のオブジェクトに合わせる
+			outlineObject_->SetIsDisplay(isDisplay_);
+
 			//worldTransforms_の先頭のワールドトランスフォームを取得
 			auto it = worldTransforms_.begin();
 			//トランスフォームをアウトラインオブジェクトに反映
