@@ -364,6 +364,7 @@
     <ClCompile Include="application\object\entity\enemy\collider\EnemyMoveCollider.cpp" />
     <ClCompile Include="application\object\entity\enemy\collider\EnemyAreaCollider.cpp" />
     <ClCompile Include="application\object\camera\FollowCamera.cpp" />
+    <ClCompile Include="engine\scene\ResultScene.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="engine\scenebase\AbstractSceneFactory.h">
@@ -676,6 +677,7 @@
     <ClInclude Include="application\object\entity\enemy\collider\EnemyMoveCollider.h" />
     <ClInclude Include="application\object\entity\enemy\collider\EnemyAreaCollider.h" />
     <ClInclude Include="application\object\camera\FollowCamera.h" />
+    <ClInclude Include="engine\scene\ResultScene.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\shaders\line\Line.hlsli">
