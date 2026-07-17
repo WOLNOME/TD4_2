@@ -172,7 +172,7 @@ namespace Norm {
 			if (it != worldTransforms_.end() && it->second) {
 				Vector3 translate = it->second->GetTranslate();
 				Vector3 rotate = it->second->GetRotate();
-				Vector3 scale = it->second->GetScale() * olSize_;
+				Vector3 scale = it->second->GetScale()*olSize_;
 				olWT_.SetTranslate(translate);
 				olWT_.SetRotate(rotate);
 				olWT_.SetScale(scale);

@@ -491,7 +491,7 @@ namespace Norm {
 		Matrix4x4 rx = MakeRotateXMatrix(rotate.x);
 		Matrix4x4 ry = MakeRotateYMatrix(rotate.y);
 		Matrix4x4 rz = MakeRotateZMatrix(rotate.z);
-		Matrix4x4 rxyz = Multiply(rx, Multiply(ry, rz));
+		Matrix4x4 rxyz = Multiply(Multiply(rx, ry),rz);
 
 		c.m[0][0] = scale.x * rxyz.m[0][0];
 		c.m[0][1] = scale.x * rxyz.m[0][1];

@@ -72,7 +72,7 @@ namespace Norm {
 			cObject_ = std::make_unique<Object3d>();
 			cObject_->Initialize(ModelTag{}, Object3dManager::GetInstance()->GenerateName("CObject"), "cube");
 			cObject_->SetIsOutline(true);
-			cObject_->SetOutlineParam(TextureManager::GetInstance()->LoadTexture("green.png"), 1.1f);
+			cObject_->SetOutlineParam(TextureManager::GetInstance()->LoadTexture("green.png"), 2.0f);
 
 			cObject1WT_.Initialize();
 			cObject1WT_.SetTranslate({ 0.0f,5.0f,20.0f });
@@ -82,7 +82,6 @@ namespace Norm {
 			auto* collider1 = dynamic_cast<ObjectCollider*>(collider1_.get());
 			collider1->SetCollisionAttribute(CollisionAttribute::Player);
 			collider1->SetWorldTransform(&cObject1WT_);
-			collider1->SetOffset({ 0.0f,1.0f,0.0f });
 			collider1->SetOBBSize({ 2.0f,2.0f,2.0f });
 
 			cObject2WT_.Initialize();
@@ -93,7 +92,6 @@ namespace Norm {
 			auto* collider2 = dynamic_cast<ObjectCollider*>(collider2_.get());
 			collider2->SetCollisionAttribute(CollisionAttribute::Enemy);
 			collider2->SetWorldTransform(&cObject2WT_);
-			collider2->SetOffset({ 0.0f,1.0f,0.0f });
 			collider2->SetOBBSize({ 2.0f,2.0f,2.0f });
 		}
 
@@ -110,7 +108,6 @@ namespace Norm {
 		enemy_ = std::make_unique<BaseEnemy>();
 		enemy_->Initialize({ 0.0f, 5.0f, 0.0f });
 
-
 		//パーティクルの生成と初期化
 		particle_ = std::make_unique<CombinedParticle>();
 		particle_->Initialize("SampleParticle", "Basic");
@@ -121,7 +118,6 @@ namespace Norm {
 		particle_->SetBaseTransform(baseTransform);
 		particle_->SetIsPlay(true);
 		particle_->SetIsRepeat(true);
-
 
 		// 爆発ギミック
 		explosionGimmick_ = std::make_unique<ExplosionGimmick>();
