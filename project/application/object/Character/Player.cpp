@@ -5,6 +5,7 @@
 #include <Object3dManager.h>
 #include <imgui.h>
 #include <TextureManager.h>
+#include <CombinedParticleManager.h>
 
 // Application
 #include <application/object/collision/ObjectCollider.h>
@@ -32,11 +33,19 @@ void Norm::Player::Initialize() {
 		playerCollider->SetOBBSize({1.0f, 2.0f, 1.0f}); // プレイヤーのコライダーサイズ
 		playerCollider->SetHolder(this);                // 自身のポインタをセット
 	}
+
+	//移動時パーティクル
+	moveParticle_ = std::make_unique<CombinedParticle>();
+	moveParticle_->Initialize(CombinedParticleManager::GetInstance()->GenerateName("move"), "grain");
+	moveParticle_->SetIsPlay(true);
+	moveParticle_->SetIsRepeat(true);
+
 }
 
 void Norm::Player::Update() {
 	// 移動入力処理
 	Move();
+
 
 	// 重力の計算（自由落下）
 	yVelocity_ += kGravity;
@@ -55,6 +64,14 @@ void Norm::Player::Update() {
 
 	// 行列の更新
 	wt_.UpdateMatrix();
+
+	//移動時パーティクルを付ける
+	TransformEuler transform = {
+		{1,1,1},
+		{0,0,0},
+		wt_.GetTranslate()
+	};
+	moveParticle_->SetBaseTransform(transform);
 
 	// 接地フラグを毎フレーム最後にリセット
 	isGrounded_ = false;
@@ -185,4 +202,5 @@ void Norm::Player::Move() {
 	if (std::abs(velocity_.x) < 0.001f) {
 		velocity_.x = 0.0f;
 	}
+
 }

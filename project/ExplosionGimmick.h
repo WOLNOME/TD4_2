@@ -1,5 +1,6 @@
 #pragma once
 #include "GimmickBase.h"
+#include "CombinedParticle.h"
 
 class ExplosionGimmick : public GimmickBase
 {
@@ -67,4 +68,8 @@ private:
 	float explosionDuration_ = 0.5f;
 	float explosionScale_ = 1.0f;
 	float maxExplosionScale_ = 5.0f;
+
+	//爆発パーティクル
+	std::unique_ptr<CombinedParticle> explosionParticle_ = nullptr;
+
 };

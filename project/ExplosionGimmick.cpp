@@ -22,6 +22,9 @@ void ExplosionGimmick::Initialize(Norm::BaseCamera* _camera)
 	worldTransform_.Initialize();
 	worldTransform_.SetTranslate(position_);
 
+	explosionParticle_ = std::make_unique<CombinedParticle>();
+	explosionParticle_->Initialize("Explosion", "Explosion");
+
 	// とりあえず見た目用オブジェクト
 	gimmickObject_ = std::make_unique<Object3d>();
 	gimmickObject_->Initialize(ModelTag{}, Object3dManager::GetInstance()->GenerateName("ExplosionGimmick"), "bomb");
@@ -41,6 +44,16 @@ void ExplosionGimmick::Update()
 
 	// 爆発中の演出
 	if (gimmickState_ == GimmickState::Active) {
+		if (explosionTimer_ == 0.0f) {
+			TransformEuler transform = {
+				{1,1,1},
+				{0,0,0},
+				worldTransform_.GetTranslate()
+			};
+			explosionParticle_->SetBaseTransform(transform);
+			explosionParticle_->SetIsPlay(true);
+		}
+
 		explosionTimer_ += 1.0f / 60.0f;
 
 		float t = explosionTimer_ / explosionDuration_;

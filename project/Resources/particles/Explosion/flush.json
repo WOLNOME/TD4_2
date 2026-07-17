@@ -14,7 +14,7 @@
     "BlendMode": 2,
     "ClumpNum": 1,
     "EffectStyle": 0,
-    "EmitRate": 5,
+    "EmitRate": 250,
     "EndColor": {
         "Max": {
             "w": 0.0,
@@ -25,18 +25,18 @@
         "Min": {
             "w": 0.0,
             "x": 1.0,
-            "y": 1.0,
-            "z": 1.0
+            "y": 0.8803088665008545,
+            "z": 0.0
         }
     },
-    "EndTime": 1.0,
+    "EndTime": 0.05000000074505806,
     "FloorHeight": 0.0,
     "GenerateMethod": 0,
     "GrainTransform": {
         "Rotate": {
             "Max": {
-                "x": 3.140000104904175,
-                "y": 3.140000104904175,
+                "x": 0.0,
+                "y": 0.0,
                 "z": 3.140000104904175
             },
             "Min": {
@@ -47,24 +47,24 @@
         },
         "Scale": {
             "Max": {
-                "x": 1.0,
-                "y": 1.0,
-                "z": 1.0
+                "x": 90.0,
+                "y": 3.0,
+                "z": 3.0
             },
             "Min": {
-                "x": 1.0,
-                "y": 1.0,
-                "z": 1.0
+                "x": 90.0,
+                "y": 3.0,
+                "z": 3.0
             }
         }
     },
     "Gravity": 1.0,
-    "IsBillboard": 0,
+    "IsBillboard": 1,
     "IsBound": 0,
     "IsGravity": 0,
     "LifeTime": {
-        "Max": 1.0,
-        "Min": 1.0
+        "Max": 0.10000000149011612,
+        "Min": 0.10000000149011612
     },
     "LocalTransform": {
         "Rotate": {
@@ -82,16 +82,16 @@
         "Translate": {
             "w": 0.0,
             "x": 0.0,
-            "y": 8.0,
+            "y": 0.0,
             "z": 0.0
         }
     },
-    "MaxGrains": 10,
-    "Primitive": 4,
+    "MaxGrains": 1000,
+    "Primitive": 3,
     "Repulsion": 0.5,
     "SizeVelocity": {
-        "Max": 400.0,
-        "Min": 400.0
+        "Max": 0.0,
+        "Min": -4.0
     },
     "StartColor": {
         "Max": {
@@ -103,22 +103,22 @@
         "Min": {
             "w": 1.0,
             "x": 1.0,
-            "y": 1.0,
-            "z": 1.0
+            "y": 0.8803088665008545,
+            "z": 0.0
         }
     },
     "StartTime": 0.0,
-    "Texture": "gradationLine2.png",
+    "Texture": "diamond.png",
     "Velocity": {
         "Max": {
-            "x": 1.0,
-            "y": 1.0,
-            "z": 1.0
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
         },
         "Min": {
-            "x": -1.0,
-            "y": -1.0,
-            "z": -1.0
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
         }
     }
 }

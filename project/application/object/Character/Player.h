@@ -5,6 +5,7 @@
 #include <WorldTransform.h>
 #include <Input.h>
 #include <ICollider.h>
+#include <CombinedParticle.h>
 
 namespace Norm {
 // =========================================================
@@ -100,5 +101,8 @@ private:
 
 	// ゴール済みフラグ
 	bool isGoaled_ = false;
+
+	//移動時パーティクル
+	std::unique_ptr<CombinedParticle> moveParticle_ = nullptr;
 };
 } 
