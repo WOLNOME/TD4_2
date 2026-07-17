@@ -44,7 +44,7 @@ void Norm::GamePlayScene::Initialize() {
 	//背景の生成 + 初期化
 	background_ = std::make_unique<Object3d>();
 	background_->Initialize(ShapeTag{},"background",Shape::ShapeKind::kPlane);
-	background_->SetTexture(TextureManager::GetInstance()->LoadTexture("uvChecker.png"));
+	background_->SetTexture(TextureManager::GetInstance()->LoadTexture("backGround.png"));
 	background_->SetIsLightProcess(true);
 	backgroundWT_.Initialize();
 	backgroundWT_.SetScale({ 100.0f, 100.0f, 1.0f });
