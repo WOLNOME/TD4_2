@@ -1,6 +1,7 @@
 #pragma once
 /// ===Include=== ///
 #include "Base/EnemyState.h"
+#include "Vector2.h"
 
 ///=====================================================/// 
 /// EnemyMoveState
@@ -30,6 +31,9 @@ private:
 	// 移動速度
 	float moveSpeed_ = 0.05f;
 
+	// 視野の範囲
+	Norm::Vector2 viewRange_ = { 10.0f, 10.0f };
+
 private:
 
 	/// <summary>
@@ -40,6 +44,6 @@ private:
 	/// <summary>
 	/// 状態遷移の確認
 	/// </summary>
-	void CheckTransition();
+	bool CheckTransition();
 };
 

@@ -106,7 +106,7 @@ namespace Norm {
 
 		// Enemyの生成と初期化
 		enemy_ = std::make_unique<BaseEnemy>();
-		enemy_->Initialize({ 0.0f, 5.0f, 0.0f });
+		//enemy_->Initialize({ 0.0f, 5.0f, 0.0f }, );
 
 		//パーティクルの生成と初期化
 		particle_ = std::make_unique<CombinedParticle>();

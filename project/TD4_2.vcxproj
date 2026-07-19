@@ -115,9 +115,10 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="application\object\entity\enemy\State\EnemyChaseState.cpp" />
     <ClCompile Include="application\object\entity\enemy\State\EnemyMoveState.cpp" />
     <ClCompile Include="application\object\entity\enemy\State\EnemyEscapeState.cpp" />
-    <ClCompile Include="application\object\entity\enemy\State\EnemyAlertState.cpp" />
     <ClCompile Include="application\object\entity\enemy\collider\EnemyMoveCollider.cpp" />
     <ClCompile Include="application\object\entity\enemy\collider\EnemyAreaCollider.cpp" />
+    <ClCompile Include="application\object\entity\enemy\State\EnemyStopState.cpp" />
+    <ClCompile Include="application\object\entity\enemy\Manager\EnemyManager.cpp" />
     <ClCompile Include="engine\collision\base\AABBColliderBase.cpp" />
     <ClCompile Include="engine\behaviorTree\nodeBase\NodeBase.cpp" />
     <ClCompile Include="engine\behaviorTree\interface\INode.cpp" />
@@ -223,9 +224,10 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="application\object\entity\enemy\State\EnemyChaseState.h" />
     <ClInclude Include="application\object\entity\enemy\State\EnemyMoveState.h" />
     <ClInclude Include="application\object\entity\enemy\State\EnemyEscapeState.h" />
-    <ClInclude Include="application\object\entity\enemy\State\EnemyAlertState.h" />
     <ClInclude Include="application\object\entity\enemy\collider\EnemyMoveCollider.h" />
     <ClInclude Include="application\object\entity\enemy\collider\EnemyAreaCollider.h" />
+    <ClInclude Include="application\object\entity\enemy\State\EnemyStopState.h" />
+    <ClInclude Include="application\object\entity\enemy\Manager\EnemyManager.h" />
     <ClInclude Include="engine\collision\base\AABBColliderBase.h" />
     <ClInclude Include="engine\behaviorTree\nodeBase\NodeBase.h" />
     <ClInclude Include="engine\behaviorTree\interface\INode.h" />

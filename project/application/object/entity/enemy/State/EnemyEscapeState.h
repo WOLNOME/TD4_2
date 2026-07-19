@@ -34,7 +34,7 @@ private:
 	Norm::Vector3 escapeDirection_{};
 
 	// この状態にとどまる時間(秒)
-	float escapeDuration_ = 1.5f;
+	float escapeDuration_ = 0.5f;
 	// 経過時間
 	float escapeTimer_ = 0.0f;
 
