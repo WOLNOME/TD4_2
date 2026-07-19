@@ -6,7 +6,7 @@
 #include <Object3d.h>
 
 // Application
-#include <application/object/entity/enemy/BaseEnemy.h>
+#include <application/object/entity/enemy/Manager/EnemyManager.h>
 #include <application/object/environment/Ground.h>
 #include <application/object/environment/Skydome.h>
 
@@ -82,7 +82,7 @@ private:
 	std::unique_ptr<Player> player_ = nullptr;
 
 	// Enemy
-	std::unique_ptr<BaseEnemy> enemy_ = nullptr;
+	std::unique_ptr<EnemyManager> enemyManager_ = nullptr;
 
 	// ギミック
 	std::unique_ptr<ExplosionGimmick> explosionGimmick_ = nullptr;

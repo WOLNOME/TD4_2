@@ -6,6 +6,8 @@
 #include "TextureManager.h"
 // Application
 #include <application/object/collision/ObjectCollider.h>
+// Player
+#include <application/object/Character/Player.h>
 // EnemyState
 #include "State/EnemyMoveState.h"
 // Math
@@ -15,6 +17,7 @@
 #include <imgui.h>
 #include "State/EnemyChaseState.h"
 #include "State/EnemyEscapeState.h"
+#include "State/EnemyStopState.h"
 #endif // _DEBUG
 
 using namespace Norm;
@@ -22,7 +25,7 @@ using namespace Norm;
 ///-------------------------------------------/// 
 /// 初期化処理
 ///-------------------------------------------///
-void BaseEnemy::Initialize(Norm::Vector3 position, EnemyDirection FirstDirection) {
+void BaseEnemy::Initialize(Norm::Vector3 position, Norm::Player* player, EnemyDirection FirstDirection) {
 	/// ===オブジェクト=== ///
 	// 生成・初期化
 	object3d_ = std::make_unique<Object3d>();
@@ -36,6 +39,9 @@ void BaseEnemy::Initialize(Norm::Vector3 position, EnemyDirection FirstDirection
 	worldTransform_.SetTranslate(position);
 	//オブジェクトにセット
 	object3d_->RegistWorldTransform(&worldTransform_);
+
+	/// ===Player=== ///
+	player_ = player;
 
 	/// ===コライダー=== ///
 	// 生成 + 登録
@@ -70,6 +76,9 @@ void BaseEnemy::Initialize(Norm::Vector3 position, EnemyDirection FirstDirection
 		enemyMoveCollider->SetOBBSize({ 0.8f, 1.5f, 0.8f }); // 敵のコライダーサイズ
 		enemyMoveCollider->SetHolder(this); // 自身のポインタをセット
 	}
+
+	/// ===初期位置=== ///
+	initialPosition_ = position;
 
 	/// ===方向の設定=== ///
 	currentDirection_ = FirstDirection;
@@ -128,14 +137,11 @@ void BaseEnemy::Update() {
 void BaseEnemy::DebugWithImGui() {
 #ifdef _DEBUG
 
-	preIsAttack_ = isAttack_;
-	preIsEscape_ = isEscape_;
-
 	ImGui::Begin("BaseEnemy");
-	ImGui::DragFloat3("debugPlayerPos_", &debugPlayerPos_.x, 0.1f);
 	ImGui::Checkbox("isAttack_", &isAttack_);
 	ImGui::Checkbox("isEscape_", &isEscape_);
 	ImGui::Checkbox("isTurning_", &isTurning_);
+	ImGui::Checkbox("isFlash_", &isFlash_);
 	ImGui::Checkbox("isAreaColliding_", &isAreaColliding_);
 	ImGui::Checkbox("isFootColliding_", &isFootColliding_);
 
@@ -145,14 +151,19 @@ void BaseEnemy::DebugWithImGui() {
 	ImGui::End();
 
 	// 攻撃状態が変化した場合の処理
-	if (!preIsAttack_ && isAttack_) {
-		isEscape_ = false; // 攻撃状態に入るときは逃走状態を解除
+	if (isAttack_) {
+		isAttack_ = false;
 		ChangeState(std::make_unique<EnemyChaseState>());
 	}
 	// 逃走状態が変化した場合の処理
-	if (!preIsEscape_ && isEscape_) {
-		isAttack_ = false; // 逃走状態に入るときは攻撃状態を解除
+	if (isEscape_) {
+		isEscape_ = false;
 		ChangeState(std::make_unique<EnemyEscapeState>());
+	}
+	// フラッシュ状態が変化した場合の処理
+	if (isFlash_) {
+		isFlash_ = false;	
+		Flash();
 	}
 
 	// コライダーデバッグ
@@ -176,27 +187,6 @@ void BaseEnemy::DebugWithImGui() {
 	}
 
 #endif // _DEBUG
-}
-
-///-------------------------------------------/// 
-/// 追跡処理
-///-------------------------------------------///
-void BaseEnemy::Chase(const Vector3 playerPos) {
-	// Playerの方向を計算
-	Vector3 toPlayer = playerPos - worldTransform_.GetWorldTranslate();
-	float distance = toPlayer.Length();
-
-	// 突進攻撃
-	if (distance > 0.0001f) {
-		Norm::Vector3 dir = { toPlayer.x / distance, toPlayer.y / distance, 0.0f };
-		Norm::Vector3 newPos = worldTransform_.GetWorldTranslate();
-		newPos.x += dir.x * chaseData_.chargeSpeed;
-		newPos.y += dir.y * chaseData_.chargeSpeed;
-		worldTransform_.SetTranslate(newPos);
-	}
-
-	// 向きの更新
-	UpdateFacing(toPlayer.x);
 }
 
 ///-------------------------------------------/// 
@@ -226,7 +216,7 @@ void BaseEnemy::UpdateFacing(float directionX) {
 	}
 
 	// 決定した左右の向きへ滑らかに回転させる
-	float currentRotationY_ = LerpAngle(worldTransform_.GetRotate().y, targetFacingRotationY_, chaseData_.rotateSpeed);
+	float currentRotationY_ = LerpAngle(worldTransform_.GetRotate().y, targetFacingRotationY_, rotationSpeed_);
 	worldTransform_.SetRotate({ 0.0f, currentRotationY_, 0.0f });
 
 	// 回転がほぼ完了したかを判定するための許容誤差
@@ -238,6 +228,15 @@ void BaseEnemy::UpdateFacing(float directionX) {
 	} else {
 		isRotating_ = true; // 回転中
 	}
+}
+
+///-------------------------------------------/// 
+/// フラッシュを喰らった時の処理
+///-------------------------------------------///
+void BaseEnemy::Flash() {
+	// フラッシュの構造体などが有ればそれを受け取り、フラッシュの範囲内にEnemyがいたらStateを移動するようにする。
+
+	ChangeState(std::make_unique<EnemyStopState>(std::move(currentState_)));
 }
 
 ///-------------------------------------------/// 

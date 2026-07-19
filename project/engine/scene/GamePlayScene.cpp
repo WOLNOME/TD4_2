@@ -59,8 +59,8 @@ void Norm::GamePlayScene::Initialize() {
 	stageManager_->LoadStage("resources/stages/stage1.json");
 
 	// Enemyの生成と初期化
-	enemy_ = std::make_unique<BaseEnemy>();
-	enemy_->Initialize({ 25.0f, -25.0f, 0.0f });
+	enemyManager_ = std::make_unique<EnemyManager>();
+	enemyManager_->SpawnEnemy({ 25.0f, -25.0f, 0.0f }, player_.get());
 
 	// 爆発ギミック
 	explosionGimmick_ = std::make_unique<ExplosionGimmick>();
@@ -123,7 +123,7 @@ void Norm::GamePlayScene::Update() {
 	camera_->Update();
 
 	// Enemyの更新
-	enemy_->Update();
+	enemyManager_->UpdateEnemies();
 
 	//爆発ギミック
 	explosionGimmick_->Update();
@@ -171,7 +171,7 @@ void Norm::GamePlayScene::DebugWithImGui() {
 	stageManager_->Debug();
 
 	// Enemy用デバッグ
-	enemy_->DebugWithImGui();
+	enemyManager_->DebugWithImGui();
 
 	//平行光源
 	dirLight_->DebugWithImGui(L"平行光源１");

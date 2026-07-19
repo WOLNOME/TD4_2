@@ -364,12 +364,13 @@
     <ClCompile Include="GimmickBase.cpp" />
     <ClCompile Include="ExplosionGimmick.cpp" />
     <ClCompile Include="engine\scene\TitleScene.cpp" />
-    <ClCompile Include="application\object\entity\enemy\State\EnemyAlertState.cpp" />
     <ClCompile Include="application\object\entity\enemy\collider\EnemyMoveCollider.cpp" />
     <ClCompile Include="application\object\entity\enemy\collider\EnemyAreaCollider.cpp" />
     <ClCompile Include="application\object\camera\FollowCamera.cpp" />
     <ClCompile Include="engine\scene\ResultScene.cpp" />
     <ClCompile Include="application\ui\pause\PauseMenu.cpp" />
+    <ClCompile Include="application\object\entity\enemy\State\EnemyStopState.cpp" />
+    <ClCompile Include="application\object\entity\enemy\Manager\EnemyManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="engine\scenebase\AbstractSceneFactory.h">
@@ -679,13 +680,14 @@
     <ClInclude Include="GimmickBase.h" />
     <ClInclude Include="ExplosionGimmick.h" />
     <ClInclude Include="engine\scene\TitleScene.h" />
-    <ClInclude Include="application\object\entity\enemy\State\EnemyAlertState.h" />
     <ClInclude Include="application\object\entity\enemy\collider\EnemyMoveCollider.h" />
     <ClInclude Include="application\object\entity\enemy\collider\EnemyAreaCollider.h" />
     <ClInclude Include="application\object\camera\FollowCamera.h" />
     <ClInclude Include="engine\scene\ResultScene.h" />
     <ClInclude Include="application\ui\pause\PauseMenu.h" />
     <ClInclude Include="engine\3d\object\ObjectEnum.h" />
+    <ClInclude Include="application\object\entity\enemy\State\EnemyStopState.h" />
+    <ClInclude Include="application\object\entity\enemy\Manager\EnemyManager.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\shaders\line\Line.hlsli">
