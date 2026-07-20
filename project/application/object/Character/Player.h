@@ -43,6 +43,12 @@ public:
 	// =========================================================
 
 	/// <summary>
+	/// 位置の設定
+	/// </summary>
+	/// <param name="translate"></param>
+	void SetTranslate(Vector3& translate) { wt_.SetTranslate(translate); }
+
+	/// <summary>
 	/// 位置の取得
 	/// </summary>
 	/// <returns></returns>
