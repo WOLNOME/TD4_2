@@ -65,13 +65,11 @@ void GimmickBase::SetColliderSize(const Vector3& size)
 
 bool GimmickBase::IsHitLightCircle() const
 {
+
 	if (!lightInfo_) {
 		return false;
 	}
 
-	if (!lightInfo_->isLighting) {
-		return false;
-	}
 
 	Vector3 diff = position_ - lightInfo_->position;
 

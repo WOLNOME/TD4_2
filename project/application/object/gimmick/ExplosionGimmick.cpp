@@ -125,7 +125,7 @@ void ExplosionGimmick::Reset()
 		baseColliderSize_
 	);
 
-	worldTransform_.SetScale(baseColliderSize_)
+	
 
 }
 
