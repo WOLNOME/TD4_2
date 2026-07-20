@@ -4,7 +4,7 @@
 #include <application/stage/StageLoader.h>
 #include <application/object/Character/Player.h>
 #include <application/object/entity/enemy/Manager/EnemyManager.h>
-#include "GimmickManager.h"
+#include <application/object/gimmick/GimmickManager.h>
 
 void Norm::StageManager::LoadStage(const std::string& jsonPath, Player* player, EnemyManager* enemyManager, GimmickManager* gimmickManager) {
 	chips_.clear();
