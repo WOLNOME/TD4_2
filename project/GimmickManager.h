@@ -4,6 +4,8 @@
 
 #include "Vector3.h"
 #include "GimmickBase.h"
+#include "engine/3d/camera/BaseCamera.h"
+
 
 using namespace Norm;
 
@@ -24,7 +26,7 @@ public:
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	void Initialize();
+	void Initialize(Norm::BaseCamera* _camera);
 	/// <summary>
 	/// 更新
 	/// </summary>
@@ -56,6 +58,7 @@ private:
 	std::vector<std::unique_ptr<GimmickBase>> gimmicks_;// ギミックのリスト
 	LightInfo lightInfo_{}; // ライト情報
 	GimmickType gimmickType_ = GimmickType::None; // ギミックの状態
+	Norm::BaseCamera* camera_ = nullptr; // カメラのポインタ
 
 };
 

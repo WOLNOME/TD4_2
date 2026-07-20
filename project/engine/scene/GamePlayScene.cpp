@@ -65,7 +65,7 @@ void Norm::GamePlayScene::Initialize() {
 	// 爆発ギミック
 	// ギミック管理
 	gimmickManager_ = std::make_unique<GimmickManager>();
-	gimmickManager_->Initialize();
+	gimmickManager_->Initialize(camera_.get());
 	gimmickManager_->CreateGimmick(
 		GimmickType::Explosion,
 		{ 14.0f, -25.0f, 0.0f }

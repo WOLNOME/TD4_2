@@ -6,6 +6,9 @@
 #include "application/object/collision/ObjectCollider.h"
 #include "GimmickCollider.h"
 
+#include "engine/3d/camera/BaseCamera.h"
+#include "application/ui/guide/GuideUI.h"
+
 
 using namespace Norm;
 

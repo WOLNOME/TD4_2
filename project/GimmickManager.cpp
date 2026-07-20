@@ -1,9 +1,9 @@
 #include "GimmickManager.h"
 #include "ExplosionGimmick.h"
-void GimmickManager::Initialize()
+void GimmickManager::Initialize(Norm::BaseCamera* _camera)
 {
+	camera_ = _camera;
 	gimmicks_.clear();
-
 }
 
 void GimmickManager::Update()
@@ -75,7 +75,7 @@ void GimmickManager::CreateGimmick(
     // Manager内のlightInfo_を全ギミックに参照させる
     gimmick->SetLightInfo(&lightInfo_);
 
-    gimmick->Initialize();
+    gimmick->Initialize(camera_);
 
     gimmicks_.push_back(std::move(gimmick));
 }
