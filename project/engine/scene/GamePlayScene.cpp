@@ -54,26 +54,22 @@ void Norm::GamePlayScene::Initialize() {
 	backgroundWT_.SetTranslate({ 0.0f, 0.0f, 2.5f });
 	background_->RegistWorldTransform(&backgroundWT_);
 
-	/* ステージ管理クラス生成 + ステージ読み込み */
-	stageManager_ = std::make_unique<StageManager>();
-	stageManager_->LoadStage("resources/stages/stage1.json");
-
 	// Enemyの生成と初期化
 	enemyManager_ = std::make_unique<EnemyManager>();
-	enemyManager_->SpawnEnemy({ 25.0f, -25.0f, 0.0f }, player_.get());
 
 	// 爆発ギミック
 	// ギミック管理
 	gimmickManager_ = std::make_unique<GimmickManager>();
 	gimmickManager_->Initialize(camera_.get());
-	gimmickManager_->CreateGimmick(
-		GimmickType::Explosion,
-		{ 14.0f, -25.0f, 0.0f }
+	
+	/* ステージ管理クラス生成 + ステージ読み込み */
+	stageManager_ = std::make_unique<StageManager>();
+	stageManager_->LoadStage(
+		"resources/stages/stage1.json", 
+		player_.get(),
+		enemyManager_.get(),
+		gimmickManager_.get()
 	);
-	/*explosionGimmick_ = std::make_unique<ExplosionGimmick>();
-	explosionGimmick_->SetLightInfo(&lightInfo_);
-	explosionGimmick_->SetPosition({ 14.0f,-25.0f, 0.0f });
-	explosionGimmick_->Initialize(camera_.get());*/
 
 	// 背景オブジェクト生成 + 初期化
 	background_ = std::make_unique<Object3d>();

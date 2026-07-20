@@ -6,7 +6,14 @@
 // Application
 #include <application/stage/MapChip.h>
 
+// グローバル前方宣言
+class EnemyManager;
+class GimmickManager;
+
 namespace Norm {
+// Norm空間の前方宣言
+class Player;
+
 // =========================================================
 // ステージ管理クラス
 // =========================================================
@@ -20,7 +27,7 @@ public:
 	/// ステージ読み込み処理
 	/// </summary>
 	/// <param name="jsonPath"></param>
-	void LoadStage(const std::string& jsonPath);
+	void LoadStage(const std::string& jsonPath, Player* player, EnemyManager* enemyManager, GimmickManager* gimmickManager);
 
 	/// <summary>
 	/// デバッグ表示
