@@ -17,14 +17,24 @@ void LightManager::Update() {
 	assert(pointLight_ && "ポイントライトを設定してください");
 	assert(camera_ && "カメラを設定してください");
 
+	//クールタイムの計算
+	if (flushCoolTimer_ > 0.0f) {
+		flushCoolTimer_ -= kDeltaTime;
+		if (flushCoolTimer_ <= 0.0f) {
+			flushCoolTimer_ = 0.0f;
+		}
+	}
+
 	//左クリックでフラッシュ
-	if (Input::GetInstance()->TriggerMouseButton(MouseButton::LeftButton)) {
+	if (Input::GetInstance()->TriggerMouseButton(MouseButton::LeftButton) && !isFlush_ && flushCoolTimer_ == 0.0f) {
 		//輝度を最大まで上げる
 		pointLight_->SetIntensity(kMaxIntensity);
 		//範囲を最大まで上げる
 		pointLight_->SetRadius(kMaxRange);
 		//フラッシュフラグをオンにする
 		isFlush_ = true;
+		//クールタイマーをセット
+		flushCoolTimer_ = kFlushCoolTime;
 	}
 
 	//フラッシュ後に明るさと範囲を徐々に戻していく処理
@@ -33,10 +43,10 @@ void LightManager::Update() {
 		flushKeepTimer_ += kDeltaTime;
 
 		//輝度と範囲を徐々にしぼめる
-		float intensity = MyMath::Lerp(kMaxIntensity, kNormalIntensity, MyMath::EaseInCirc(flushKeepTimer_ / kFlushKeepTime));
+		float intensity = MyMath::Lerp(kMaxIntensity, kNormalIntensity, MyMath::EaseInSine(flushKeepTimer_ / kFlushKeepTime));
 		pointLight_->SetIntensity(intensity);
 
-		float range = MyMath::Lerp(kMaxRange, kNormalRange, MyMath::EaseInCirc(flushKeepTimer_ / kFlushKeepTime));
+		float range = MyMath::Lerp(kMaxRange, kNormalRange, MyMath::EaseInSine(flushKeepTimer_ / kFlushKeepTime));
 		pointLight_->SetRadius(range);
 
 		//タイマーが規定時間に達したら

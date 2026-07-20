@@ -5,6 +5,7 @@
 #include "OBBColliderBase.h"
 
 //アプリケーション
+#include "application/system/LightManager.h"
 #include "application/object/environment/Skydome.h"
 #include "application/object/environment/Ground.h"
 #include "application/object/entity/enemy/BaseEnemy.h"
@@ -59,6 +60,9 @@ namespace Norm {
 		//点光源
 		std::unique_ptr<PointLight> pointLight;
 
+		//ライト管理クラス
+		std::unique_ptr<LightManager> lightManager_ = nullptr;
+
 		//スプライト
 		uint32_t textureHandleSprite_ = 0u;
 		std::unique_ptr<Sprite> sprite_ = nullptr;
@@ -100,7 +104,6 @@ namespace Norm {
 
 		//ギミック
 		std::unique_ptr<ExplosionGimmick> explosionGimmick_ = nullptr;
-		LightInfo lightInfo_{};
 		
 	};
 

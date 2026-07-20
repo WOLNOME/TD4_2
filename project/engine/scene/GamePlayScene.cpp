@@ -31,9 +31,9 @@ void Norm::GamePlayScene::Initialize() {
 	dirLight_->SetDirection({ 0.5f,0.5f,-1.0f });
 	pointLight_ = std::make_unique<PointLight>();
 	pointLight_->SetPosition({ 0.0f,0.0f,0.0f });
-	pointLight_->SetRadius(8.0f);
-	pointLight_->SetDecay(1.5f);
-	pointLight_->SetIntensity(3.0f);
+	pointLight_->SetRadius(6.0f);
+	pointLight_->SetDecay(1.3f);
+	pointLight_->SetIntensity(2.0f);
 
 	// ライトを登録
 	sceneLight_->SetLight(dirLight_.get());
@@ -69,7 +69,7 @@ void Norm::GamePlayScene::Initialize() {
 
 	// 爆発ギミック
 	explosionGimmick_ = std::make_unique<ExplosionGimmick>();
-	explosionGimmick_->SetLightInfo(&lightInfo_);
+	explosionGimmick_->SetLightManager(lightManager_.get());
 	explosionGimmick_->SetPosition({ 14.0f,-25.0f, 0.0f });
 	explosionGimmick_->Initialize(camera_.get());
 

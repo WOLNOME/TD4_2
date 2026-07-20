@@ -83,7 +83,6 @@ namespace Norm {
 
 		//ギミック
 		std::unique_ptr<ExplosionGimmick> explosionGimmick_ = nullptr;
-		LightInfo lightInfo_{};
 
 		std::unique_ptr<GuideUI> guideUI_ = nullptr;
 	};

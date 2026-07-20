@@ -72,13 +72,15 @@ private:
 	bool isFlush_ = false;
 
 	const float kMaxIntensity = 6.0f;		//フラッシュ時最大の輝度
-	const float kNormalIntensity = 3.0f;	//通常時の輝度
-	const float kMaxRange = 12.0f;			//フラッシュ時最大の範囲
-	const float kNormalRange = 8.0f;		//通常時の範囲
+	const float kNormalIntensity = 2.0f;	//通常時の輝度
+	const float kMaxRange = 14.0f;			//フラッシュ時最大の範囲
+	const float kNormalRange = 6.0f;		//通常時の範囲
 
-	const float kFlushKeepTime = 1.0f;
+	const float kFlushKeepTime = 0.6f;
 	float flushKeepTimer_ = 0.0f;
 
+	const float kFlushCoolTime = 2.0f;
+	float flushCoolTimer_ = 0.0f;
 
 
 };
