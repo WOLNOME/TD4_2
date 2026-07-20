@@ -4,6 +4,7 @@
 #include <BaseScene.h>
 #include <DevelopCamera.h>
 #include <Sprite.h>
+#include <Audio.h>
 
 // Application
 #include <application/object/environment/Skydome.h>
@@ -57,5 +58,11 @@ private:
 	// スプライト
 	uint32_t texResult_ = 0u;
 	std::unique_ptr<Sprite> spriteResult_ = nullptr;
+
+	// クリック音
+	std::unique_ptr<Norm::Audio> seClick_;
+
+	// BGM
+	std::unique_ptr<Norm::Audio> bgmResult_;
 };
 }

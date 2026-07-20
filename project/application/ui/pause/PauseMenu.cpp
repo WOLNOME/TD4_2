@@ -67,7 +67,7 @@ void Norm::PauseMenu::Update() {
 	// ESCキーが押されたらポーズ状態を切り替える
 	if (input->TriggerKey(DIK_ESCAPE)) {
 		// ポーズキー押下音再生
-		sePause_->Play(false, 0.4f);
+		sePause_->Play(false, 0.2f);
 
 		isPaused_ = !isPaused_;
 

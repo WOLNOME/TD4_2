@@ -61,6 +61,10 @@ void Norm::TitleScene::Initialize() {
 	seClick_ = std::make_unique<Norm::Audio>();
 	seClick_->Initialize("click.wav");
 
+	bgmTitle_ = std::make_unique<Norm::Audio>();
+	bgmTitle_->Initialize("titleBGM.wav");
+	bgmTitle_->Play(true, 0.5f);
+
 	PostEffectManager::GetInstance()->AddPostEffectOrder(PostEffectKind::None);
 }
 

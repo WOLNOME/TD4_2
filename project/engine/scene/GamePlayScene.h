@@ -94,5 +94,8 @@ private:
 	// ポーズメニュー
 	std::unique_ptr<PauseMenu> pauseMenu_;
 	std::unique_ptr<GuideUI> guideUI_ = nullptr;
+
+	// BGM
+	std::unique_ptr<Norm::Audio> bgmGame_;
 };
 } // namespace Norm

@@ -79,5 +79,8 @@ namespace Norm {
 
 		// クリック音
 	    std::unique_ptr<Norm::Audio> seClick_;
+
+		// タイトルBGM
+	    std::unique_ptr<Norm::Audio> bgmTitle_;
 	};
 }
