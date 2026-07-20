@@ -72,6 +72,9 @@ void Norm::TitleScene::Initialize() {
 		titleEnemies_.push_back(std::move(newObject));
 
 	}
+	initSize_ = buttonUI_.sprite->GetSize();
+
+	PostEffectManager::GetInstance()->AddPostEffectOrder(PostEffectKind::None);
 }
 
 void Norm::TitleScene::Finalize() {
