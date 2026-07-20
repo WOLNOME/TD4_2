@@ -9,6 +9,9 @@ void GimmickManager::Initialize(Norm::BaseCamera* _camera)
 void GimmickManager::Update()
 {
     for (auto& gimmick : gimmicks_) {
+
+        gimmick->UpdateUI();
+
         if (!gimmick) {
             continue;
         }

@@ -35,6 +35,8 @@ public:
 	virtual void Initialize(Norm::BaseCamera* _camera) = 0;
 	virtual void Update();
 
+	void UpdateUI();
+
 	/// <summary>
 	/// ライトの円に当たっているか判定
 	/// </summary>
@@ -74,7 +76,7 @@ protected:
 
 	std::unique_ptr<GuideUI> guideUI_ = nullptr;
 
-	Vector3 uiOffset_ = { 0.0f,4.0f,0.0f };
+	Vector3 uiOffset_ = { 0.0f,2.0f,0.0f };
 
 	Vector3 position_{};
 	float radius_ = 1.0f;
