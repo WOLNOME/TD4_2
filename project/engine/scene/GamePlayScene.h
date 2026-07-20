@@ -18,7 +18,7 @@
 #include <application/ui/pause/PauseMenu.h>
 
 //#include "ExplosionGimmick.h"
-#include "GimmickManager.h"
+#include "application/object/gimmick/GimmickManager.h"
 
 namespace Norm {
 // =========================================================
