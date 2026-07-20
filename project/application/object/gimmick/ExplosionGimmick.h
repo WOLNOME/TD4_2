@@ -1,21 +1,26 @@
 #pragma once
 #include "GimmickBase.h"
+#include <ICollider.h>
+#include "Vector3.h"
 #include "CombinedParticle.h"
+
+using namespace Norm;
+
 
 class ExplosionGimmick : public GimmickBase
 {
 public:
-	ExplosionGimmick() = default;
-	~ExplosionGimmick() override = default;
-
+	
 	/// <summary>
 	/// 初期化
 	/// </summary>
 	void Initialize(Norm::BaseCamera* _camera) override;
+
 	/// <summary>
 	///	更新
 	/// </summary>
 	void Update() override;
+
 
 	/// <summary>
 	/// 爆発をリセット
@@ -68,6 +73,14 @@ private:
 	float explosionDuration_ = 0.5f;
 	float explosionScale_ = 1.0f;
 	float maxExplosionScale_ = 5.0f;
+
+	// 再出現用
+	float respawnTimer_ = 0.0f;
+	float respawnDuration_ = 3.0f;
+
+	// 爆発前のコライダーサイズ
+	Vector3 baseColliderSize_;
+
 
 	//爆発パーティクル
 	std::unique_ptr<CombinedParticle> explosionParticle_ = nullptr;

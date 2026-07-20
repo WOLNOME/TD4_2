@@ -18,7 +18,7 @@ void EnemyMoveCollider::Debug() {
 	OBBColliderBase::Debug();
 
 	// カラーを戻す
-	debugLineColor_ = { 1,1,1,1 };
+	debugLineColor_ = { 0,1,0,1 };
 #endif // _DEBUG
 }
 
@@ -26,11 +26,12 @@ void EnemyMoveCollider::Debug() {
 /// 衝突時のコールバック
 ///-------------------------------------------///
 void EnemyMoveCollider::OnCollision(Norm::ICollider * _other, Norm::CollisionAttribute _attribute) {
-	// カラーを戻す
-	debugLineColor_ = { 1,0,0,1 };
 	
 	// 衝突時の処理
 	if (_attribute == Norm::CollisionAttribute::Block || _attribute == Norm::CollisionAttribute::Area) {
+
+		// カラーを赤に変更
+		debugLineColor_ = { 1,0,0,1 };
 		// フラグを有効化
 		enemy_->SetFootColliding(true);
 	}

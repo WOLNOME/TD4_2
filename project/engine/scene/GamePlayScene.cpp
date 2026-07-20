@@ -4,6 +4,7 @@
 #include <CollisionManager.h>
 #include <Input.h>
 #include <SceneManager.h>
+#include <Object3dManager.h>
 
 void Norm::GamePlayScene::Initialize() {
 	/* シーン共通初期化処理 */
@@ -53,10 +54,30 @@ void Norm::GamePlayScene::Initialize() {
 	backgroundWT_.SetTranslate({ 0.0f, 0.0f, 2.5f });
 	background_->RegistWorldTransform(&backgroundWT_);
 
+	// Enemyの生成と初期化
+	enemyManager_ = std::make_unique<EnemyManager>();
+
+	// 爆発ギミック
+	// ギミック管理
+	gimmickManager_ = std::make_unique<GimmickManager>();
+	gimmickManager_->Initialize(camera_.get());
+	
 	/* ステージ管理クラス生成 + ステージ読み込み */
 	stageManager_ = std::make_unique<StageManager>();
-	stageManager_->LoadStage("resources/stages/stage1.json");
+	stageManager_->LoadStage(
+		"resources/stages/stage1.json", 
+		player_.get(),
+		enemyManager_.get(),
+		gimmickManager_.get()
+	);
 
+	// 背景オブジェクト生成 + 初期化
+	background_ = std::make_unique<Object3d>();
+	background_->Initialize(ShapeTag{}, Object3dManager::GetInstance()->GenerateName("background"), Shape::ShapeKind::kPlane);
+	background_->SetColor({0.2f, 0.2f, 0.2f, 1.0f});
+	backgroundWT_.Initialize();
+	backgroundWT_.SetScale({150.0f, 100.0f, 1.0f}); // 画面全体を覆うように
+	background_->RegistWorldTransform(&backgroundWT_);
 	//ライト管理クラスの生成・初期化
 	lightManager_ = std::make_unique<LightManager>();
 	lightManager_->Initialize();
@@ -72,6 +93,9 @@ void Norm::GamePlayScene::Initialize() {
 	explosionGimmick_->SetLightManager(lightManager_.get());
 	explosionGimmick_->SetPosition({ 14.0f,-25.0f, 0.0f });
 	explosionGimmick_->Initialize(camera_.get());
+	// ポーズメニュー生成 + 初期化
+	pauseMenu_ = std::make_unique<PauseMenu>();
+	pauseMenu_->Initialize();
 
 	//ポストエフェクト　ブルーム
 	PostEffectManager::GetInstance()->AddPostEffectOrder(PostEffectKind::BloomExtract);
@@ -86,6 +110,20 @@ void Norm::GamePlayScene::Update() {
 	/* シーン共通更新処理 */
 	BaseScene::Update();
 
+	/* ポーズメニュー更新処理 */
+	pauseMenu_->Update();
+	// タイトルへ戻るが押されていたらシーンを切り替える
+	if (pauseMenu_->IsRequestedReturnToTitle()) {
+		sceneManager_->SetNextScene("TITLE");
+	}
+	// ポーズ中なら以降の更新をスキップ
+	if (pauseMenu_->IsPaused()) { 
+		return;
+	}
+
+	//ライト移動処理
+	LightMoveProcess();
+
 	//ライト管理クラスの更新
 	lightManager_->Update();
 
@@ -95,14 +133,21 @@ void Norm::GamePlayScene::Update() {
 	if (player_->IsGoaled()) {
 		sceneManager_->SetNextScene("RESULT");
 	}
+	backgroundWT_.SetTranslate({ // 背景オブジェクトをプレイヤーに追従させる
+		player_->GetTranslate().x, 
+		player_->GetTranslate().y, 
+		player_->GetTranslate().z + 4.0f // ちょっと奥に配置
+	});
 	/* カメラ更新処理 */
 	camera_->Update();
 
 	// Enemyの更新
-	enemy_->Update();
+	enemyManager_->UpdateEnemies();
 
-	//爆発ギミック
-	explosionGimmick_->Update();
+	// ギミックに最新のライト情報を渡す
+	gimmickManager_->SetLightInfo(lightInfo_);
+	// 全ギミックを更新
+	gimmickManager_->Update();
 
 	/* 当たり判定処理（全ての移動が終わったあとのため最後）*/
 	CollisionManager::GetInstance()->CheckCollision();
@@ -150,16 +195,19 @@ void Norm::GamePlayScene::DebugWithImGui() {
 	stageManager_->Debug();
 
 	// Enemy用デバッグ
-	enemy_->DebugWithImGui();
+	enemyManager_->DebugWithImGui();
 
 	//平行光源
 	dirLight_->DebugWithImGui(L"平行光源１");
 	//点光源
 	pointLight_->DebugWithImGui(L"点光源１");
 
+	if (gimmickManager_) {
+		gimmickManager_->Debug();
+	}
 	background_->Debug(L"背景");
 
-	explosionGimmick_->DebugImGui();
+	//explosionGimmick_->DebugImGui();
 
 	PostEffectManager::GetInstance()->DebugWithImGui();
 

@@ -20,7 +20,7 @@ void Norm::Player::Initialize() {
 	object_->SetIsOutline(true);
 	object_->SetOutlineParam(TextureManager::GetInstance()->LoadTexture("green.png"), 1.1f);
 	wt_.Initialize();
-	wt_.SetTranslate({0.0f, -52.0f, 0.0f});
+	/*wt_.SetTranslate({0.0f, -52.0f, 0.0f});*/
 	object_->RegistWorldTransform(&wt_);
 
 	// コライダーの生成 + 登録

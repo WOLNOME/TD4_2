@@ -99,7 +99,10 @@ namespace Norm {
 			collider2->SetCollisionAttribute(CollisionAttribute::Enemy);
 			collider2->SetWorldTransform(&cObject2WT_);
 			collider2->SetOBBSize({ 2.0f,2.0f,2.0f });
+
 		}
+
+		
 
 		back_ = std::make_unique<Object3d>();
 		back_->Initialize(ShapeTag{}, Object3dManager::GetInstance()->GenerateName("Back"), Shape::ShapeKind::kPlane);
@@ -112,7 +115,7 @@ namespace Norm {
 
 		// Enemyの生成と初期化
 		enemy_ = std::make_unique<BaseEnemy>();
-		enemy_->Initialize({ 0.0f, 5.0f, 0.0f });
+		//enemy_->Initialize({ 0.0f, 5.0f, 0.0f }, );
 
 		//パーティクルの生成と初期化
 		particle_ = std::make_unique<CombinedParticle>();

@@ -3,20 +3,24 @@
 // Engine
 #include <BaseScene.h>
 #include <DevelopCamera.h>
+#include <Object3d.h>
 
 // Application
+#include <application/object/entity/enemy/Manager/EnemyManager.h>
 #include <application/system/LightManager.h>
 #include <application/object/environment/Skydome.h>
 #include <application/object/environment/Ground.h>
-#include <application/object/entity/enemy/BaseEnemy.h>
+#include <application/object/environment/Skydome.h>
 
 #include <application/ui/guide/GuideUI.h>
 
-#include <application/stage/StageManager.h>
 #include <application/object/Character/Player.h>
 #include <application/object/camera/FollowCamera.h>
+#include <application/stage/StageManager.h>
+#include <application/ui/pause/PauseMenu.h>
 
-#include "ExplosionGimmick.h"
+//#include "ExplosionGimmick.h"
+#include "application/object/gimmick/GimmickManager.h"
 
 namespace Norm {
 	// =========================================================
@@ -79,11 +83,14 @@ namespace Norm {
 		std::unique_ptr<Player> player_ = nullptr;
 
 		// Enemy
-		std::unique_ptr<BaseEnemy> enemy_ = nullptr;
+		std::unique_ptr<EnemyManager> enemyManager_ = nullptr;
 
 		//ギミック
 		std::unique_ptr<ExplosionGimmick> explosionGimmick_ = nullptr;
+		std::unique_ptr<GimmickManager> gimmickManager_;
 
+		// ポーズメニュー
+		std::unique_ptr<PauseMenu> pauseMenu_;
 		std::unique_ptr<GuideUI> guideUI_ = nullptr;
 	};
-}
+} // namespace Norm

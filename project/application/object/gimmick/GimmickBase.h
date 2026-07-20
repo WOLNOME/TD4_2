@@ -3,8 +3,12 @@
 #include "Vector3.h"
 #include "WorldTransform.h"
 #include "Object3d.h"
+#include "application/object/collision/ObjectCollider.h"
+#include "GimmickCollider.h"
+
 #include "engine/3d/camera/BaseCamera.h"
 #include "application/ui/guide/GuideUI.h"
+
 
 using namespace Norm;
 
@@ -21,8 +25,6 @@ class LightManager;
 class GimmickBase
 {
 public:
-	GimmickBase() = default;
-	virtual ~GimmickBase() = default;
 
 	virtual void Initialize(Norm::BaseCamera* _camera) = 0;
 	virtual void Update();
@@ -45,10 +47,16 @@ public:
 	const Vector3& GetPosition() const { return position_; }
 	float GetRadius() const { return radius_; }
 
+	void CreateCollider(CollisionAttribute attribute, const Vector3& offset, const Vector3& size);
+
+	
+
+
 protected:
 	virtual void OnLightHit() {}
 	virtual void OnFlashHit() {}
 
+	void SetColliderSize(const Vector3& size);
 protected:
 	LightManager* lightManager_ = nullptr;
 
@@ -63,4 +71,6 @@ protected:
 
 	Vector3 position_{};
 	float radius_ = 1.0f;
+
+	std::unique_ptr<ICollider> collider_ = nullptr;
 };

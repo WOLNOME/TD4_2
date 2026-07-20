@@ -30,6 +30,13 @@ void Norm::ResultScene::Initialize() {
 	/* 天球の生成 + 初期化 */
 	skydome_ = std::make_unique<Skydome>();
 	skydome_->Initialize();
+
+	/* スプライト生成 + 初期化 */
+	spriteResult_ = std::make_unique<Sprite>();
+	texResult_ = TextureManager::GetInstance()->LoadTexture("result.png");
+	spriteResult_->Initialize(SpriteTag{}, Object3dManager::GetInstance()->GenerateName("Sprite"), Order::Front0, texResult_);
+
+	PostEffectManager::GetInstance()->AddPostEffectOrder(PostEffectKind::None);
 }
 
 void Norm::ResultScene::Finalize() {}

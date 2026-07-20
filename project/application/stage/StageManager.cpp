@@ -2,8 +2,11 @@
 
 // Application
 #include <application/stage/StageLoader.h>
+#include <application/object/Character/Player.h>
+#include <application/object/entity/enemy/Manager/EnemyManager.h>
+#include <application/object/gimmick/GimmickManager.h>
 
-void Norm::StageManager::LoadStage(const std::string& jsonPath) {
+void Norm::StageManager::LoadStage(const std::string& jsonPath, Player* player, EnemyManager* enemyManager, GimmickManager* gimmickManager) {
 	chips_.clear();
 
 	// ローダーを使ってデータを取得
@@ -29,7 +32,37 @@ void Norm::StageManager::LoadStage(const std::string& jsonPath) {
 					blockTypeStr = data.tileTypes[localTileId];
 				}
 
-				// 文字列から生成する MapChip::Type　を判別
+				// 座標計算
+				Vector3 position = {
+				    x * data.tileSize,
+				    -y * data.tileSize, // マップエディタに合わせて反対方向へ
+				    0.0f};
+
+				// プレイヤーの配置
+				if (blockTypeStr == "player") {
+					if (player) {
+						player->SetTranslate(position);
+					}
+					continue;
+				}
+
+				// 敵の生成
+				if (blockTypeStr == "ghost") {
+					if (enemyManager) {
+						enemyManager->SpawnEnemy(position, player);
+					}
+					continue;
+				}
+
+				// 爆弾の生成
+				if (blockTypeStr == "bomb") {
+					if (gimmickManager) {
+						gimmickManager->CreateGimmick(GimmickType::Explosion, position);
+					}
+					continue;
+				}
+
+				// 各ブロックの生成
 				MapChip::Type type = MapChip::Type::None;
 				if (blockTypeStr == "normalBlock") {
 					type = MapChip::Type::NormalBlock;
@@ -43,13 +76,6 @@ void Norm::StageManager::LoadStage(const std::string& jsonPath) {
 				if (type == MapChip::Type::None) {
 					continue;
 				}
-
-				// 座標計算
-				Vector3 position = {
-					x * data.tileSize, 
-					-y * data.tileSize, // マップエディタに合わせて反対方向へ
-					0.0f
-				};
 
 				// チップの生成・登録
 				auto chip = std::make_unique<MapChip>();

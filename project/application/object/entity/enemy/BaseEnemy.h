@@ -27,6 +27,11 @@ constexpr EnemyDirection Opposite(EnemyDirection dir) {
 	return (dir == EnemyDirection::Right) ? EnemyDirection::Left : EnemyDirection::Right;
 }
 
+/// ===前方宣言=== ///
+namespace Norm {
+	class Player;
+}
+
 ///=====================================================/// 
 /// BaseEnemy
 /// Enemyの基盤クラス
@@ -40,7 +45,7 @@ public:
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	void Initialize(Norm::Vector3 position, EnemyDirection FirstDirection = EnemyDirection::Left);
+	void Initialize(Norm::Vector3 position, Norm::Player* player, EnemyDirection FirstDirection = EnemyDirection::Left);
 
 	/// <summary>
 	/// 更新処理
@@ -53,11 +58,6 @@ public:
 	void DebugWithImGui();
 
 	/// <summary>
-	/// 追跡処理
-	/// </summary>
-	void Chase(const Norm::Vector3 playerPos);
-
-	/// <summary>
 	/// 状態を変更する
 	/// </summary>
 	/// <param name="newState"></param>
@@ -68,6 +68,11 @@ public:
 	/// </summary>
 	/// <param name="directionX"></param>
 	void UpdateFacing(float directionX);
+
+	/// <summary>
+	/// フラッシュを喰らった時の処理
+	/// </summary>
+	void Flash();
 
 public:
 	/// <summary>
@@ -88,10 +93,22 @@ public:
 	Norm::WorldTransform& GetWorldTransform() { return worldTransform_; }
 
 	/// <summary>
+	/// プレイヤーのポインタを取得
+	/// </summary>
+	/// <returns></returns>
+	Norm::Player* GetPlayer() const { return player_; }
+
+	/// <summary>
 	/// velocityを取得する
 	/// </summary>
 	/// <returns></returns>
 	Norm::Vector3 GetVelocity() const { return velocity_; }
+
+	/// <summary>
+	/// 初期位置を取得する
+	/// </summary>
+	/// <returns></returns>
+	Norm::Vector3 GetInitialPosition() const { return initialPosition_; }
 
 	/// <summary>
 	/// EnemyDrectionを取得する
@@ -117,8 +134,13 @@ public:
 	/// <returns></returns>
 	bool IsRotating() const { return isRotating_; }
 
+	/// <summary>
+	/// 死亡しているかどうかを取得
+	/// </summary>
+	/// <returns></returns>
+	bool IsDead() const { return isDead_; }
+
 #ifdef _DEBUG
-	Norm::Vector3 GetDebugPlayerPos() const { return debugPlayerPos_; }
 	bool GetIsTurning() const { return isTurning_; }
 #endif // DEBUG
 
@@ -154,7 +176,6 @@ public:
 	void SetIsTurning(bool isFlag) { isTurning_ = isFlag; }
 #endif // _DEBUG
 
-
 private:
 	/// ============================== ///
 	///		メンバ変数
@@ -169,15 +190,17 @@ private:
 	std::unique_ptr<EnemyState> currentState_ = nullptr;
 	EnemyDirection currentDirection_ = EnemyDirection::Right;
 
+	// プレイヤーのポインタ
+	Norm::Player* player_ = nullptr;
+
 	// 速度
 	Norm::Vector3 velocity_ = { 0.0f, 0.0f, 0.0f };
 
-	// 追跡関連の変数
-	struct BaseEnemyChaseData {
-		float chargeSpeed = 0.1f; // 突進速度
-		float rotateSpeed = 0.05f; // 回転速度
-	};
-	BaseEnemyChaseData chaseData_{};
+	// 初期位置
+	Norm::Vector3 initialPosition_ = {0.0f, 0.0f, 0.0f};
+
+	// 回転速度
+	float rotationSpeed_ = 0.05f;
 
 	// 目標のY軸回転角
 	float targetFacingRotationY_ = 0.0f; 
@@ -189,12 +212,13 @@ private:
 	// 回転中かどうかのフラグ
 	bool isRotating_ = false; 
 
+	// 死亡フラグ
+	bool isDead_ = false;
+
 #ifdef _DEBUG
-	Norm::Vector3 debugPlayerPos_ = { 0.0f, 0.0f, 0.0f };
+	bool isFlash_ = false;
 	bool isAttack_ = false;
-	bool preIsAttack_ = false;
 	bool isEscape_ = false;
-	bool preIsEscape_ = false;
 	bool isTurning_ = false;
 #endif // _DEBUG
 

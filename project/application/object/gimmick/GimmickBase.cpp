@@ -38,6 +38,40 @@ void GimmickBase::HitLight()
 	OnLightHit();
 }
 
+void GimmickBase::CreateCollider(CollisionAttribute attribute, const Vector3& offset, const Vector3& size)
+{
+	if (!gimmickObject_) 
+	{
+		return;
+	}
+
+	collider_ = std::make_unique<GimmickCollider>(this);
+
+	auto* collider = dynamic_cast<GimmickCollider*>(collider_.get());
+	if (!collider) 
+	{
+		return;
+	}
+
+	collider->SetCollisionAttribute(attribute);
+	collider->SetWorldTransform(&worldTransform_);
+	collider->SetOffset(offset);
+	collider->SetOBBSize(size);
+
+}
+
+void GimmickBase::SetColliderSize(const Vector3& size)
+{
+	auto* collider = dynamic_cast<GimmickCollider*>(collider_.get());
+	if (!collider) 
+	{
+		return;
+	}
+
+	collider->SetOBBSize(size);
+
+}
+
 bool GimmickBase::IsHitLightCircle() const
 {
 	Vector3 diff = position_ - lightManager_->GetPointLight()->GetPosition();
