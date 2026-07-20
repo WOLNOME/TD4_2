@@ -180,6 +180,10 @@ namespace Norm {
 				olWT_.SetRotate(rotate);
 				olWT_.SetScale(scale);
 			}
+
+			//更新
+			outlineObject_->Update();
+
 		}
 
 		//メッシュの種類ごとの処理
