@@ -9,7 +9,7 @@
 #include "application/object/environment/Ground.h"
 #include "application/object/entity/enemy/BaseEnemy.h"
 
-#include "ExplosionGimmick.h"
+#include "application/object/gimmick/ExplosionGimmick.h"
 
 namespace Norm {
 
