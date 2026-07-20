@@ -17,7 +17,8 @@ enum class GimmickState
 	Hidden,      // 見つかっていない
 	Discovered, // ライトで発見済み
 	Active,     // 起動中
-	Used        // 使用済み
+	Used,        // 使用済み
+	Respawning // 再生成演出中
 };
 
 class LightManager;
@@ -40,16 +41,14 @@ public:
 	void HitLight();
 
 	/// ==============アクセッサ================ ///
-	
 	void SetLightManager(LightManager* _lightManager) { lightManager_ = _lightManager; }
-	
+
+
 	GimmickState GetGimmickState() const { return gimmickState_; }//状態を取得
 	const Vector3& GetPosition() const { return position_; }
 	float GetRadius() const { return radius_; }
 
 	void CreateCollider(CollisionAttribute attribute, const Vector3& offset, const Vector3& size);
-
-	
 
 
 protected:
@@ -58,6 +57,7 @@ protected:
 
 	void SetColliderSize(const Vector3& size);
 protected:
+
 	LightManager* lightManager_ = nullptr;
 
 	GimmickState gimmickState_ = GimmickState::Hidden;
