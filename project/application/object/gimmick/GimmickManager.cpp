@@ -1,81 +1,80 @@
 #include "GimmickManager.h"
 #include "ExplosionGimmick.h"
-void GimmickManager::Initialize(Norm::BaseCamera* _camera)
-{
+#include <cassert>
+
+#include "application/system/LightManager.h"
+
+void GimmickManager::Initialize(Norm::BaseCamera* _camera) {
 	camera_ = _camera;
 	gimmicks_.clear();
 }
 
-void GimmickManager::Update()
-{
-    for (auto& gimmick : gimmicks_) {
-        if (!gimmick) {
-            continue;
-        }
+void GimmickManager::Update() {
+	for (auto& gimmick : gimmicks_) {
+		if (!gimmick) {
+			continue;
+		}
 
-        gimmick->Update();
-    }
+		gimmick->Update();
+	}
 
 }
 
-void GimmickManager::Debug()
-{
+void GimmickManager::Debug() {
 #ifdef _DEBUG
 
-    for (auto& gimmick : gimmicks_) {
-        if (!gimmick) {
-            continue;
-        }
+	for (auto& gimmick : gimmicks_) {
+		if (!gimmick) {
+			continue;
+		}
 
-        // 現状はExplosionGimmickだけ個別のDebugImGuiを持っている
-        if (auto* explosion =
-            dynamic_cast<ExplosionGimmick*>(gimmick.get())) {
+		// 現状はExplosionGimmickだけ個別のDebugImGuiを持っている
+		if (auto* explosion =
+			dynamic_cast<ExplosionGimmick*>(gimmick.get())) {
 
-            explosion->DebugImGui();
-        }
-    }
+			explosion->DebugImGui();
+		}
+	}
 
 #endif
 }
 
 void GimmickManager::CreateGimmick(
-    GimmickType type,
-    const Vector3& position)
-{
-    std::unique_ptr<GimmickBase> gimmick = nullptr;
+	GimmickType type,
+	const Vector3& position) {
+	assert(lightManager_ && "ライトマネージャーが設定されていません");
 
-    switch (type) {
-    case GimmickType::Explosion:
-    {
-        auto explosion = std::make_unique<ExplosionGimmick>();
+	std::unique_ptr<GimmickBase> gimmick = nullptr;
 
-        explosion->SetPosition(position);
+	switch (type) {
+	case GimmickType::Explosion:
+	{
+		auto explosion = std::make_unique<ExplosionGimmick>();
+		explosion->SetLightManager(lightManager_);
+		explosion->SetPosition(position);
 
-        gimmick = std::move(explosion);
-        break;
-    }
+		gimmick = std::move(explosion);
+		break;
+	}
 
-    case GimmickType::HomingLauncher:
-        // 後で追加
-        break;
+	case GimmickType::HomingLauncher:
+		// 後で追加
+		break;
 
-    case GimmickType::StunTrap:
-        // 後で追加
-        break;
+	case GimmickType::StunTrap:
+		// 後で追加
+		break;
 
-    case GimmickType::None:
-    default:
-        return;
-    }
+	case GimmickType::None:
+	default:
+		return;
+	}
 
-    if (!gimmick) {
-        return;
-    }
+	if (!gimmick) {
+		return;
+	}
 
-    // Manager内のlightInfo_を全ギミックに参照させる
-    gimmick->SetLightInfo(&lightInfo_);
+	gimmick->Initialize(camera_);
 
-    gimmick->Initialize(camera_);
-
-    gimmicks_.push_back(std::move(gimmick));
+	gimmicks_.push_back(std::move(gimmick));
 }

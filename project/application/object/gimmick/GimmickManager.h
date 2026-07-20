@@ -10,18 +10,17 @@
 using namespace Norm;
 
 
-	enum class GimmickType
-	{
-		None,
-		Explosion,
-		HomingLauncher,
-		StunTrap,
+enum class GimmickType {
+	None,
+	Explosion,
+	HomingLauncher,
+	StunTrap,
 
-	};
-class GimmickManager
-{
+};
 
+class LightManager;
 
+class GimmickManager {
 public:
 	/// <summary>
 	/// 初期化
@@ -47,16 +46,14 @@ public:
 	);
 
 	/// <summary>
-	/// ライト情報を更新
+	/// ライトマネージャーの設定
 	/// </summary>
-	void SetLightInfo(const LightInfo& lightInfo)
-	{
-		lightInfo_ = lightInfo;
-	}
+	/// <param name="_lightManager">ライトマネージャー</param>
+	void SetLightManager(LightManager* _lightManager) { lightManager_ = _lightManager; }
 
 private:
 	std::vector<std::unique_ptr<GimmickBase>> gimmicks_;// ギミックのリスト
-	LightInfo lightInfo_{}; // ライト情報
+	LightManager* lightManager_ = nullptr;
 	GimmickType gimmickType_ = GimmickType::None; // ギミックの状態
 	Norm::BaseCamera* camera_ = nullptr; // カメラのポインタ
 

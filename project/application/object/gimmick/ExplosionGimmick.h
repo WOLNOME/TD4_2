@@ -2,6 +2,9 @@
 #include "GimmickBase.h"
 #include <ICollider.h>
 #include "Vector3.h"
+#include "CombinedParticle.h"
+
+#include <Audio.h>
 
 using namespace Norm;
 
@@ -87,4 +90,11 @@ private:
 	// 爆発前のコライダーサイズ
 	Vector3 baseColliderSize_;
 
+	//爆発パーティクル
+	std::unique_ptr<CombinedParticle> explosionParticle_ = nullptr;
+
+	// 爆弾クリック音
+	std::unique_ptr<Norm::Audio> seBombClick_;
+	// 爆発音
+	std::unique_ptr<Norm::Audio> seExplosion_;
 };

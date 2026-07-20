@@ -1,6 +1,7 @@
 #include "ExplosionGimmick.h"
 #include "Object3dManager.h"
 #include "TextureManager.h"
+#include "CombinedParticleManager.h"
 
 #ifdef _DEBUG
 #include "imgui.h"
@@ -24,6 +25,9 @@ void ExplosionGimmick::Initialize(Norm::BaseCamera* _camera)
 	worldTransform_.Initialize();
 	worldTransform_.SetTranslate(position_);
 
+	explosionParticle_ = std::make_unique<CombinedParticle>();
+	explosionParticle_->Initialize(CombinedParticleManager::GetInstance()->GenerateName("ExplosionGimmick"), "Explosion");
+
 	// とりあえず見た目用オブジェクト
 	gimmickObject_ = std::make_unique<Object3d>();
 	gimmickObject_->Initialize(ModelTag{}, Object3dManager::GetInstance()->GenerateName("ExplosionGimmick"), "bomb");
@@ -40,6 +44,13 @@ void ExplosionGimmick::Initialize(Norm::BaseCamera* _camera)
 		{ 0.0f, 1.0f, 0.0f },
 		baseColliderSize_
 	);
+
+	// SE読み込み
+	seBombClick_ = std::make_unique<Norm::Audio>();
+	seBombClick_->Initialize("bombClick.wav");
+
+	seExplosion_ = std::make_unique<Norm::Audio>();
+	seExplosion_->Initialize("explosion.wav");
 }
 
 void ExplosionGimmick::Update()
@@ -107,6 +118,16 @@ void ExplosionGimmick::Update()
 
 	// 爆発中の演出
 	if (gimmickState_ == GimmickState::Active) {
+		if (explosionTimer_ == 0.0f) {
+			TransformEuler transform = {
+				{1,1,1},
+				{0,0,0},
+				worldTransform_.GetTranslate()
+			};
+			explosionParticle_->SetBaseTransform(transform);
+			explosionParticle_->SetIsPlay(true);
+		}
+
 		explosionTimer_ += kDeltaTime;
 
 		float t = explosionTimer_ / explosionDuration_;
@@ -133,6 +154,9 @@ void ExplosionGimmick::Update()
 
 			// コリジョンを消す
 			collider_.reset();
+
+			// 爆発音再生
+			seExplosion_->Play(false, 0.5f);
 		}
 	}
 
@@ -246,5 +270,6 @@ void ExplosionGimmick::OnFlashHit()
 	explosionTimer_ = 0.0f;
 	explosionScale_ = 1.0f;
 
-
+	// 爆弾クリック音再生
+	seBombClick_->Play(false, 0.5f);
 }

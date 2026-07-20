@@ -38,6 +38,9 @@ namespace Norm {
 		groundWT_.Initialize();
 		ground_->RegistWorldTransform(&groundWT_);
 
+		//ポストエフェクトNoneを設定
+		PostEffectManager::GetInstance()->AddPostEffectOrder(PostEffectKind::None);
+
 	}
 
 	void ParticleEditorScene::Finalize() {
