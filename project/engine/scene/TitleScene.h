@@ -64,14 +64,11 @@ namespace Norm {
 		Vector3 cameraTranslate_ = { 0.0f, 0.0f, -100.0f };
 		Vector3 cameraRotate_ = { 0.0f, 0.0f, 0.0f };
 
-		// 平行光源
-		std::unique_ptr<DirectionalLight> dirLight_;
-
 		//点光源
 		std::unique_ptr<PointLight> pointLight_;
 
 		std::unique_ptr<Object3d> backGroundObject_ = nullptr;
-		WorldTransform wt_;
+		WorldTransform backGroundWT_;
 
 		std::vector<std::unique_ptr<TitleEnemy>> titleEnemies_;
 
@@ -79,15 +76,35 @@ namespace Norm {
 
 		UI buttonUI_;
 
-		Vector2 initSize_;
+		Vector2 buttonInitSize_;
+
+		float buttonLength_ = 80.0f;
+
+		float buttonSizeRatio_ = 1.2f;
 
 		int maxEnemy_ = 5;
+
+		float spawnDirection_ = 1.0f;
+
+		float spawnLengthX_ = 40.0f;
+
+		float spawnLengthY_ = 7.5f;
+
+		float startPosY_ = -15.0f;
 
 		bool isSceneChange_ = false;
 
 		float sceneChangeTimer_ = 0.0f;
 
-		float sceneChangeMaxTime_ = 2.0f;
+		float sceneChangeMaxTime_ = 1.0f;
+
+		float lightRadiusBefore_ = 20.0f;
+
+		float lightRadiusAfter_ = 15.0f;
+
+		float lightIntensityBefore_ = 10.0f;
+
+		float lightIntensityAfter_ = 0.0f;
 
 	};
 }

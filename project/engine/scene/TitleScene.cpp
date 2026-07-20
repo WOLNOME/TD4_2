@@ -21,27 +21,27 @@ void Norm::TitleScene::Initialize() {
 	ParticleManager::GetInstance()->SetCamera(camera_.get());
 
 	/* ライト生成 + 初期化 */
-	dirLight_ = std::make_unique<DirectionalLight>();
-	dirLight_->SetIntensity(0.05f);
-	dirLight_->SetColor({ 1,0,0,1 });
-	dirLight_->SetDirection({ 0.5f,0.5f,-1.0f });
-
 	pointLight_ = std::make_unique<PointLight>();
 	pointLight_->SetPosition({ 0.0f,0.0f,0.0f });
 	pointLight_->SetRadius(15.0f);
 	pointLight_->SetDecay(1.0f);
 
-	sceneLight_->SetLight(dirLight_.get());
+	//ライトをシーンに登録
 	sceneLight_->SetLight(pointLight_.get());
 
+	/* 背景オブジェクトの生成 */
 	backGroundObject_ = std::make_unique<Object3d>();
 	backGroundObject_->Initialize(ModelTag{}, Object3dManager::GetInstance()->GenerateName("backGround"), "backGroundCube");
 
-	wt_.Initialize();
-	wt_.SetTranslate({ 0.0f,-50.0f,10.0f });
-	wt_.SetScale({ 100.0f,100.0f,1.0f });
-	backGroundObject_->RegistWorldTransform(&wt_);
+	//ワールドトランスフォームを初期化
+	backGroundWT_.Initialize();
+	backGroundWT_.SetTranslate({ 0.0f,-50.0f,10.0f });
+	backGroundWT_.SetScale({ 100.0f,100.0f,1.0f });
 
+	//背景オブジェクトに登録
+	backGroundObject_->RegistWorldTransform(&backGroundWT_);
+
+	/* UIの初期化 */
 	titleUI_.textureHandle = TextureManager::GetInstance()->LoadTexture("whiteSquare.png");
 	titleUI_.sprite = std::make_unique<Sprite>();
 	titleUI_.sprite->Initialize(SpriteTag{}, SpriteManager::GetInstance()->GenerateName("titleUI"), Order::Front2, titleUI_.textureHandle);
@@ -55,44 +55,23 @@ void Norm::TitleScene::Initialize() {
 	buttonUI_.sprite->SetPosition({ 640.0f,360.0f });
 	buttonUI_.sprite->SetSize({ 100.0f,75.0f });
 
-	initSize_ = buttonUI_.sprite->GetSize();
+	//ボタンUIの初期サイズを取得
+	buttonInitSize_ = buttonUI_.sprite->GetSize();
 
-	float direction = 1.0f;
-
-	float currentNum = static_cast<float>(maxEnemy_) / 2.0f;
-
-	float mod = std::fmodf(currentNum, 1.0f);
-
-	if (mod > 0.0f) {
-
-		currentNum = currentNum - mod;
-	}
-
-	currentNum = currentNum * -1.0f;
-
+	/* 演出用エネミーの生成 */
 	for (int i = 0; i < maxEnemy_; i++) {
-
-		float lengthX = 40.0f;
-
-		float lengthY = 15.0f;
 
 		std::unique_ptr<TitleEnemy> newObject = std::make_unique<TitleEnemy>();
 
-		if (currentNum != 0) {
+		newObject->Initialize(Vector3(spawnLengthX_ * spawnDirection_, spawnLengthY_ * i + startPosY_, 0.0f));
 
-			newObject->Initialize(Vector3(lengthX * direction, lengthY / currentNum, 0.0f));
-		} else {
+		spawnDirection_ *= -1.0f;
 
-			newObject->Initialize(Vector3(lengthX * direction, 0.0f, 0.0f));
-		}
-
-		direction *= -1.0f;
-
+		//エネミーが保持しているライトをシーンに登録
 		sceneLight_->SetLight(newObject->GetPointLight());
 
 		titleEnemies_.push_back(std::move(newObject));
 
-		currentNum++;
 	}
 }
 
@@ -100,54 +79,65 @@ void Norm::TitleScene::Finalize() {
 }
 
 void Norm::TitleScene::Update() {
+
 	/* シーン共通更新処理 */
 	BaseScene::Update();
 
+	//カメラの更新
 	camera_->Update();
 
+	//ライトの追従処理
 	LightMoveProcess();
 
-	wt_.UpdateMatrix();
+	//背景オブジェクトの座標更新
+	backGroundWT_.UpdateMatrix();
 
+	//演出用エネミーの更新
 	for (auto& titleEnemy : titleEnemies_) {
 
+		//シーンチェンジが始まったら逃げ出す処理を開始する
 		titleEnemy->SetIsRun(isSceneChange_);
 
 		titleEnemy->Update();
 	}
 
+	/* ボタンUIの更新 */
 	Vector2 mousePos = Input::GetInstance()->GetMousePosition();
 
 	Vector2 uiPos = buttonUI_.sprite->GetPosition();
 
-	if (MyMath::Length(Vector3(mousePos.x, mousePos.y, 0.0f) - Vector3(uiPos.x, uiPos.y, 0.0f)) <= 80.0f) {
+	//マウスがボタンUIの範囲内にあれば
+	if (MyMath::Length(Vector3(mousePos.x, mousePos.y, 0.0f) - Vector3(uiPos.x, uiPos.y, 0.0f)) <= buttonLength_) {
 
-		buttonUI_.sprite->SetSize(initSize_ * 1.2f);
+		//サイズを少し大きくする
+		buttonUI_.sprite->SetSize(buttonInitSize_ * buttonSizeRatio_);
 
+		//範囲内で左クリックが押されたらシーンチェンジを開始する
 		if (Input::GetInstance()->TriggerMouseButton(MouseButton::LeftButton)) {
 
 			isSceneChange_ = true;
 		}
 	} else {
 
-		buttonUI_.sprite->SetSize(initSize_);
+		buttonUI_.sprite->SetSize(buttonInitSize_);
 	}
 
 	if (isSceneChange_) {
 
+		//シーンチェンジ開始
 		sceneChangeTimer_ += 1.0f / 60.0f;
 
-		float easeT = MyMath::EaseOutExpo(sceneChangeTimer_ / sceneChangeMaxTime_);
+		//ライトをフラッシュさせて少しずつ減衰させる
+		float easeT = MyMath::EaseOutQuart(sceneChangeTimer_ / sceneChangeMaxTime_);
 
-		pointLight_->SetRadius(MyMath::Lerp(30.0f, 15.0f, easeT));
+		pointLight_->SetRadius(MyMath::Lerp(lightRadiusBefore_, lightRadiusAfter_, easeT));
 
-		pointLight_->SetIntensity(MyMath::Lerp(3.0f, 1.0f, easeT));
-
-		pointLight_->SetDecay(MyMath::Lerp(0.5f, 1.0f, easeT));
+		pointLight_->SetIntensity(MyMath::Lerp(lightIntensityBefore_, lightIntensityAfter_, easeT));
 	}
 
 	if (sceneChangeTimer_ >= sceneChangeMaxTime_) {
 
+		//演出が終わったらシーンチェンジ
 		sceneChangeTimer_ = sceneChangeMaxTime_;
 
 		sceneManager_->SetNextScene("GAMEPLAY");
@@ -183,8 +173,7 @@ void Norm::TitleScene::DebugWithImGui() {
 		}
 	}
 	ImGui::End();
-	//平行光源
-	dirLight_->DebugWithImGui(L"平行光源１");
+
 	//点光源
 	pointLight_->DebugWithImGui(L"点光源１");
 
