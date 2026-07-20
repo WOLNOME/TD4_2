@@ -369,7 +369,7 @@
     <ClCompile Include="application\object\entity\enemy\collider\EnemyAreaCollider.cpp" />
     <ClCompile Include="application\object\camera\FollowCamera.cpp" />
     <ClCompile Include="engine\scene\ResultScene.cpp" />
-    <ClCompile Include="LightManager.cpp" />
+    <ClCompile Include="application\system\LightManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="engine\scenebase\AbstractSceneFactory.h">
@@ -685,7 +685,7 @@
     <ClInclude Include="application\object\camera\FollowCamera.h" />
     <ClInclude Include="engine\scene\ResultScene.h" />
     <ClInclude Include="engine\3d\object\ObjectEnum.h" />
-    <ClInclude Include="LightManager.h" />
+    <ClInclude Include="application\system\LightManager.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\shaders\line\Line.hlsli">

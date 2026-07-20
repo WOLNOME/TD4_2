@@ -8,14 +8,6 @@
 
 using namespace Norm;
 
-struct LightInfo
-{
-	Vector3 position{};       // ライトの位置
-	float range = 5.0f;       // ライトの範囲
-	bool isLighting = false;  // ライトが出ているか
-	bool isFlash = false;     // フラッシュ中か
-};
-
 enum class GimmickState
 {
 	Hidden,      // 見つかっていない
@@ -23,6 +15,8 @@ enum class GimmickState
 	Active,     // 起動中
 	Used        // 使用済み
 };
+
+class LightManager;
 
 class GimmickBase
 {
@@ -44,8 +38,8 @@ public:
 	void HitLight();
 
 	/// ==============アクセッサ================ ///
-	void SetLightInfo(const LightInfo* lightInfo) { lightInfo_ = lightInfo; }
-
+	
+	void SetLightManager(LightManager* _lightManager) { lightManager_ = _lightManager; }
 	
 	GimmickState GetGimmickState() const { return gimmickState_; }//状態を取得
 	const Vector3& GetPosition() const { return position_; }
@@ -56,8 +50,7 @@ protected:
 	virtual void OnFlashHit() {}
 
 protected:
-
-	const LightInfo* lightInfo_ = nullptr;
+	LightManager* lightManager_ = nullptr;
 
 	GimmickState gimmickState_ = GimmickState::Hidden;
 

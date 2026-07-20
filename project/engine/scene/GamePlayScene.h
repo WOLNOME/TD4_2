@@ -5,6 +5,7 @@
 #include <DevelopCamera.h>
 
 // Application
+#include <application/system/LightManager.h>
 #include <application/object/environment/Skydome.h>
 #include <application/object/environment/Ground.h>
 #include <application/object/entity/enemy/BaseEnemy.h>
@@ -47,20 +48,15 @@ namespace Norm {
 		/// </summary>
 		void DebugWithImGui() override;
 
-		/// <summary>
-		/// 点光源（ライト）の操作処理
-		/// </summary>
-		void LightMoveProcess();
-
 	private:
 		// =========================================================
 		// Member Variables
 		// =========================================================
 
-	// カメラ
-	std::unique_ptr<FollowCamera> camera_ = nullptr;
-	Vector3 cameraTranslate_ = {15.0f, -10.0f, -100.0f};
-	Vector3 cameraRotate_ = {0.0f, 0.0f, 0.0f};
+		// カメラ
+		std::unique_ptr<FollowCamera> camera_ = nullptr;
+		Vector3 cameraTranslate_ = { 15.0f, -10.0f, -100.0f };
+		Vector3 cameraRotate_ = { 0.0f, 0.0f, 0.0f };
 
 		// 平行光源
 		std::unique_ptr<DirectionalLight> dirLight_;
@@ -75,6 +71,9 @@ namespace Norm {
 
 		// ステージ管理クラス
 		std::unique_ptr<StageManager> stageManager_ = nullptr;
+
+		//ライト管理クラス
+		std::unique_ptr<LightManager> lightManager_ = nullptr;
 
 		// プレイヤー
 		std::unique_ptr<Player> player_ = nullptr;

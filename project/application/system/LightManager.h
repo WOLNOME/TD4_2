@@ -3,6 +3,7 @@
 
 namespace Norm {
 	class PointLight;
+	class BaseCamera;
 }
 
 /// <summary>
@@ -37,7 +38,11 @@ public:
 	/// <returns></returns>
 	const Norm::PointLight* GetPointLight() { return pointLight_; }
 
-
+	/// <summary>
+	/// フラッシュ中フラグの取得
+	/// </summary>
+	/// <returns></returns>
+	bool GetIsFlush() { return isFlush_; }
 
 	// =========================================================
 	// setter
@@ -47,13 +52,23 @@ public:
 	/// ポイントライトの設定
 	/// </summary>
 	/// <param name="_pointLight">ポイントライト</param>
-	void SetPointLight(Norm::PointLight* _pointLight) { pointLight_ = _pointLight; }
+	void SetPointLight(Norm::PointLight* _pointLight) {
+		pointLight_ = _pointLight;
+	}
+
+	/// <summary>
+	/// カメラのセット
+	/// </summary>
+	/// <param name="_camera">カメラ</param>
+	void SetCamera(Norm::BaseCamera* _camera) {
+		camera_ = _camera;
+	}
 
 
 private:
 	Norm::PointLight* pointLight_ = nullptr;
+	Norm::BaseCamera* camera_ = nullptr;
 
-	bool isLighting_ = false;
 	bool isFlush_ = false;
 
 	const float kMaxIntensity = 6.0f;		//フラッシュ時最大の輝度
@@ -61,7 +76,7 @@ private:
 	const float kMaxRange = 12.0f;			//フラッシュ時最大の範囲
 	const float kNormalRange = 8.0f;		//通常時の範囲
 
-	const float kFlushKeepTime = 2.0f;
+	const float kFlushKeepTime = 1.0f;
 	float flushKeepTimer_ = 0.0f;
 
 
