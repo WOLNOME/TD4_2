@@ -17,8 +17,8 @@
 #include <imgui.h>
 #include "State/EnemyChaseState.h"
 #include "State/EnemyEscapeState.h"
-#include "State/EnemyStopState.h"
 #endif // _DEBUG
+#include "State/EnemyStopState.h"
 
 using namespace Norm;
 
