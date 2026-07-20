@@ -28,19 +28,19 @@ void Norm::TitleScene::Initialize() {
 
 	pointLight_ = std::make_unique<PointLight>();
 	pointLight_->SetPosition({ 0.0f,0.0f,0.0f });
-	pointLight_->SetRadius(10.0f);
+	pointLight_->SetRadius(15.0f);
+	pointLight_->SetDecay(1.0f);
 
 	sceneLight_->SetLight(dirLight_.get());
 	sceneLight_->SetLight(pointLight_.get());
 
-	object_ = std::make_unique<Object3d>();
-	object_->Initialize(ModelTag{}, Object3dManager::GetInstance()->GenerateName("backGround"), "cube");
-	object_->SetColor({ 0.0f,0.0f,0.0f,1.0f });
+	backGroundObject_ = std::make_unique<Object3d>();
+	backGroundObject_->Initialize(ModelTag{}, Object3dManager::GetInstance()->GenerateName("backGround"), "backGroundCube");
 
 	wt_.Initialize();
 	wt_.SetTranslate({ 0.0f,-50.0f,10.0f });
 	wt_.SetScale({ 100.0f,100.0f,1.0f });
-	object_->RegistWorldTransform(&wt_);
+	backGroundObject_->RegistWorldTransform(&wt_);
 
 	titleUI_.textureHandle = TextureManager::GetInstance()->LoadTexture("whiteSquare.png");
 	titleUI_.sprite = std::make_unique<Sprite>();
@@ -56,6 +56,44 @@ void Norm::TitleScene::Initialize() {
 	buttonUI_.sprite->SetSize({ 100.0f,75.0f });
 
 	initSize_ = buttonUI_.sprite->GetSize();
+
+	float direction = 1.0f;
+
+	float currentNum = static_cast<float>(maxEnemy_) / 2.0f;
+
+	float mod = std::fmodf(currentNum, 1.0f);
+
+	if (mod > 0.0f) {
+
+		currentNum = currentNum - mod;
+	}
+
+	currentNum = currentNum * -1.0f;
+
+	for (int i = 0; i < maxEnemy_; i++) {
+
+		float lengthX = 40.0f;
+
+		float lengthY = 15.0f;
+
+		std::unique_ptr<titleEnemy> newObject = std::make_unique<titleEnemy>();
+
+		if (currentNum != 0) {
+
+			newObject->Initialize(Vector3(lengthX * direction, lengthY / currentNum, 0.0f));
+		} else {
+
+			newObject->Initialize(Vector3(lengthX * direction, 0.0f, 0.0f));
+		}
+
+		direction *= -1.0f;
+
+		sceneLight_->SetLight(newObject->GetPointLight());
+
+		titleEnemies_.push_back(std::move(newObject));
+
+		currentNum++;
+	}
 }
 
 void Norm::TitleScene::Finalize() {
@@ -71,21 +109,48 @@ void Norm::TitleScene::Update() {
 
 	wt_.UpdateMatrix();
 
+	for (auto& titleEnemy : titleEnemies_) {
+
+		titleEnemy->SetIsRun(isSceneChange_);
+
+		titleEnemy->Update();
+	}
+
 	Vector2 mousePos = Input::GetInstance()->GetMousePosition();
 
 	Vector2 uiPos = buttonUI_.sprite->GetPosition();
 
-	if (MyMath::Length(Vector3(mousePos.x, mousePos.y, 0.0f) - Vector3(uiPos.x, uiPos.y, 0.0f)) <= 10.0f) {
+	if (MyMath::Length(Vector3(mousePos.x, mousePos.y, 0.0f) - Vector3(uiPos.x, uiPos.y, 0.0f)) <= 80.0f) {
 
 		buttonUI_.sprite->SetSize(initSize_ * 1.2f);
 
 		if (Input::GetInstance()->TriggerMouseButton(MouseButton::LeftButton)) {
 
-			sceneManager_->SetNextScene("GAMEPLAY");
+			isSceneChange_ = true;
 		}
 	} else {
 
 		buttonUI_.sprite->SetSize(initSize_);
+	}
+
+	if (isSceneChange_) {
+
+		sceneChangeTimer_ += 1.0f / 60.0f;
+
+		float easeT = MyMath::EaseOutExpo(sceneChangeTimer_ / sceneChangeMaxTime_);
+
+		pointLight_->SetRadius(MyMath::Lerp(30.0f, 15.0f, easeT));
+
+		pointLight_->SetIntensity(MyMath::Lerp(3.0f, 1.0f, easeT));
+
+		pointLight_->SetDecay(MyMath::Lerp(0.5f, 1.0f, easeT));
+	}
+
+	if (sceneChangeTimer_ >= sceneChangeMaxTime_) {
+
+		sceneChangeTimer_ = sceneChangeMaxTime_;
+
+		sceneManager_->SetNextScene("GAMEPLAY");
 	}
 
 }

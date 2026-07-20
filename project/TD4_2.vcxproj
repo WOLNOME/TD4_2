@@ -213,6 +213,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="GimmickBase.cpp" />
     <ClCompile Include="engine\scene\TitleScene.cpp" />
     <ClCompile Include="engine\scene\ResultScene.cpp" />
+    <ClCompile Include="titleEnemy.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="application\system\direction\cinematic\Cinematic.h" />
@@ -332,6 +333,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="application\object\collision\ObjectCollider.h" />
     <ClInclude Include="engine\scene\TitleScene.h" />
     <ClInclude Include="engine\scene\ResultScene.h" />
+    <ClInclude Include="titleEnemy.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt" />
