@@ -53,7 +53,7 @@ void ExplosionGimmick::Update()
 {
 	constexpr float kDeltaTime = 1.0f / 60.0f;
 
-	// 使用済み状態では再出現まで待機
+	// 使用済み：再生成まで待つ
 	if (gimmickState_ == GimmickState::Used) {
 
 		respawnTimer_ += kDeltaTime;
@@ -64,6 +64,50 @@ void ExplosionGimmick::Update()
 
 		return;
 	}
+
+	// 再生成演出中
+	if (gimmickState_ == GimmickState::Respawning) {
+
+		respawnAnimationTimer_ += kDeltaTime;
+
+		float t =
+			respawnAnimationTimer_ / respawnAnimationDuration_;
+
+		if (t > 1.0f) {
+			t = 1.0f;
+		}
+
+		// 0 → 1まで徐々に大きくする
+		respawnScale_ = t;
+
+		worldTransform_.SetScale({
+			respawnScale_,
+			respawnScale_,
+			respawnScale_
+			});
+
+		// 再生成完了
+		if (respawnAnimationTimer_ >= respawnAnimationDuration_) {
+
+			worldTransform_.SetScale({
+				1.0f,
+				1.0f,
+				1.0f
+				});
+
+			// 演出が終わってからコライダーを生成
+			CreateCollider(
+				CollisionAttribute::Gimmick,
+				{ 0.0f, 1.0f, 0.0f },
+				baseColliderSize_
+			);
+
+			gimmickState_ = GimmickState::Hidden;
+		}
+
+		return;
+	}
+
 
 	// Base側でライト判定
 	GimmickBase::Update();
@@ -102,38 +146,34 @@ void ExplosionGimmick::Update()
 		}
 	}
 
-
-
 }
 
 void ExplosionGimmick::Reset()
 {
-	gimmickState_ = GimmickState::Hidden;
+	gimmickState_ = GimmickState::Respawning;
 
 	isExploded_ = false;
 
 	explosionTimer_ = 0.0f;
 	respawnTimer_ = 0.0f;
 
-	explosionScale_ = 1.0f;
+	respawnAnimationTimer_ = 0.0f;
+	respawnScale_ = 0.0f;
 
+	// 最初は小さい状態
 	worldTransform_.SetScale({
-		explosionScale_,
-		explosionScale_,
-		explosionScale_
+		respawnScale_,
+		respawnScale_,
+		respawnScale_
 		});
 
-	// 見た目を再表示
+	// モデル表示
 	if (gimmickObject_) {
 		gimmickObject_->SetIsDisplay(true);
 	}
 
-	// 爆発終了時に削除したコライダーを再生成
-	CreateCollider(
-		CollisionAttribute::Gimmick,
-		{ 0.0f, 1.0f, 0.0f },
-		baseColliderSize_
-	);
+
+	
 
 }
 

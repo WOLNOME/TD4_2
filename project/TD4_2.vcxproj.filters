@@ -369,6 +369,7 @@
     <ClCompile Include="application\ui\pause\PauseMenu.cpp" />
     <ClCompile Include="application\object\entity\enemy\State\EnemyStopState.cpp" />
     <ClCompile Include="application\object\entity\enemy\Manager\EnemyManager.cpp" />
+    <ClCompile Include="application\object\entity\titleEnemy\TitleEnemy.cpp" />
     <ClCompile Include="application\object\gimmick\GimmickBase.cpp">
       <Filter>application\object\gimmick</Filter>
     </ClCompile>
@@ -381,6 +382,7 @@
     <ClCompile Include="application\object\gimmick\ExplosionGimmick.cpp">
       <Filter>application\object\gimmick</Filter>
     </ClCompile>
+    <ClCompile Include="application\object\entity\enemy\collider\EnemyBodyCollider.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="engine\scenebase\AbstractSceneFactory.h">
@@ -696,6 +698,7 @@
     <ClInclude Include="engine\3d\object\ObjectEnum.h" />
     <ClInclude Include="application\object\entity\enemy\State\EnemyStopState.h" />
     <ClInclude Include="application\object\entity\enemy\Manager\EnemyManager.h" />
+    <ClInclude Include="application\object\entity\titleEnemy\TitleEnemy.h" />
     <ClInclude Include="application\object\gimmick\GimmickBase.h">
       <Filter>application\object\gimmick</Filter>
     </ClInclude>
@@ -708,6 +711,7 @@
     <ClInclude Include="application\object\gimmick\ExplosionGimmick.h">
       <Filter>application\object\gimmick</Filter>
     </ClInclude>
+    <ClInclude Include="application\object\entity\enemy\collider\EnemyBodyCollider.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\shaders\line\Line.hlsli">

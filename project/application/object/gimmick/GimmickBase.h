@@ -25,7 +25,8 @@ enum class GimmickState
 	Hidden,      // 見つかっていない
 	Discovered, // ライトで発見済み
 	Active,     // 起動中
-	Used        // 使用済み
+	Used,        // 使用済み
+	Respawning // 再生成演出中
 };
 
 class GimmickBase
