@@ -44,12 +44,26 @@ void ExplosionGimmick::Initialize(Norm::BaseCamera* _camera)
 
 void ExplosionGimmick::Update()
 {
+	constexpr float kDeltaTime = 1.0f / 60.0f;
+
+	// 使用済み状態では再出現まで待機
+	if (gimmickState_ == GimmickState::Used) {
+
+		respawnTimer_ += kDeltaTime;
+
+		if (respawnTimer_ >= respawnDuration_) {
+			Reset();
+		}
+
+		return;
+	}
+
 	// Base側でライト判定
 	GimmickBase::Update();
 
 	// 爆発中の演出
 	if (gimmickState_ == GimmickState::Active) {
-		explosionTimer_ += 1.0f / 60.0f;
+		explosionTimer_ += kDeltaTime;
 
 		float t = explosionTimer_ / explosionDuration_;
 		if (t > 1.0f) {
@@ -64,10 +78,17 @@ void ExplosionGimmick::Update()
 		SetColliderSize({baseColliderSize_.x * explosionScale_,baseColliderSize_.y * explosionScale_,baseColliderSize_.z * explosionScale_});
 
 		if (explosionTimer_ >= explosionDuration_) {
+
 			gimmickState_ = GimmickState::Used;
+			respawnTimer_ = 0.0f;
+
+			// モデルを非表示
 			if (gimmickObject_) {
 				gimmickObject_->SetIsDisplay(false);
 			}
+
+			// コリジョンを消す
+			collider_.reset();
 		}
 	}
 
@@ -78,19 +99,31 @@ void ExplosionGimmick::Update()
 void ExplosionGimmick::Reset()
 {
 	gimmickState_ = GimmickState::Hidden;
+
 	isExploded_ = false;
+
 	explosionTimer_ = 0.0f;
+	respawnTimer_ = 0.0f;
+
 	explosionScale_ = 1.0f;
-	worldTransform_.SetScale({ explosionScale_, explosionScale_, explosionScale_ });
-	// コライダーのサイズも大きくする
-	if (auto* collider = dynamic_cast<GimmickCollider*>(collider_.get())) {
-		collider->SetOBBSize({
-			baseColliderSize_.x * explosionScale_,
-			baseColliderSize_.y * explosionScale_,
-			baseColliderSize_.z * explosionScale_
-			});
+
+	worldTransform_.SetScale({
+		explosionScale_,
+		explosionScale_,
+		explosionScale_
+		});
+
+	// 見た目を再表示
+	if (gimmickObject_) {
+		gimmickObject_->SetIsDisplay(true);
 	}
-	gimmickObject_->SetIsDisplay(true);
+
+	// 爆発終了時に削除したコライダーを再生成
+	CreateCollider(
+		CollisionAttribute::Gimmick,
+		{ 0.0f, 1.0f, 0.0f },
+		baseColliderSize_
+	);
 
 }
 
@@ -111,6 +144,29 @@ void ExplosionGimmick::DebugImGui()
 		ImGui::DragFloat("爆発の大きさ", &maxExplosionScale_, 0.1f, 1.0f, 30.0f);
 		ImGui::Text("Explosion Timer: %.2f", explosionTimer_);
 
+		if (collider_) {
+			auto* Collider = dynamic_cast<GimmickCollider*>(collider_.get());
+			if (Collider) {
+				Collider->Debug();
+			}
+		}
+
+		ImGui::DragFloat(
+			"再出現までの時間",
+			&respawnDuration_,
+			0.1f,
+			0.1f,
+			30.0f
+		);
+
+		if (gimmickState_ == GimmickState::Used) {
+			ImGui::Text(
+				"Respawn Timer: %.2f / %.2f",
+				respawnTimer_,
+				respawnDuration_
+			);
+		}
+
 		if (ImGui::Button("Apply Position")) {
 			worldTransform_.SetTranslate(position_);
 		}
@@ -129,12 +185,7 @@ void ExplosionGimmick::DebugImGui()
 
 	}
 
-	if (collider_) {
-		auto* Collider = dynamic_cast<GimmickCollider*>(collider_.get());
-		if (Collider) {
-			Collider->Debug();
-		}
-	}
+	
 
 #endif
 }

@@ -73,6 +73,10 @@ private:
 	float explosionScale_ = 1.0f;
 	float maxExplosionScale_ = 5.0f;
 
+	// 再出現用
+	float respawnTimer_ = 0.0f;
+	float respawnDuration_ = 3.0f;
+
 	// 爆発前のコライダーサイズ
 	Vector3 baseColliderSize_;
 
