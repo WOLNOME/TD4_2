@@ -26,6 +26,7 @@ class LightManager;
 class GimmickBase
 {
 public:
+	virtual ~GimmickBase() = default;
 
 	virtual void Initialize(Norm::BaseCamera* _camera) = 0;
 	virtual void Update();
