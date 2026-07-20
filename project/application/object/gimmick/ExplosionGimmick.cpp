@@ -35,11 +35,16 @@ void ExplosionGimmick::Initialize(Norm::BaseCamera* _camera)
 
 	gimmickObject_->RegistWorldTransform(&worldTransform_);
 
+	// コライダーは一度作成しておくが、初期は判定をオフにしておく
 	CreateCollider(
 		CollisionAttribute::Gimmick,
 		{ 0.0f, 1.0f, 0.0f },
 		baseColliderSize_
 	);
+	if (collider_) {
+		
+		collider_->SetCollisionAttribute(Norm::CollisionAttribute::Nothingness);
+	}
 }
 
 void ExplosionGimmick::Update()
@@ -88,13 +93,7 @@ void ExplosionGimmick::Update()
 				1.0f
 				});
 
-			// 演出が終わってからコライダーを生成
-			CreateCollider(
-				CollisionAttribute::Gimmick,
-				{ 0.0f, 1.0f, 0.0f },
-				baseColliderSize_
-			);
-
+			// 重要：再出現時もコライダーは生成しない（爆破時のみ判定を有効にする方針）
 			gimmickState_ = GimmickState::Hidden;
 		}
 
@@ -118,8 +117,10 @@ void ExplosionGimmick::Update()
 		explosionScale_ = 1.0f + t * (maxExplosionScale_ - 1.0f);
 		worldTransform_.SetScale({ explosionScale_, explosionScale_, explosionScale_ });
 
-		// コライダーのサイズも大きくする
-		SetColliderSize({baseColliderSize_.x * explosionScale_,baseColliderSize_.y * explosionScale_,baseColliderSize_.z * explosionScale_});
+		// コライダーのサイズも大きくする（コライダーは存在している前提）
+		if (collider_) {
+			SetColliderSize({baseColliderSize_.x * explosionScale_,baseColliderSize_.y * explosionScale_,baseColliderSize_.z * explosionScale_});
+		}
 
 		if (explosionTimer_ >= explosionDuration_) {
 
@@ -131,8 +132,10 @@ void ExplosionGimmick::Update()
 				gimmickObject_->SetIsDisplay(false);
 			}
 
-			// コリジョンを消す
-			collider_.reset();
+			// コリジョン無効化
+			if (collider_) {
+				collider_->SetCollisionAttribute(Norm::CollisionAttribute::Nothingness);
+			}
 		}
 	}
 
@@ -246,5 +249,15 @@ void ExplosionGimmick::OnFlashHit()
 	explosionTimer_ = 0.0f;
 	explosionScale_ = 1.0f;
 
-
+	// ここでコライダーを有効化（存在しなければ作成）
+	if (!collider_) {
+		CreateCollider(
+			CollisionAttribute::Gimmick,
+			{ 0.0f, 1.0f, 0.0f },
+			baseColliderSize_
+		);
+	}
+	if (collider_) {
+		collider_->SetCollisionAttribute(Norm::CollisionAttribute::Gimmick);
+	}
 }
