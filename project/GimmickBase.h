@@ -4,6 +4,7 @@
 #include "WorldTransform.h"
 #include "Object3d.h"
 #include "application/object/collision/ObjectCollider.h"
+#include "GimmickCollider.h"
 
 
 using namespace Norm;
@@ -27,8 +28,6 @@ enum class GimmickState
 class GimmickBase
 {
 public:
-	GimmickBase() = default;
-	virtual ~GimmickBase() = default;
 
 	virtual void Initialize() = 0;
 	virtual void Update();
@@ -46,18 +45,21 @@ public:
 	/// ==============アクセッサ================ ///
 	void SetLightInfo(const LightInfo* lightInfo) { lightInfo_ = lightInfo; }
 
-	
+
 	GimmickState GetGimmickState() const { return gimmickState_; }//状態を取得
 	const Vector3& GetPosition() const { return position_; }
 	float GetRadius() const { return radius_; }
 
-	void CreateCollider(CollisionAttribute attribute,const Vector3& offset,const Vector3& size);
-	ObjectCollider* GetCollider() const { return collider_.get(); }
+	void CreateCollider(CollisionAttribute attribute, const Vector3& offset, const Vector3& size);
+
+	
+
 
 protected:
 	virtual void OnLightHit() {}
 	virtual void OnFlashHit() {}
 
+	void SetColliderSize(const Vector3& size);
 protected:
 	const LightInfo* lightInfo_ = nullptr;
 
@@ -69,5 +71,5 @@ protected:
 	Vector3 position_{};
 	float radius_ = 1.0f;
 
-	std::unique_ptr<ObjectCollider> collider_ = nullptr;
+	std::unique_ptr<ICollider> collider_ = nullptr;
 };

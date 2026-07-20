@@ -11,6 +11,7 @@ namespace Norm {
 		Block,
 
 		Gimmick,					//ギミック
+
 		Nothingness,				//虚無オブジェクト
 	};
 

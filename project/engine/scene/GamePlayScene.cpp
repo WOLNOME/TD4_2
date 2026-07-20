@@ -51,10 +51,13 @@ void Norm::GamePlayScene::Initialize() {
 	guideUI_->Initialize(camera_.get(), Input::GetInstance(), { 14.0f,-22.0f,0.0f });
 
 	// 爆発ギミック
-	explosionGimmick_ = std::make_unique<ExplosionGimmick>();
-	explosionGimmick_->SetLightInfo(&lightInfo_);
-	explosionGimmick_->SetPosition({ 14.0f,-25.0f, 0.0f });
-	explosionGimmick_->Initialize();
+	// ギミック管理
+	gimmickManager_ = std::make_unique<GimmickManager>();
+	gimmickManager_->Initialize();
+	gimmickManager_->CreateGimmick(
+		GimmickType::Explosion,
+		{ 14.0f, -25.0f, 0.0f }
+	);
 }
 
 void Norm::GamePlayScene::Finalize() {}
@@ -73,8 +76,10 @@ void Norm::GamePlayScene::Update() {
 	// Enemyの更新
 	enemy_->Update();
 
-	//爆発ギミック
-	explosionGimmick_->Update();
+	// ギミックに最新のライト情報を渡す
+	gimmickManager_->SetLightInfo(lightInfo_);
+	// 全ギミックを更新
+	gimmickManager_->Update();
 
 	guideUI_->Update();
   
@@ -127,7 +132,9 @@ void Norm::GamePlayScene::DebugWithImGui() {
 	//点光源
 	pointLight_->DebugWithImGui(L"点光源１");
 
-	explosionGimmick_->DebugImGui();
+	if (gimmickManager_) {
+		gimmickManager_->Debug();
+	}
 
 
 #endif

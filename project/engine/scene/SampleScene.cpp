@@ -92,7 +92,10 @@ namespace Norm {
 			collider2->SetWorldTransform(&cObject2WT_);
 			collider2->SetOffset({ 0.0f,1.0f,0.0f });
 			collider2->SetOBBSize({ 2.0f,2.0f,2.0f });
+
 		}
+
+		
 
 		back_ = std::make_unique<Object3d>();
 		back_->Initialize(ShapeTag{}, Object3dManager::GetInstance()->GenerateName("Back"), Shape::ShapeKind::kPlane);

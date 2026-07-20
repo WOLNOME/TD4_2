@@ -207,6 +207,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="application\object\Character\Player.cpp" />
     <ClCompile Include="application\object\collision\ObjectCollider.cpp" />
     <ClCompile Include="GimmickBase.cpp" />
+    <ClCompile Include="GimmickCollider.cpp" />
+    <ClCompile Include="GimmickManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="application\system\direction\cinematic\Cinematic.h" />
@@ -320,6 +322,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="application\stage\StageManager.h" />
     <ClInclude Include="application\object\Character\Player.h" />
     <ClInclude Include="application\object\collision\ObjectCollider.h" />
+    <ClInclude Include="GimmickCollider.h" />
+    <ClInclude Include="GimmickManager.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt" />

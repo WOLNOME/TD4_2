@@ -9,14 +9,16 @@
 
 void ExplosionGimmick::Initialize()
 {
-	gimmickState_ = GimmickState::Hidden;
 
-	isExploded_ = false;
-	explosionTimer_ = 0.0f;
-	explosionDuration_ = 0.5f;
-	explosionScale_ = 1.0f;
+	gimmickState_ = GimmickState::Hidden;// 初期状態は見つかっていない状態
 
+	isExploded_ = false;// 爆発していない状態
+	explosionTimer_ = 0.0f;// 爆発演出用タイマー
+	explosionDuration_ = 0.5f;// 爆発演出の時間
+	explosionScale_ = 1.0f;// 爆発演出のスケール
 	radius_ = 1.0f;
+
+	baseColliderSize_ = { 1.0f, 1.0f, 1.0f };
 
 	worldTransform_.Initialize();
 	worldTransform_.SetTranslate(position_);
@@ -27,11 +29,11 @@ void ExplosionGimmick::Initialize()
 
 	gimmickObject_->RegistWorldTransform(&worldTransform_);
 
-	
+
 	CreateCollider(
-		CollisionAttribute::Player,
+		CollisionAttribute::Gimmick,
 		{ 0.0f, 1.0f, 0.0f },
-		worldTransform_.GetScale()
+		baseColliderSize_
 	);
 }
 
@@ -53,6 +55,9 @@ void ExplosionGimmick::Update()
 		explosionScale_ = 1.0f + t * (maxExplosionScale_ - 1.0f);
 		worldTransform_.SetScale({ explosionScale_, explosionScale_, explosionScale_ });
 
+		// コライダーのサイズも大きくする
+		SetColliderSize({baseColliderSize_.x * explosionScale_,baseColliderSize_.y * explosionScale_,baseColliderSize_.z * explosionScale_});
+
 		if (explosionTimer_ >= explosionDuration_) {
 			gimmickState_ = GimmickState::Used;
 			if (gimmickObject_) {
@@ -60,7 +65,11 @@ void ExplosionGimmick::Update()
 			}
 		}
 	}
+
+
+
 }
+
 void ExplosionGimmick::Reset()
 {
 	gimmickState_ = GimmickState::Hidden;
@@ -68,6 +77,14 @@ void ExplosionGimmick::Reset()
 	explosionTimer_ = 0.0f;
 	explosionScale_ = 1.0f;
 	worldTransform_.SetScale({ explosionScale_, explosionScale_, explosionScale_ });
+	// コライダーのサイズも大きくする
+	if (auto* collider = dynamic_cast<GimmickCollider*>(collider_.get())) {
+		collider->SetOBBSize({
+			baseColliderSize_.x * explosionScale_,
+			baseColliderSize_.y * explosionScale_,
+			baseColliderSize_.z * explosionScale_
+			});
+	}
 	gimmickObject_->SetIsDisplay(true);
 
 }
@@ -106,10 +123,14 @@ void ExplosionGimmick::DebugImGui()
 		ImGui::TreePop();
 
 	}
-	gimmickObject_->Debug(L"GimmickObjct");
-	auto* collider1 = dynamic_cast<ObjectCollider*>(collider_.get());
-	collider1->Debug();
-	
+
+	if (collider_) {
+		auto* Collider = dynamic_cast<GimmickCollider*>(collider_.get());
+		if (Collider) {
+			Collider->Debug();
+		}
+	}
+
 #endif
 }
 
@@ -129,5 +150,5 @@ void ExplosionGimmick::OnFlashHit()
 	explosionTimer_ = 0.0f;
 	explosionScale_ = 1.0f;
 
-	
+
 }

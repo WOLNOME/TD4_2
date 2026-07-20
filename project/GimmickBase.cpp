@@ -28,14 +28,16 @@ void GimmickBase::HitLight()
 
 void GimmickBase::CreateCollider(CollisionAttribute attribute, const Vector3& offset, const Vector3& size)
 {
-	if (!gimmickObject_) {
+	if (!gimmickObject_) 
+	{
 		return;
 	}
 
-	collider_ = std::make_unique<ObjectCollider>(gimmickObject_.get());
+	collider_ = std::make_unique<GimmickCollider>(this);
 
-	auto* collider = dynamic_cast<ObjectCollider*>(collider_.get());
-	if (!collider) {
+	auto* collider = dynamic_cast<GimmickCollider*>(collider_.get());
+	if (!collider) 
+	{
 		return;
 	}
 
@@ -44,6 +46,17 @@ void GimmickBase::CreateCollider(CollisionAttribute attribute, const Vector3& of
 	collider->SetOffset(offset);
 	collider->SetOBBSize(size);
 
+}
+
+void GimmickBase::SetColliderSize(const Vector3& size)
+{
+	auto* collider = dynamic_cast<GimmickCollider*>(collider_.get());
+	if (!collider) 
+	{
+		return;
+	}
+
+	collider->SetOBBSize(size);
 
 }
 

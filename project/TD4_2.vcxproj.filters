@@ -360,6 +360,8 @@
     <ClCompile Include="application\object\entity\enemy\State\EnemyEscapeState.cpp" />
     <ClCompile Include="GimmickBase.cpp" />
     <ClCompile Include="ExplosionGimmick.cpp" />
+    <ClCompile Include="GimmickManager.cpp" />
+    <ClCompile Include="GimmickCollider.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="engine\scenebase\AbstractSceneFactory.h">
@@ -668,6 +670,8 @@
     <ClInclude Include="application\object\entity\enemy\State\EnemyEscapeState.h" />
     <ClInclude Include="GimmickBase.h" />
     <ClInclude Include="ExplosionGimmick.h" />
+    <ClInclude Include="GimmickManager.h" />
+    <ClInclude Include="GimmickCollider.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\shaders\line\Line.hlsli">

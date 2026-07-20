@@ -14,7 +14,8 @@
 #include <application/stage/StageManager.h>
 #include <application/object/Character/Player.h>
 
-#include "ExplosionGimmick.h"
+//#include "ExplosionGimmick.h"
+#include "GimmickManager.h"
 
 namespace Norm {
 // =========================================================
@@ -78,8 +79,10 @@ private:
 	// Enemy
 	std::unique_ptr<BaseEnemy> enemy_ = nullptr;
 
-	//ギミック
-	std::unique_ptr<ExplosionGimmick> explosionGimmick_ = nullptr;
+	////ギミック
+	//std::unique_ptr<ExplosionGimmick> explosionGimmick_ = nullptr;
+	//LightInfo lightInfo_{};
+	std::unique_ptr<GimmickManager> gimmickManager_;
 	LightInfo lightInfo_{};
 
 	std::unique_ptr<GuideUI> guideUI_ = nullptr;
