@@ -1,7 +1,16 @@
 #include "GimmickBase.h"
+#include <cassert>
+
+//アプリケーション
+#include <application/system/LightManager.h>
+
+//エンジン
+#include <PointLight.h>
 
 void GimmickBase::Update()
 {
+	assert(lightManager_ && "ライトマネージャーが設定されていません");
+
 	HitLight();
 
 	guideUI_->SetPosition(position_ + uiOffset_);
@@ -20,7 +29,7 @@ void GimmickBase::HitLight()
 	}
 
 	// フラッシュだったらフラッシュ用処理
-	if (lightInfo_->isFlash) {
+	if (lightManager_->GetIsFlush()) {
 		OnFlashHit();
 		return;
 	}
@@ -65,20 +74,14 @@ void GimmickBase::SetColliderSize(const Vector3& size)
 
 bool GimmickBase::IsHitLightCircle() const
 {
-
-	if (!lightInfo_) {
-		return false;
-	}
-
-
-	Vector3 diff = position_ - lightInfo_->position;
+	Vector3 diff = position_ - lightManager_->GetPointLight()->GetPosition();
 
 	float distanceSq =
 		diff.x * diff.x +
 		diff.y * diff.y +
 		diff.z * diff.z;
 
-	float hitRange = lightInfo_->range + radius_;
+	float hitRange = lightManager_->GetPointLight()->GetRadius() + radius_;
 
 	return distanceSq <= hitRange * hitRange;
 }

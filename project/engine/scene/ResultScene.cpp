@@ -36,6 +36,14 @@ void Norm::ResultScene::Initialize() {
 	texResult_ = TextureManager::GetInstance()->LoadTexture("result.png");
 	spriteResult_->Initialize(SpriteTag{}, Object3dManager::GetInstance()->GenerateName("Sprite"), Order::Front0, texResult_);
 
+	// 音声読み込み
+	seClick_ = std::make_unique<Norm::Audio>();
+	seClick_->Initialize("click.wav");
+
+	bgmResult_ = std::make_unique<Norm::Audio>();
+	bgmResult_->Initialize("resultBGM.wav");
+	bgmResult_->Play(true, 0.5f);
+
 	PostEffectManager::GetInstance()->AddPostEffectOrder(PostEffectKind::None);
 }
 
@@ -49,6 +57,9 @@ void Norm::ResultScene::Update() {
 
 	// 左クリックでタイトルへ（仮）
 	if (Input::GetInstance()->TriggerMouseButton(MouseButton::LeftButton)) {
+		// クリック音再生
+		seClick_->Play(false, 0.5f);
+
 		sceneManager_->SetNextScene("TITLE");
 	}
 }

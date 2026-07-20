@@ -3,8 +3,9 @@
 // Engine
 #include <CollisionManager.h>
 #include <Object3dManager.h>
-#include <imgui.h>
 #include <TextureManager.h>
+#include <imgui.h>
+#include <CombinedParticleManager.h>
 
 // Application
 #include <application/object/collision/ObjectCollider.h>
@@ -32,11 +33,29 @@ void Norm::Player::Initialize() {
 		playerCollider->SetOBBSize({1.0f, 2.0f, 1.0f}); // プレイヤーのコライダーサイズ
 		playerCollider->SetHolder(this);                // 自身のポインタをセット
 	}
+
+	//移動時パーティクル
+	moveParticle_ = std::make_unique<CombinedParticle>();
+	moveParticle_->Initialize(CombinedParticleManager::GetInstance()->GenerateName("move"), "grain");
+	moveParticle_->SetIsPlay(true);
+	moveParticle_->SetIsRepeat(true);
+
+
+	// SE読み込み
+	seJump_ = std::make_unique<Norm::Audio>();
+	seJump_->Initialize("jump.wav");
+
+	seLand_ = std::make_unique<Norm::Audio>();
+	seLand_->Initialize("land.wav");
+
+	seGoal_ = std::make_unique<Norm::Audio>();
+	seGoal_->Initialize("goal.wav");
 }
 
 void Norm::Player::Update() {
 	// 移動入力処理
 	Move();
+
 
 	// 重力の計算（自由落下）
 	yVelocity_ += kGravity;
@@ -55,6 +74,19 @@ void Norm::Player::Update() {
 
 	// 行列の更新
 	wt_.UpdateMatrix();
+
+	// 空中フラグをオン
+	if (!isGrounded_) {
+		isAirborne_ = true;
+	}
+
+	//移動時パーティクルを付ける
+	TransformEuler transform = {
+		{1,1,1},
+		{0,0,0},
+		wt_.GetTranslate()
+	};
+	moveParticle_->SetBaseTransform(transform);
 
 	// 接地フラグを毎フレーム最後にリセット
 	isGrounded_ = false;
@@ -137,6 +169,12 @@ void Norm::Player::OnCollision(ICollider* other, CollisionAttribute otherAttr) {
 
 			// 接地中の処理（上方向に押し戻された際）
 			if (pushVector.y > 0.0f) {
+				// 空中から着地した瞬間だけ再生
+				if (isAirborne_) {
+					seLand_->Play(false, 0.5f);
+					isAirborne_ = false; // 着地したので戻す
+				}
+
 				isGrounded_ = true;
 				yVelocity_ = 0.0f;
 			}
@@ -147,11 +185,21 @@ void Norm::Player::OnCollision(ICollider* other, CollisionAttribute otherAttr) {
 				}
 			}
 		}
+
+		/// ===Enemy=== ///
+		if (otherAttr == CollisionAttribute::Enemy) {
+
+		}
 	}
 
 	// 相手がゴールブロックならゴール済みフラグを立てる
 	if (otherAttr == CollisionAttribute::Goal) {
-		isGoaled_ = true;
+		if (!isGoaled_) {
+			// ゴール音再生
+			seGoal_->Play(false, 0.5f);
+
+			isGoaled_ = true;
+		}
 	}
 }
 
@@ -170,11 +218,15 @@ void Norm::Player::Move() {
 		}
 
 		// ジャンプ入力
-		if (input_->TriggerKey(DIK_W)) {
+		if (input_->TriggerKey(DIK_W) || input_->TriggerKey(DIK_SPACE)) {
 			// 接地中のみ可能
 			if (isGrounded_) {
 				yVelocity_ = kJumpPower;
 				isGrounded_ = false;
+				isAirborne_ = true;
+
+				// ジャンプ音再生
+				seJump_->Play(false, 0.5f);
 			}
 		}
 	}
@@ -185,4 +237,5 @@ void Norm::Player::Move() {
 	if (std::abs(velocity_.x) < 0.001f) {
 		velocity_.x = 0.0f;
 	}
+
 }

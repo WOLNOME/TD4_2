@@ -3,6 +3,7 @@
 // Engine
 #include <MyMath.h>
 #include <Sprite.h>
+#include <Audio.h>
 
 namespace Norm {
 // =========================================================
@@ -94,5 +95,10 @@ private:
 	// ESCキー
 	uint32_t texKeyEscape_ = 0u;
 	std::unique_ptr<Sprite> spriteKeyEscape_ = nullptr;
+
+	// クリック音
+	std::unique_ptr<Norm::Audio> seClick_;
+	// ポーズキー押下音
+	std::unique_ptr<Norm::Audio> sePause_;
 };
 } // namespace Norm

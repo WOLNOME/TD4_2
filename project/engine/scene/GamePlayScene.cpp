@@ -32,24 +32,30 @@ void Norm::GamePlayScene::Initialize() {
 	dirLight_->SetDirection({ 0.5f,0.5f,-1.0f });
 	pointLight_ = std::make_unique<PointLight>();
 	pointLight_->SetPosition({ 0.0f,0.0f,0.0f });
-	pointLight_->SetRadius(8.0f);
-	pointLight_->SetDecay(1.5f);
-	pointLight_->SetIntensity(3.0f);
+	pointLight_->SetRadius(6.0f);
+	pointLight_->SetDecay(1.3f);
+	pointLight_->SetIntensity(2.0f);
 
 	// ライトを登録
 	sceneLight_->SetLight(dirLight_.get());
 	sceneLight_->SetLight(pointLight_.get());
+
+	//ライト管理クラスの生成・初期化
+	lightManager_ = std::make_unique<LightManager>();
+	lightManager_->Initialize();
+	lightManager_->SetPointLight(pointLight_.get());
+	lightManager_->SetCamera(camera_.get());
 
 	/* 天球の生成 + 初期化 */
 	skydome_ = std::make_unique<Skydome>();
 	skydome_->Initialize();
 	//背景の生成 + 初期化
 	background_ = std::make_unique<Object3d>();
-	background_->Initialize(ShapeTag{},"background",Shape::ShapeKind::kPlane);
+	background_->Initialize(ShapeTag{}, "background", Shape::ShapeKind::kPlane);
 	background_->SetTexture(TextureManager::GetInstance()->LoadTexture("backGround.png"));
 	background_->SetIsLightProcess(true);
 	backgroundWT_.Initialize();
-	backgroundWT_.SetScale({ 100.0f, 100.0f, 1.0f });
+	backgroundWT_.SetScale({ 150.0f, 100.0f, 1.0f });
 	backgroundWT_.SetRotate({ 0.0f,-pi,0.0f });
 	backgroundWT_.SetTranslate({ 0.0f, 0.0f, 2.5f });
 	background_->RegistWorldTransform(&backgroundWT_);
@@ -61,6 +67,7 @@ void Norm::GamePlayScene::Initialize() {
 	// ギミック管理
 	gimmickManager_ = std::make_unique<GimmickManager>();
 	gimmickManager_->Initialize(camera_.get());
+	gimmickManager_->SetLightManager(lightManager_.get());
 	
 	/* ステージ管理クラス生成 + ステージ読み込み */
 	stageManager_ = std::make_unique<StageManager>();
@@ -71,20 +78,22 @@ void Norm::GamePlayScene::Initialize() {
 		gimmickManager_.get()
 	);
 
-	// 背景オブジェクト生成 + 初期化
-	background_ = std::make_unique<Object3d>();
-	background_->Initialize(ShapeTag{}, Object3dManager::GetInstance()->GenerateName("background"), Shape::ShapeKind::kPlane);
-	background_->SetColor({0.2f, 0.2f, 0.2f, 1.0f});
-	backgroundWT_.Initialize();
-	backgroundWT_.SetScale({150.0f, 100.0f, 1.0f}); // 画面全体を覆うように
-	background_->RegistWorldTransform(&backgroundWT_);
+
+	
+
+	// Enemyの生成と初期化
+	enemyManager_=std::make_unique<EnemyManager>();
 
 	// ポーズメニュー生成 + 初期化
 	pauseMenu_ = std::make_unique<PauseMenu>();
 	pauseMenu_->Initialize();
 
+	// BGM読み込み
+	bgmGame_ = std::make_unique<Norm::Audio>();
+	bgmGame_->Initialize("gameBGM.wav");
+	bgmGame_->Play(true, 0.5f);
+
 	//ポストエフェクト　ブルーム
-	//PostEffectManager::GetInstance()->AddPostEffectOrder(PostEffectKind::None);
 	PostEffectManager::GetInstance()->AddPostEffectOrder(PostEffectKind::BloomExtract);
 	PostEffectManager::GetInstance()->AddPostEffectOrder(PostEffectKind::GaussianFilter, PostEffectKind::BloomExtract);
 	PostEffectManager::GetInstance()->AddPostEffectOrder(PostEffectKind::BloomComposite, PostEffectKind::GaussianFilter);
@@ -108,8 +117,8 @@ void Norm::GamePlayScene::Update() {
 		return;
 	}
 
-	//ライト移動処理
-	LightMoveProcess();
+	//ライト管理クラスの更新
+	lightManager_->Update();
 
 	/* プレイヤー更新処理 */
 	player_->Update();
@@ -128,12 +137,10 @@ void Norm::GamePlayScene::Update() {
 	// Enemyの更新
 	enemyManager_->UpdateEnemies();
 
-	// ギミックに最新のライト情報を渡す
-	gimmickManager_->SetLightInfo(lightInfo_);
 	// 全ギミックを更新
 	gimmickManager_->Update();
 
-    /* 当たり判定処理（全ての移動が終わったあとのため最後）*/
+	/* 当たり判定処理（全ての移動が終わったあとのため最後）*/
 	CollisionManager::GetInstance()->CheckCollision();
 }
 
@@ -169,6 +176,9 @@ void Norm::GamePlayScene::DebugWithImGui() {
 	/* カメラデバッグ */
 	camera_->DebugWithImGui();
 
+	//ライト管理クラスのデバッグ
+	lightManager_->Debug();
+
 	/* プレイヤーデバッグ */
 	player_->Debug();
 
@@ -193,46 +203,4 @@ void Norm::GamePlayScene::DebugWithImGui() {
 	PostEffectManager::GetInstance()->DebugWithImGui();
 
 #endif
-}
-
-void Norm::GamePlayScene::LightMoveProcess() {
-	//インプットの取得
-	auto* input = Input::GetInstance();
-
-	//ベクトル1を求める
-	Vector3 cameraPos = camera_->worldTransform.GetWorldTranslate();
-	Vector3 pointX;	//マウスのスクリーン座標をワールド座標に変換したときのある点
-	Vector3 mousePos = { input->GetMousePosition().x,input->GetMousePosition().y,0.0f };
-	float ndcX = (2.0f * mousePos.x / WinApp::GetInstance()->kClientWidth) - 1.0f;
-	float ndcY = 1.0f - (2.0f * mousePos.y / WinApp::GetInstance()->kClientHeight);
-	Vector3 pointNDC =
-	{
-		ndcX,
-		ndcY,
-		1.0f
-	};
-	Matrix4x4 invViewProj =
-		MyMath::Inverse(camera_->GetViewProjectionMatrix());
-	pointX = MyMath::Transform(pointNDC, invViewProj);
-	//ベクトル1を直線に変換
-	Line line;
-	line.diff = Vector3(pointX - cameraPos).Normalized();
-	line.origin = cameraPos;
-	//XY平面を作成
-	Plane XYPlane;
-	XYPlane.normal = { 0,0,1 };
-	XYPlane.distance = -2.0f;
-	//直線と平面の交点CPを求める
-	Vector3 cp = MyMath::CollisionPoint(line, XYPlane);
-	//点光源の座標としてcpを適用する
-	pointLight_->SetPosition(cp);
-
-	// ギミック判定用ライト情報
-	lightInfo_.position = cp;
-	lightInfo_.range = pointLight_->GetRadius();
-	lightInfo_.isLighting = true;
-
-	// 左クリックでフラッシュ
-	lightInfo_.isFlash = input->TriggerMouseButton(MouseButton::LeftButton);
-
 }

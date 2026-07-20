@@ -12,14 +12,6 @@
 
 using namespace Norm;
 
-struct LightInfo
-{
-	Vector3 position{};       // ライトの位置
-	float range = 5.0f;       // ライトの範囲
-	bool isLighting = false;  // ライトが出ているか
-	bool isFlash = false;     // フラッシュ中か
-};
-
 enum class GimmickState
 {
 	Hidden,      // 見つかっていない
@@ -28,6 +20,8 @@ enum class GimmickState
 	Used,        // 使用済み
 	Respawning // 再生成演出中
 };
+
+class LightManager;
 
 class GimmickBase
 {
@@ -47,7 +41,7 @@ public:
 	void HitLight();
 
 	/// ==============アクセッサ================ ///
-	void SetLightInfo(const LightInfo* lightInfo) { lightInfo_ = lightInfo; }
+	void SetLightManager(LightManager* _lightManager) { lightManager_ = _lightManager; }
 
 
 	GimmickState GetGimmickState() const { return gimmickState_; }//状態を取得
@@ -55,8 +49,6 @@ public:
 	float GetRadius() const { return radius_; }
 
 	void CreateCollider(CollisionAttribute attribute, const Vector3& offset, const Vector3& size);
-
-	
 
 
 protected:
@@ -66,7 +58,7 @@ protected:
 	void SetColliderSize(const Vector3& size);
 protected:
 
-	const LightInfo* lightInfo_ = nullptr;
+	LightManager* lightManager_ = nullptr;
 
 	GimmickState gimmickState_ = GimmickState::Hidden;
 

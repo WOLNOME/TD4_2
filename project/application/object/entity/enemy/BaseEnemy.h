@@ -8,6 +8,7 @@
 // Collider
 #include "collider/EnemyMoveCollider.h"
 #include "collider/EnemyAreaCollider.h"
+#include "collider/EnemyBodyCollider.h"
 // EnemyState
 #include "State/Base/EnemyState.h"
 // C++標準ライブラリ
@@ -75,14 +76,6 @@ public:
 	void Flash();
 
 public:
-	/// <summary>
-	/// 衝突時コールバック
-	/// </summary>
-	/// <param name="other"></param>
-	/// <param name="otherAttr"></param>
-	void OnCollision(Norm::ICollider* other, Norm::CollisionAttribute otherAttr);
-
-public:
 	/// ============================== ///
 	///		getter
 	/// ============================== ///
@@ -129,6 +122,12 @@ public:
 	bool IsAreaColliding() const { return isAreaColliding_; }
 
 	/// <summary>
+	/// 体と衝突中かどうかを取得する
+	/// </summary>
+	/// <returns></returns>
+	bool IsBodyColliding() const { return isBodyColliding_; }
+
+	/// <summary>
 	/// 回転中かどうかを取得
 	/// </summary>
 	/// <returns></returns>
@@ -172,6 +171,12 @@ public:
 	/// <param name="isColliding"></param>
 	void SetAreaColliding(bool isColliding) { isAreaColliding_ = isColliding; }
 
+	/// <summary>
+	/// 衝突中かどうかを設定する(体)
+	/// </summary>
+	/// <param name="isColliding"></param>
+	void SetBodyColliding(bool isColliding) { isBodyColliding_ = isColliding; }
+
 #ifdef _DEBUG
 	void SetIsTurning(bool isFlag) { isTurning_ = isFlag; }
 #endif // _DEBUG
@@ -182,10 +187,8 @@ private:
 	/// ============================== ///
 	std::unique_ptr<Norm::Object3d> object3d_ = nullptr;
 	Norm::WorldTransform worldTransform_;
-	std::unique_ptr<Norm::ICollider> collider_ = nullptr;
 	std::unique_ptr<EnemyAreaCollider> areaCollider_ = nullptr;
-	std::unique_ptr<EnemyMoveCollider> moveCollider_ = nullptr;
-
+	std::unique_ptr<EnemyBodyCollider> bodyCollider_ = nullptr;
 	// 現在の状態
 	std::unique_ptr<EnemyState> currentState_ = nullptr;
 	EnemyDirection currentDirection_ = EnemyDirection::Right;
@@ -208,6 +211,7 @@ private:
 	// 衝突中かどうかを保持するフラグ
 	bool isFootColliding_ = false;
 	bool isAreaColliding_ = false;
+	bool isBodyColliding_ = false;
 
 	// 回転中かどうかのフラグ
 	bool isRotating_ = false; 
