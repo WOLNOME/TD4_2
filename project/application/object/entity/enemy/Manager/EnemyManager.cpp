@@ -24,17 +24,24 @@ void EnemyManager::SpawnEnemy(
 /// エネミーの更新
 ///-------------------------------------------///
 void EnemyManager::UpdateEnemies() {
-	for (auto& enemy : enemies_) {
-		if (enemy) {
-			// 死亡しているかどうかを確認
-			if (enemy->IsDead()) {
-				deadEnemyCount_++;
-			}
+	// Enemyの更新処理
+    for (auto& enemy : enemies_) {
+        if (enemy) {
+            enemy->Update();
+        }
+    }
 
-			// エネミーの更新処理
-			enemy->Update();
-		}
-	}
+    // 死亡した敵をリストから削除
+    for (auto it = enemies_.begin(); it != enemies_.end(); ) {
+        if ((*it)->IsDead()) {
+            // 死亡カウントを増加
+            deadEnemyCount_++;            
+            it = enemies_.erase(it);
+        } else {
+			// 次の要素に進む
+            ++it;
+        }
+    }
 }
 
 ///-------------------------------------------/// 

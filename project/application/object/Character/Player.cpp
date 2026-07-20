@@ -147,6 +147,11 @@ void Norm::Player::OnCollision(ICollider* other, CollisionAttribute otherAttr) {
 				}
 			}
 		}
+
+		/// ===Enemy=== ///
+		if (otherAttr == CollisionAttribute::Enemy) {
+
+		}
 	}
 
 	// 相手がゴールブロックならゴール済みフラグを立てる

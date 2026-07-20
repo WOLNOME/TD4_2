@@ -40,18 +40,10 @@ void EnemyMoveState::Exit() {
 /// 移動処理
 ///-------------------------------------------///
 void EnemyMoveState::Move() {
-#ifdef _DEBUG
-
-	// フラグがtrueなら180度回転させる
-	if (enemy_->GetIsTurning()) {
-		enemy_->SetCurrentDirection(Opposite(enemy_->GetCurrentDirection()));
-		enemy_->SetIsTurning(false);
-	}
-#endif // _DEBUG
 
 	// 進行方向への速度を設定
 	float sign = DirectionToSign(enemy_->GetCurrentDirection());
-	enemy_->SetVelocity({ sign * moveSpeed_, 0.0f, 0.0f });
+	enemy_->SetVelocity({ sign * moveSpeed_ * (enemy_->GetPlayer()->IsGoaled() ? 0.0f : 1.0f), 0.0f, 0.0f });
 
 	// 向きの更新
 	enemy_->UpdateFacing(sign);
