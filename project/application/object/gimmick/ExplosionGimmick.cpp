@@ -134,7 +134,7 @@ void ExplosionGimmick::Update()
 
 			// コリジョン無効化
 			if (collider_) {
-				collider_->SetCollisionAttribute(Norm::CollisionAttribute::Nothingness);
+				collider_->SetCollisionAttribute(Norm::CollisionAttribute::Gimmick);
 			}
 		}
 	}
