@@ -1,12 +1,12 @@
 #pragma once
 /// ===include=== ///
-#include "EnemyState.h"
+#include "Base/EnemyState.h"
 
 ///=====================================================/// 
-/// EnemyAttackState
-/// Enemyの攻撃状態を管理するクラス
+/// EnemyChaseState
+/// Enemyの追跡状態を管理するクラス
 ///=====================================================///
-class EnemyAttackState : public EnemyState {
+class EnemyChaseState : public EnemyState {
 public:
 
 	/// <summary>
@@ -23,5 +23,17 @@ public:
 	/// 終了処理
 	/// </summary>
 	void Exit() override;
+
+private:
+
+	// 追跡関連の変数
+	float chaseSpeed_ = 0.1f; // 追跡速度
+
+private:
+
+	/// <summary>
+	/// プレイヤーを追う処理
+	/// </summary>
+	void ChasePlayer();
 };
 

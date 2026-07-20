@@ -91,6 +91,9 @@
     <FxCompile Include="Resources\shaders\textTexture\TextTexture.PS.hlsl">
       <Filter>Resources\shaders\textTexture</Filter>
     </FxCompile>
+    <FxCompile Include="Resources\shaders\postEffects\BloomExtract.PS.hlsl" />
+    <FxCompile Include="Resources\shaders\postEffects\BloomBlur.PS.hlsl" />
+    <FxCompile Include="Resources\shaders\postEffects\BloomComposite.PS.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="engine\scenebase\AbstractSceneFactory.cpp">
@@ -354,14 +357,22 @@
     <ClCompile Include="application\object\Character\Player.cpp" />
     <ClCompile Include="application\object\collision\ObjectCollider.cpp" />
     <ClCompile Include="application\object\entity\enemy\BaseEnemy.cpp" />
-    <ClCompile Include="application\object\entity\enemy\State\EnemyState.cpp" />
-    <ClCompile Include="application\object\entity\enemy\State\EnemyAttackState.cpp" />
+    <ClCompile Include="application\object\entity\enemy\State\Base\EnemyState.cpp" />
+    <ClCompile Include="application\object\entity\enemy\State\EnemyChaseState.cpp" />
     <ClCompile Include="application\object\entity\enemy\State\EnemyMoveState.cpp" />
     <ClCompile Include="application\object\entity\enemy\State\EnemyEscapeState.cpp" />
     <ClCompile Include="GimmickBase.cpp" />
     <ClCompile Include="ExplosionGimmick.cpp" />
     <ClCompile Include="GimmickManager.cpp" />
     <ClCompile Include="GimmickCollider.cpp" />
+    <ClCompile Include="engine\scene\TitleScene.cpp" />
+    <ClCompile Include="application\object\entity\enemy\collider\EnemyMoveCollider.cpp" />
+    <ClCompile Include="application\object\entity\enemy\collider\EnemyAreaCollider.cpp" />
+    <ClCompile Include="application\object\camera\FollowCamera.cpp" />
+    <ClCompile Include="engine\scene\ResultScene.cpp" />
+    <ClCompile Include="application\ui\pause\PauseMenu.cpp" />
+    <ClCompile Include="application\object\entity\enemy\State\EnemyStopState.cpp" />
+    <ClCompile Include="application\object\entity\enemy\Manager\EnemyManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="engine\scenebase\AbstractSceneFactory.h">
@@ -664,14 +675,23 @@
     <ClInclude Include="application\object\Character\Player.h" />
     <ClInclude Include="application\object\collision\ObjectCollider.h" />
     <ClInclude Include="application\object\entity\enemy\BaseEnemy.h" />
-    <ClInclude Include="application\object\entity\enemy\State\EnemyState.h" />
-    <ClInclude Include="application\object\entity\enemy\State\EnemyAttackState.h" />
+    <ClInclude Include="application\object\entity\enemy\State\Base\EnemyState.h" />
+    <ClInclude Include="application\object\entity\enemy\State\EnemyChaseState.h" />
     <ClInclude Include="application\object\entity\enemy\State\EnemyMoveState.h" />
     <ClInclude Include="application\object\entity\enemy\State\EnemyEscapeState.h" />
     <ClInclude Include="GimmickBase.h" />
     <ClInclude Include="ExplosionGimmick.h" />
     <ClInclude Include="GimmickManager.h" />
     <ClInclude Include="GimmickCollider.h" />
+    <ClInclude Include="engine\scene\TitleScene.h" />
+    <ClInclude Include="application\object\entity\enemy\collider\EnemyMoveCollider.h" />
+    <ClInclude Include="application\object\entity\enemy\collider\EnemyAreaCollider.h" />
+    <ClInclude Include="application\object\camera\FollowCamera.h" />
+    <ClInclude Include="engine\scene\ResultScene.h" />
+    <ClInclude Include="application\ui\pause\PauseMenu.h" />
+    <ClInclude Include="engine\3d\object\ObjectEnum.h" />
+    <ClInclude Include="application\object\entity\enemy\State\EnemyStopState.h" />
+    <ClInclude Include="application\object\entity\enemy\Manager\EnemyManager.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\shaders\line\Line.hlsli">

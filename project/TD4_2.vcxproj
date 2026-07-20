@@ -111,10 +111,14 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="application\system\direction\cinematic\Cinematic.cpp" />
     <ClCompile Include="application\system\direction\builder\CinematicBuilder.cpp" />
     <ClCompile Include="application\object\entity\enemy\BaseEnemy.cpp" />
-    <ClCompile Include="application\object\entity\enemy\State\EnemyState.cpp" />
-    <ClCompile Include="application\object\entity\enemy\State\EnemyAttackState.cpp" />
+    <ClCompile Include="application\object\entity\enemy\State\Base\EnemyState.cpp" />
+    <ClCompile Include="application\object\entity\enemy\State\EnemyChaseState.cpp" />
     <ClCompile Include="application\object\entity\enemy\State\EnemyMoveState.cpp" />
     <ClCompile Include="application\object\entity\enemy\State\EnemyEscapeState.cpp" />
+    <ClCompile Include="application\object\entity\enemy\collider\EnemyMoveCollider.cpp" />
+    <ClCompile Include="application\object\entity\enemy\collider\EnemyAreaCollider.cpp" />
+    <ClCompile Include="application\object\entity\enemy\State\EnemyStopState.cpp" />
+    <ClCompile Include="application\object\entity\enemy\Manager\EnemyManager.cpp" />
     <ClCompile Include="engine\collision\base\AABBColliderBase.cpp" />
     <ClCompile Include="engine\behaviorTree\nodeBase\NodeBase.cpp" />
     <ClCompile Include="engine\behaviorTree\interface\INode.cpp" />
@@ -206,18 +210,26 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="application\stage\StageManager.cpp" />
     <ClCompile Include="application\object\Character\Player.cpp" />
     <ClCompile Include="application\object\collision\ObjectCollider.cpp" />
+    <ClCompile Include="application\object\camera\FollowCamera.cpp" />
     <ClCompile Include="GimmickBase.cpp" />
     <ClCompile Include="GimmickCollider.cpp" />
     <ClCompile Include="GimmickManager.cpp" />
+    <ClCompile Include="engine\scene\TitleScene.cpp" />
+    <ClCompile Include="engine\scene\ResultScene.cpp" />
+    <ClCompile Include="application\ui\pause\PauseMenu.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="application\system\direction\cinematic\Cinematic.h" />
     <ClInclude Include="application\system\direction\builder\CinematicBuilder.h" />
     <ClInclude Include="application\object\entity\enemy\BaseEnemy.h" />
-    <ClInclude Include="application\object\entity\enemy\State\EnemyState.h" />
-    <ClInclude Include="application\object\entity\enemy\State\EnemyAttackState.h" />
+    <ClInclude Include="application\object\entity\enemy\State\Base\EnemyState.h" />
+    <ClInclude Include="application\object\entity\enemy\State\EnemyChaseState.h" />
     <ClInclude Include="application\object\entity\enemy\State\EnemyMoveState.h" />
     <ClInclude Include="application\object\entity\enemy\State\EnemyEscapeState.h" />
+    <ClInclude Include="application\object\entity\enemy\collider\EnemyMoveCollider.h" />
+    <ClInclude Include="application\object\entity\enemy\collider\EnemyAreaCollider.h" />
+    <ClInclude Include="application\object\entity\enemy\State\EnemyStopState.h" />
+    <ClInclude Include="application\object\entity\enemy\Manager\EnemyManager.h" />
     <ClInclude Include="engine\collision\base\AABBColliderBase.h" />
     <ClInclude Include="engine\behaviorTree\nodeBase\NodeBase.h" />
     <ClInclude Include="engine\behaviorTree\interface\INode.h" />
@@ -314,6 +326,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="engine\collision\base\SphereColliderBase.h" />
     <ClInclude Include="application\object\level\collision\LevelObjectCollider.h" />
     <ClInclude Include="application\system\direction\shot\base\IShotBase.h" />
+    <ClInclude Include="application\object\camera\FollowCamera.h" />
     <ClInclude Include="GimmickBase.h" />
     <ClInclude Include="application\ui\guide\GuideUI.h" />
     <ClInclude Include="engine\scene\GamePlayScene.h" />
@@ -324,6 +337,10 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="application\object\collision\ObjectCollider.h" />
     <ClInclude Include="GimmickCollider.h" />
     <ClInclude Include="GimmickManager.h" />
+    <ClInclude Include="engine\scene\TitleScene.h" />
+    <ClInclude Include="engine\scene\ResultScene.h" />
+    <ClInclude Include="application\ui\pause\PauseMenu.h" />
+    <ClInclude Include="engine\3d\object\ObjectEnum.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt" />
@@ -424,6 +441,24 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>
     <FxCompile Include="Resources\shaders\particle\UpdateParticle.CS.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="Resources\shaders\postEffects\BloomBlur.PS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="Resources\shaders\postEffects\BloomComposite.PS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="Resources\shaders\postEffects\BloomExtract.PS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>

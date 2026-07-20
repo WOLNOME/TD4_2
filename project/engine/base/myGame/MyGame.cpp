@@ -29,7 +29,9 @@ void MyGame::Initialize() {
 
 	//パーティクルエディター→PARTICLEEDITOR
 	//サンプルシーン→Sample
+	// タイトルシーン->TITLE
 	// ゲームプレイシーン->GAMEPLAY
+	// リザルトシーン->RESULT
 }
 
 void MyGame::Finalize() {
@@ -133,7 +135,7 @@ void MyGame::Draw() {
 
 	//画面切り替え
 	MainRender::GetInstance()->ExchangeScreen();
-	
+
 	///------------------------------///
 	///      レンダーの最終処理
 	///------------------------------///

@@ -3,6 +3,9 @@
 void GimmickBase::Update()
 {
 	HitLight();
+
+	guideUI_->SetPosition(position_ + uiOffset_);
+	guideUI_->Update();
 }
 
 void GimmickBase::HitLight()

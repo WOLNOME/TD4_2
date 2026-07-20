@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include <cstdint>
+#include <map>
 
 namespace Norm {
 	/// <summary>
@@ -13,6 +14,9 @@ namespace Norm {
 		int32_t width = 0;	// マップの横のマス数
 	    int32_t height = 0; // マップの縦のマス数
 	    float tileSize = 2.0f; // タイル1マスのサイズ（3D空間上の大きさ）
+	    int32_t firstGid = 1; // firstgidを保存
+
+		std::map<int32_t, std::string> tileTypes; // タイル固有IDに対するBlockTypeの文字列を紐づける
 
 		// レイヤーごとのマップチップIDデータ（2次元配列を1次元にしたもの）
 		struct Layer {

@@ -152,7 +152,7 @@ PixelShaderOutput main(VertexShaderOutput input)
         float3 diffuseSpotLight = { 0.0f, 0.0f, 0.0f };
         float3 specularSpotLight = { 0.0f, 0.0f, 0.0f };
     
-        for (int k = 0; k < gSceneLight.numPointLights; ++k)
+        for (int k = 0; k < gSceneLight.numSpotLights; ++k)
         {
             if (gSceneLight.spotLights[k].isActive == 1)
             {

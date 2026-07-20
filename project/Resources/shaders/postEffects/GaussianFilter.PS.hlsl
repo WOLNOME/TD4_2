@@ -8,7 +8,6 @@ struct PixelShaderOutput
     float4 color : SV_TARGET0;
 };
 
-
 static const float pi = 3.14159265f;
 
 static const float2 kIndex3x3[3][3] =

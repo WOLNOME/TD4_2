@@ -1,5 +1,6 @@
 #include "ExplosionGimmick.h"
 #include "Object3dManager.h"
+#include "TextureManager.h"
 
 #ifdef _DEBUG
 #include "imgui.h"
@@ -7,7 +8,7 @@
 
 
 
-void ExplosionGimmick::Initialize()
+void ExplosionGimmick::Initialize(Norm::BaseCamera* _camera)
 {
 
 	gimmickState_ = GimmickState::Hidden;// 初期状態は見つかっていない状態

@@ -19,5 +19,4 @@ void Skydome::Initialize() {
 	worldTransform_.SetScale({ 1500.0f,1500.0f,1500.0f });
 	//オブジェクトにセット
 	object3d_->RegistWorldTransform(&worldTransform_);
-
 }

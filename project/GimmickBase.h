@@ -29,7 +29,7 @@ class GimmickBase
 {
 public:
 
-	virtual void Initialize() = 0;
+	virtual void Initialize(Norm::BaseCamera* _camera) = 0;
 	virtual void Update();
 
 	/// <summary>
@@ -61,12 +61,17 @@ protected:
 
 	void SetColliderSize(const Vector3& size);
 protected:
+
 	const LightInfo* lightInfo_ = nullptr;
 
 	GimmickState gimmickState_ = GimmickState::Hidden;
 
 	std::unique_ptr<Object3d> gimmickObject_ = nullptr;
 	WorldTransform worldTransform_{};
+
+	std::unique_ptr<GuideUI> guideUI_ = nullptr;
+
+	Vector3 uiOffset_ = { 0.0f,4.0f,0.0f };
 
 	Vector3 position_{};
 	float radius_ = 1.0f;

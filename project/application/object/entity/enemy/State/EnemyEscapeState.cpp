@@ -12,7 +12,7 @@
 void EnemyEscapeState::Enter(BaseEnemy* enemy) {
 	enemy_ = enemy;
 
-	// ランダムな方向を決定する(横スクロールのためx,y平面のみ。zは0固定)
+	// ランダムな方向を決定する
 	std::random_device seedGenerator;
 	std::mt19937 engine(seedGenerator());
 	std::uniform_real_distribution<float> angleDist(0.0f, 2.0f * Norm::pi);

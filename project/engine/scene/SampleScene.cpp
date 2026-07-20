@@ -61,6 +61,7 @@ namespace Norm {
 		shapeBase_->RegistWorldTransform(&shapeBaseWT_);
 		sampleMap_ = std::make_unique<Object3d>();
 		sampleMap_->Initialize(ModelTag{}, Object3dManager::GetInstance()->GenerateName("SampleMap"), "sampleMap");
+		
 		sampleMapWT_.Initialize();
 		sampleMapWT_.SetTranslate({ 0.0f,5.0f,40.0f });
 		sampleMapWT_.SetRotate({ 0.0f,0.0f,0.0f });
@@ -70,6 +71,8 @@ namespace Norm {
 		{
 			cObject_ = std::make_unique<Object3d>();
 			cObject_->Initialize(ModelTag{}, Object3dManager::GetInstance()->GenerateName("CObject"), "cube");
+			cObject_->SetIsOutline(true);
+			cObject_->SetOutlineParam(TextureManager::GetInstance()->LoadTexture("green.png"), 2.0f);
 
 			cObject1WT_.Initialize();
 			cObject1WT_.SetTranslate({ 0.0f,5.0f,20.0f });
@@ -79,7 +82,6 @@ namespace Norm {
 			auto* collider1 = dynamic_cast<ObjectCollider*>(collider1_.get());
 			collider1->SetCollisionAttribute(CollisionAttribute::Player);
 			collider1->SetWorldTransform(&cObject1WT_);
-			collider1->SetOffset({ 0.0f,1.0f,0.0f });
 			collider1->SetOBBSize({ 2.0f,2.0f,2.0f });
 
 			cObject2WT_.Initialize();
@@ -90,7 +92,6 @@ namespace Norm {
 			auto* collider2 = dynamic_cast<ObjectCollider*>(collider2_.get());
 			collider2->SetCollisionAttribute(CollisionAttribute::Enemy);
 			collider2->SetWorldTransform(&cObject2WT_);
-			collider2->SetOffset({ 0.0f,1.0f,0.0f });
 			collider2->SetOBBSize({ 2.0f,2.0f,2.0f });
 
 		}
@@ -102,14 +103,13 @@ namespace Norm {
 		back_->SetTexture(TextureManager::GetInstance()->LoadTexture("uvChecker.png"));
 		backWT_.Initialize();
 		backWT_.SetTranslate({ 4.6f,20.0f,41.0f });
-		backWT_.SetRotate({ 0.0f,1.58f,0.0f });
+		backWT_.SetRotate({ 0.0f,-pi/2.0f,0.0f });
 		backWT_.SetScale({ 30.0f,20.0f,1.0f });
 		back_->RegistWorldTransform(&backWT_);
 
 		// Enemyの生成と初期化
 		enemy_ = std::make_unique<BaseEnemy>();
-		enemy_->Initialize({ 0.0f, 5.0f, 0.0f });
-
+		//enemy_->Initialize({ 0.0f, 5.0f, 0.0f }, );
 
 		//パーティクルの生成と初期化
 		particle_ = std::make_unique<CombinedParticle>();
@@ -122,12 +122,14 @@ namespace Norm {
 		particle_->SetIsPlay(true);
 		particle_->SetIsRepeat(true);
 
-
 		// 爆発ギミック
 		explosionGimmick_ = std::make_unique<ExplosionGimmick>();
 		explosionGimmick_->SetLightInfo(&lightInfo_);
 		explosionGimmick_->SetPosition({ 0.0f, 10.0f, 40.0f });
-		explosionGimmick_->Initialize();
+		explosionGimmick_->Initialize(camera_.get());
+
+		//ポストエフェクトの初期化
+		PostEffectManager::GetInstance()->AddPostEffectOrder(PostEffectKind::None);
 
 	}
 
