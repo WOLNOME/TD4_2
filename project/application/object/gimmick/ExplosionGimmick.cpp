@@ -40,6 +40,13 @@ void ExplosionGimmick::Initialize(Norm::BaseCamera* _camera)
 		{ 0.0f, 1.0f, 0.0f },
 		baseColliderSize_
 	);
+
+	// SE読み込み
+	seBombClick_ = std::make_unique<Norm::Audio>();
+	seBombClick_->Initialize("bombClick.wav");
+
+	seExplosion_ = std::make_unique<Norm::Audio>();
+	seExplosion_->Initialize("explosion.wav");
 }
 
 void ExplosionGimmick::Update()
@@ -89,6 +96,9 @@ void ExplosionGimmick::Update()
 
 			// コリジョンを消す
 			collider_.reset();
+
+			// 爆発音再生
+			seExplosion_->Play(false, 0.5f);
 		}
 	}
 
@@ -206,5 +216,6 @@ void ExplosionGimmick::OnFlashHit()
 	explosionTimer_ = 0.0f;
 	explosionScale_ = 1.0f;
 
-
+	// 爆弾クリック音再生
+	seBombClick_->Play(false, 0.5f);
 }

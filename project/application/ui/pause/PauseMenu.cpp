@@ -52,6 +52,13 @@ void Norm::PauseMenu::Initialize() {
 	spriteKeyEscape_->SetAnchorPoint({0.5f, 0.5f});
 	spriteKeyEscape_->SetPosition({60.0f, 60.0f});
 	spriteKeyEscape_->SetIsDisplay(true);
+
+	// 音声読み込み
+	seClick_ = std::make_unique<Norm::Audio>();
+	seClick_->Initialize("click.wav");
+
+	sePause_ = std::make_unique<Norm::Audio>();
+	sePause_->Initialize("pause.wav");
 }
 
 void Norm::PauseMenu::Update() { 
@@ -59,6 +66,9 @@ void Norm::PauseMenu::Update() {
 
 	// ESCキーが押されたらポーズ状態を切り替える
 	if (input->TriggerKey(DIK_ESCAPE)) {
+		// ポーズキー押下音再生
+		sePause_->Play(false, 0.4f);
+
 		isPaused_ = !isPaused_;
 
 		// 各スプライトの表示状態を切り替える
@@ -88,6 +98,9 @@ void Norm::PauseMenu::Update() {
 
 			// 左クリックされたらポーズ解除
 			if (input->TriggerMouseButton(MouseButton::LeftButton)) {
+				// クリック音再生
+				seClick_->Play(false, 0.5f);
+
 				isPaused_ = false;
 
 				// スプライトを非表示に戻す
@@ -108,6 +121,9 @@ void Norm::PauseMenu::Update() {
 
 			// 左クリックされたらリクエストフラグを立てる
 			if (input->TriggerMouseButton(MouseButton::LeftButton)) {
+				// クリック音再生
+				seClick_->Play(false, 0.5f);
+
 				isRequestedReturnToTitle_ = true;
 			} 
 		} else {

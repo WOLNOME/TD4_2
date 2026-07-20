@@ -57,6 +57,10 @@ void Norm::TitleScene::Initialize() {
 
 	initSize_ = buttonUI_.sprite->GetSize();
 
+	// 音声読み込み
+	seClick_ = std::make_unique<Norm::Audio>();
+	seClick_->Initialize("click.wav");
+
 	PostEffectManager::GetInstance()->AddPostEffectOrder(PostEffectKind::None);
 }
 
@@ -82,6 +86,8 @@ void Norm::TitleScene::Update() {
 		buttonUI_.sprite->SetSize(initSize_ * 1.2f);
 
 		if (Input::GetInstance()->TriggerMouseButton(MouseButton::LeftButton)) {
+			// クリック音再生
+			seClick_->Play(false, 0.5f);
 
 			sceneManager_->SetNextScene("GAMEPLAY");
 		}

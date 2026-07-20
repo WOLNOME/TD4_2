@@ -76,5 +76,8 @@ namespace Norm {
 		UI buttonUI_;
 
 		Vector2 initSize_;
+
+		// クリック音
+	    std::unique_ptr<Norm::Audio> seClick_;
 	};
 }
