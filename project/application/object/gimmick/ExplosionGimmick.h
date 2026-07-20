@@ -81,7 +81,6 @@ private:
 	// 爆発前のコライダーサイズ
 	Vector3 baseColliderSize_;
 
-
 	//爆発パーティクル
 	std::unique_ptr<CombinedParticle> explosionParticle_ = nullptr;
 

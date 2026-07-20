@@ -10,7 +10,6 @@
 #include <application/system/LightManager.h>
 #include <application/object/environment/Skydome.h>
 #include <application/object/environment/Ground.h>
-#include <application/object/environment/Skydome.h>
 
 #include <application/ui/guide/GuideUI.h>
 
@@ -19,7 +18,7 @@
 #include <application/stage/StageManager.h>
 #include <application/ui/pause/PauseMenu.h>
 
-//#include "ExplosionGimmick.h"
+#include "application/object/gimmick/ExplosionGimmick.h"
 #include "application/object/gimmick/GimmickManager.h"
 
 namespace Norm {
@@ -86,7 +85,6 @@ namespace Norm {
 		std::unique_ptr<EnemyManager> enemyManager_ = nullptr;
 
 		//ギミック
-		std::unique_ptr<ExplosionGimmick> explosionGimmick_ = nullptr;
 		std::unique_ptr<GimmickManager> gimmickManager_;
 
 		// ポーズメニュー

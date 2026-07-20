@@ -1,6 +1,7 @@
 #include "ExplosionGimmick.h"
 #include "Object3dManager.h"
 #include "TextureManager.h"
+#include "CombinedParticleManager.h"
 
 #ifdef _DEBUG
 #include "imgui.h"
@@ -25,7 +26,7 @@ void ExplosionGimmick::Initialize(Norm::BaseCamera* _camera)
 	worldTransform_.SetTranslate(position_);
 
 	explosionParticle_ = std::make_unique<CombinedParticle>();
-	explosionParticle_->Initialize("Explosion", "Explosion");
+	explosionParticle_->Initialize(CombinedParticleManager::GetInstance()->GenerateName("ExplosionGimmick"), "Explosion");
 
 	// とりあえず見た目用オブジェクト
 	gimmickObject_ = std::make_unique<Object3d>();

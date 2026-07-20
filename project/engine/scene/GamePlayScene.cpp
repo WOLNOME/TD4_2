@@ -40,6 +40,12 @@ void Norm::GamePlayScene::Initialize() {
 	sceneLight_->SetLight(dirLight_.get());
 	sceneLight_->SetLight(pointLight_.get());
 
+	//ライト管理クラスの生成・初期化
+	lightManager_ = std::make_unique<LightManager>();
+	lightManager_->Initialize();
+	lightManager_->SetPointLight(pointLight_.get());
+	lightManager_->SetCamera(camera_.get());
+
 	/* 天球の生成 + 初期化 */
 	skydome_ = std::make_unique<Skydome>();
 	skydome_->Initialize();
@@ -49,7 +55,7 @@ void Norm::GamePlayScene::Initialize() {
 	background_->SetTexture(TextureManager::GetInstance()->LoadTexture("backGround.png"));
 	background_->SetIsLightProcess(true);
 	backgroundWT_.Initialize();
-	backgroundWT_.SetScale({ 100.0f, 100.0f, 1.0f });
+	backgroundWT_.SetScale({ 150.0f, 100.0f, 1.0f });
 	backgroundWT_.SetRotate({ 0.0f,-pi,0.0f });
 	backgroundWT_.SetTranslate({ 0.0f, 0.0f, 2.5f });
 	background_->RegistWorldTransform(&backgroundWT_);
@@ -61,6 +67,7 @@ void Norm::GamePlayScene::Initialize() {
 	// ギミック管理
 	gimmickManager_ = std::make_unique<GimmickManager>();
 	gimmickManager_->Initialize(camera_.get());
+	gimmickManager_->SetLightManager(lightManager_.get());
 	
 	/* ステージ管理クラス生成 + ステージ読み込み */
 	stageManager_ = std::make_unique<StageManager>();
@@ -71,28 +78,12 @@ void Norm::GamePlayScene::Initialize() {
 		gimmickManager_.get()
 	);
 
-	// 背景オブジェクト生成 + 初期化
-	background_ = std::make_unique<Object3d>();
-	background_->Initialize(ShapeTag{}, Object3dManager::GetInstance()->GenerateName("background"), Shape::ShapeKind::kPlane);
-	background_->SetColor({0.2f, 0.2f, 0.2f, 1.0f});
-	backgroundWT_.Initialize();
-	backgroundWT_.SetScale({150.0f, 100.0f, 1.0f}); // 画面全体を覆うように
-	background_->RegistWorldTransform(&backgroundWT_);
-	//ライト管理クラスの生成・初期化
-	lightManager_ = std::make_unique<LightManager>();
-	lightManager_->Initialize();
-	lightManager_->SetPointLight(pointLight_.get());
-	lightManager_->SetCamera(camera_.get());
+
+	
 
 	// Enemyの生成と初期化
-	enemy_ = std::make_unique<BaseEnemy>();
-	enemy_->Initialize({ 25.0f, -25.0f, 0.0f });
+	enemyManager_=std::make_unique<EnemyManager>();
 
-	// 爆発ギミック
-	explosionGimmick_ = std::make_unique<ExplosionGimmick>();
-	explosionGimmick_->SetLightManager(lightManager_.get());
-	explosionGimmick_->SetPosition({ 14.0f,-25.0f, 0.0f });
-	explosionGimmick_->Initialize(camera_.get());
 	// ポーズメニュー生成 + 初期化
 	pauseMenu_ = std::make_unique<PauseMenu>();
 	pauseMenu_->Initialize();
@@ -121,9 +112,6 @@ void Norm::GamePlayScene::Update() {
 		return;
 	}
 
-	//ライト移動処理
-	LightMoveProcess();
-
 	//ライト管理クラスの更新
 	lightManager_->Update();
 
@@ -144,8 +132,6 @@ void Norm::GamePlayScene::Update() {
 	// Enemyの更新
 	enemyManager_->UpdateEnemies();
 
-	// ギミックに最新のライト情報を渡す
-	gimmickManager_->SetLightInfo(lightInfo_);
 	// 全ギミックを更新
 	gimmickManager_->Update();
 
