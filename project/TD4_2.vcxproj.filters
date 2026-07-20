@@ -373,6 +373,7 @@
     <ClCompile Include="application\ui\pause\PauseMenu.cpp" />
     <ClCompile Include="application\object\entity\enemy\State\EnemyStopState.cpp" />
     <ClCompile Include="application\object\entity\enemy\Manager\EnemyManager.cpp" />
+    <ClCompile Include="application\object\entity\titleEnemy\TitleEnemy.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="engine\scenebase\AbstractSceneFactory.h">
@@ -692,6 +693,7 @@
     <ClInclude Include="engine\3d\object\ObjectEnum.h" />
     <ClInclude Include="application\object\entity\enemy\State\EnemyStopState.h" />
     <ClInclude Include="application\object\entity\enemy\Manager\EnemyManager.h" />
+    <ClInclude Include="application\object\entity\titleEnemy\TitleEnemy.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\shaders\line\Line.hlsli">

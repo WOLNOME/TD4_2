@@ -217,6 +217,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="engine\scene\TitleScene.cpp" />
     <ClCompile Include="engine\scene\ResultScene.cpp" />
     <ClCompile Include="application\ui\pause\PauseMenu.cpp" />
+    <ClCompile Include="application\object\entity\titleEnemy\TitleEnemy.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="application\system\direction\cinematic\Cinematic.h" />
@@ -341,6 +342,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="engine\scene\ResultScene.h" />
     <ClInclude Include="application\ui\pause\PauseMenu.h" />
     <ClInclude Include="engine\3d\object\ObjectEnum.h" />
+    <ClInclude Include="application\object\entity\titleEnemy\TitleEnemy.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt" />
