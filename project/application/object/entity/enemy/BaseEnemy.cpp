@@ -45,14 +45,14 @@ void BaseEnemy::Initialize(Norm::Vector3 position, Norm::Player* player, EnemyDi
 
 	/// ===コライダー=== ///
 	// 生成 + 登録
-	collider_ = std::make_unique<ObjectCollider>(object3d_.get());
-	auto* enemyCollider = dynamic_cast<ObjectCollider*>(collider_.get());
-	if (enemyCollider) {
-		enemyCollider->SetCollisionAttribute(CollisionAttribute::Enemy);
-		enemyCollider->SetWorldTransform(&worldTransform_);
-		enemyCollider->SetOffset({ 0.0f, 0.0f, 0.0f });
-		enemyCollider->SetOBBSize({ 1.0f, 1.0f, 1.0f }); // 敵のコライダーサイズ
-		enemyCollider->SetHolder(this); // 自身のポインタをセット
+	bodyCollider_ = std::make_unique<EnemyBodyCollider>(this);
+	auto* enemyBodyCollider = dynamic_cast<EnemyBodyCollider*>(bodyCollider_.get());
+	if (enemyBodyCollider) {
+		enemyBodyCollider->SetCollisionAttribute(CollisionAttribute::Enemy);
+		enemyBodyCollider->SetWorldTransform(&worldTransform_);
+		enemyBodyCollider->SetOffset({ 0.0f, 0.0f, 0.0f });
+		enemyBodyCollider->SetOBBSize({ 1.0f, 1.0f, 1.0f }); // Bodyのコライダーサイズ
+		enemyBodyCollider->SetHolder(this);
 	}
 
 	// Area
@@ -66,16 +66,6 @@ void BaseEnemy::Initialize(Norm::Vector3 position, Norm::Player* player, EnemyDi
 		enemyAreaCollider->SetHolder(this); // 自身のポインタをセット
 	}
 
-	// 足場
-	moveCollider_ = std::make_unique<EnemyMoveCollider>(this);
-	auto* enemyMoveCollider = dynamic_cast<EnemyMoveCollider*>(moveCollider_.get());
-	if (enemyMoveCollider) {
-		enemyMoveCollider->SetCollisionAttribute(CollisionAttribute::EnemyFoot);
-		enemyMoveCollider->SetWorldTransform(&worldTransform_);
-		enemyMoveCollider->SetOffset({ -1.5f, -1.0f, 0.0f });
-		enemyMoveCollider->SetOBBSize({ 0.8f, 1.5f, 0.8f }); // 敵のコライダーサイズ
-		enemyMoveCollider->SetHolder(this); // 自身のポインタをセット
-	}
 
 	/// ===初期位置=== ///
 	initialPosition_ = position;
@@ -91,6 +81,11 @@ void BaseEnemy::Initialize(Norm::Vector3 position, Norm::Player* player, EnemyDi
 /// 更新処理
 ///-------------------------------------------///
 void BaseEnemy::Update() {
+	/// ===死亡フラグの確認=== ///
+	if (isBodyColliding_) {
+		isDead_ = true;
+	}
+
 	/// ===Stateの管理=== ///
 	if (currentState_) {
 		// 各Stateの更新
@@ -101,12 +96,6 @@ void BaseEnemy::Update() {
 	if (!isFootColliding_ || isAreaColliding_) {
 		// Y軸を180度回転させる
 		SetCurrentDirection(Opposite(currentDirection_));
-	}
-
-	/// ===ColliderのOffsetの更新=== ///
-	if (auto* enemyMoveCollider = dynamic_cast<EnemyMoveCollider*>(moveCollider_.get())) {
-		float offsetX = (currentDirection_ == EnemyDirection::Right) ? -1.5f : 1.5f;
-		enemyMoveCollider->SetOffset({ offsetX, -1.0f, 0.0f });
 	}
 
 	/// ===座標の更新=== ///
@@ -167,22 +156,16 @@ void BaseEnemy::DebugWithImGui() {
 	}
 
 	// コライダーデバッグ
-	if (collider_) {
-		auto* enemyCollider = dynamic_cast<ObjectCollider*>(collider_.get());
-		if (enemyCollider) {
-			enemyCollider->Debug();
+	if (bodyCollider_) {
+		auto* enemyBodyCollider = dynamic_cast<EnemyBodyCollider*>(bodyCollider_.get());
+		if (enemyBodyCollider) {
+			enemyBodyCollider->Debug();
 		}
 	}
 	if (areaCollider_) {
 		auto* enemyAreaCollider = dynamic_cast<EnemyAreaCollider*>(areaCollider_.get());
 		if (enemyAreaCollider) {
 			enemyAreaCollider->Debug();
-		}
-	}
-	if (moveCollider_) {
-		auto* enemyMoveCollider = dynamic_cast<EnemyMoveCollider*>(moveCollider_.get());
-		if (enemyMoveCollider) {
-			enemyMoveCollider->Debug();
 		}
 	}
 
@@ -237,13 +220,6 @@ void BaseEnemy::Flash() {
 	// フラッシュの構造体などが有ればそれを受け取り、フラッシュの範囲内にEnemyがいたらStateを移動するようにする。
 
 	ChangeState(std::make_unique<EnemyStopState>(std::move(currentState_)));
-}
-
-///-------------------------------------------/// 
-/// 衝突時コールバック
-///-------------------------------------------///
-void BaseEnemy::OnCollision(ICollider* other, CollisionAttribute otherAttr) {
-	other, otherAttr; // 未使用の引数を無視するためのダミー
 }
 
 ///-------------------------------------------/// 
