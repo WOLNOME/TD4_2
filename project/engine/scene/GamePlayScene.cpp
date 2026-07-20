@@ -79,10 +79,6 @@ void Norm::GamePlayScene::Initialize() {
 	);
 
 
-	
-
-	// Enemyの生成と初期化
-	enemyManager_=std::make_unique<EnemyManager>();
 
 	// ポーズメニュー生成 + 初期化
 	pauseMenu_ = std::make_unique<PauseMenu>();
