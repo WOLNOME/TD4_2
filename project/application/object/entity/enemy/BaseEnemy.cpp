@@ -17,6 +17,7 @@
 #include <imgui.h>
 #include "State/EnemyChaseState.h"
 #include "State/EnemyEscapeState.h"
+#include "State/EnemyDeadState.h"
 #endif // _DEBUG
 #include "State/EnemyStopState.h"
 
@@ -46,26 +47,19 @@ void BaseEnemy::Initialize(Norm::Vector3 position, Norm::Player* player, EnemyDi
 	/// ===コライダー=== ///
 	// 生成 + 登録
 	bodyCollider_ = std::make_unique<EnemyBodyCollider>(this);
-	auto* enemyBodyCollider = dynamic_cast<EnemyBodyCollider*>(bodyCollider_.get());
-	if (enemyBodyCollider) {
-		enemyBodyCollider->SetCollisionAttribute(CollisionAttribute::Enemy);
-		enemyBodyCollider->SetWorldTransform(&worldTransform_);
-		enemyBodyCollider->SetOffset({ 0.0f, 0.0f, 0.0f });
-		enemyBodyCollider->SetOBBSize({ 1.0f, 1.0f, 1.0f }); // Bodyのコライダーサイズ
-		enemyBodyCollider->SetHolder(this);
-	}
+	bodyCollider_->SetCollisionAttribute(CollisionAttribute::Enemy);
+	bodyCollider_->SetWorldTransform(&worldTransform_);
+	bodyCollider_->SetOffset({ 0.0f, 0.0f, 0.0f });
+	bodyCollider_->SetOBBSize({ 1.0f, 1.0f, 1.0f }); // Bodyのコライダーサイズ
+	bodyCollider_->SetHolder(this);
 
 	// Area
 	areaCollider_ = std::make_unique<EnemyAreaCollider>(this);
-	auto* enemyAreaCollider = dynamic_cast<EnemyAreaCollider*>(areaCollider_.get());
-	if (enemyAreaCollider) {
-		enemyAreaCollider->SetCollisionAttribute(CollisionAttribute::EnemyArea);
-		enemyAreaCollider->SetWorldTransform(&worldTransform_);
-		enemyAreaCollider->SetOffset({ 0.0f, 0.0f, 0.0f });
-		enemyAreaCollider->SetOBBSize({ 1.3f, 1.0f, 1.3f }); // Areaのコライダーサイズ
-		enemyAreaCollider->SetHolder(this); // 自身のポインタをセット
-	}
-
+	areaCollider_->SetCollisionAttribute(CollisionAttribute::EnemyArea);
+	areaCollider_->SetWorldTransform(&worldTransform_);
+	areaCollider_->SetOffset({ 0.0f, 0.0f, 0.0f });
+	areaCollider_->SetOBBSize({ 1.3f, 1.0f, 1.3f });
+	areaCollider_->SetHolder(this);
 
 	/// ===初期位置=== ///
 	initialPosition_ = position;
@@ -83,7 +77,11 @@ void BaseEnemy::Initialize(Norm::Vector3 position, Norm::Player* player, EnemyDi
 void BaseEnemy::Update() {
 	/// ===死亡フラグの確認=== ///
 	if (isBodyColliding_) {
-		isDead_ = true;
+		// Colliderを解放
+		bodyCollider_.reset();
+		areaCollider_.reset();
+		// 状態を死亡状態に変更。
+		ChangeState(std::make_unique<EnemyDeadState>());
 	}
 
 	/// ===Stateの管理=== ///

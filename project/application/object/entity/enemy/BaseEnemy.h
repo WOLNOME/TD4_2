@@ -86,6 +86,12 @@ public:
 	Norm::WorldTransform& GetWorldTransform() { return worldTransform_; }
 
 	/// <summary>
+	/// カラーの取得
+	/// </summary>
+	/// <returns></returns>
+	Norm::Vector4 GetColor() const { return object3d_->GetColor(); }
+
+	/// <summary>
 	/// プレイヤーのポインタを取得
 	/// </summary>
 	/// <returns></returns>
@@ -147,6 +153,13 @@ public:
 	/// ============================== ///
 	///		setter
 	/// ============================== ///
+	
+	/// <summary>
+	/// 色の設定
+	/// </summary>
+	/// <param name="color"></param>
+	void SetColor(const Norm::Vector4& color) { object3d_->SetColor(color); }
+
 	/// <summary>
 	/// 速度を設定する
 	/// </summary>
@@ -158,6 +171,11 @@ public:
 	/// </summary>
 	/// <param name="dir"></param>
 	void SetCurrentDirection(EnemyDirection dir) { currentDirection_ = dir; }
+
+	/// <summary>
+	/// 死亡したことを設定する
+	/// </summary>
+	void EnemyDead() { isDead_ = true; }
 
 	/// <summary>
 	/// 衝突中かどうかを設定する(足元)
