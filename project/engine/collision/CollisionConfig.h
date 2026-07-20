@@ -9,7 +9,6 @@ namespace Norm {
 		Player,						//プレイヤー
 		Enemy,						//敵
 		EnemyArea,					//敵の大き目のコライダー
-		EnemyFoot,					//敵の足元
 		Block,
 		Area, // エリアブロック（敵が範囲外に出ないようにするため、ステージ周囲に敷き詰められたブロック）
 		Goal, // ゴール

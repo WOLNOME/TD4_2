@@ -50,7 +50,7 @@ void EnemyChaseState::ChasePlayer() {
 		velocity.x = dir.x * chaseSpeed_;
 		velocity.y = dir.y * chaseSpeed_;
 		velocity.z = 0.0f;
-		enemy_->SetVelocity(velocity);
+		enemy_->SetVelocity(velocity * (enemy_->GetPlayer()->IsGoaled() ? 0.0f : 1.0f));
 	}
 
 	// 向きの更新
