@@ -76,6 +76,14 @@ namespace Norm {
 
 		UI buttonUI_;
 
+		Vector2 initSize_;
+
+		// クリック音
+	  std::unique_ptr<Norm::Audio> seClick_;
+
+		// タイトルBGM
+	  std::unique_ptr<Norm::Audio> bgmTitle_;
+    
 		Vector2 titlePos_ = { 640.0f,180.0f };
 
 		Vector2 buttonPos_ = { 640.0f,460.0f };
@@ -109,6 +117,5 @@ namespace Norm {
 		float lightIntensityBefore_ = 10.0f;
 
 		float lightIntensityAfter_ = 0.0f;
-
 	};
 }

@@ -87,8 +87,11 @@ namespace Norm {
 		//ギミック
 		std::unique_ptr<GimmickManager> gimmickManager_;
 
-		// ポーズメニュー
-		std::unique_ptr<PauseMenu> pauseMenu_;
-		std::unique_ptr<GuideUI> guideUI_ = nullptr;
-	};
+	// ポーズメニュー
+	std::unique_ptr<PauseMenu> pauseMenu_;
+	std::unique_ptr<GuideUI> guideUI_ = nullptr;
+
+	// BGM
+	std::unique_ptr<Norm::Audio> bgmGame_;
+};
 } // namespace Norm

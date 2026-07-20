@@ -75,6 +75,14 @@ void Norm::TitleScene::Initialize() {
 
 	buttonInitSize_ = buttonUI_.sprite->GetSize();
 
+	// 音声読み込み
+	seClick_ = std::make_unique<Norm::Audio>();
+	seClick_->Initialize("click.wav");
+
+	bgmTitle_ = std::make_unique<Norm::Audio>();
+	bgmTitle_->Initialize("titleBGM.wav");
+	bgmTitle_->Play(true, 0.5f);
+
 	PostEffectManager::GetInstance()->AddPostEffectOrder(PostEffectKind::None);
 }
 
@@ -117,6 +125,8 @@ void Norm::TitleScene::Update() {
 
 		//範囲内で左クリックが押されたらシーンチェンジを開始する
 		if (Input::GetInstance()->TriggerMouseButton(MouseButton::LeftButton)) {
+			// クリック音再生
+			seClick_->Play(false, 0.5f);
 
 			isSceneChange_ = true;
 		}
