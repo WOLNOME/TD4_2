@@ -5,6 +5,7 @@
 #include <WorldTransform.h>
 #include <Input.h>
 #include <ICollider.h>
+#include <Audio.h>
 
 namespace Norm {
 // =========================================================
@@ -103,8 +104,17 @@ private:
 	float yVelocity_ = 0.0f;
 	// 接地フラグ
 	bool isGrounded_ = false;
+	// 空中状態フラグ
+	bool isAirborne_ = false;
 
 	// ゴール済みフラグ
 	bool isGoaled_ = false;
+
+	// ジャンプ音
+	std::unique_ptr<Norm::Audio> seJump_;
+	// 着地音
+	std::unique_ptr<Norm::Audio> seLand_;
+	// ゴール音
+	std::unique_ptr<Norm::Audio> seGoal_;
 };
 } 

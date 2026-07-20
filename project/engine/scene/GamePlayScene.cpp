@@ -83,6 +83,11 @@ void Norm::GamePlayScene::Initialize() {
 	pauseMenu_ = std::make_unique<PauseMenu>();
 	pauseMenu_->Initialize();
 
+	// BGM読み込み
+	bgmGame_ = std::make_unique<Norm::Audio>();
+	bgmGame_->Initialize("gameBGM.wav");
+	bgmGame_->Play(true, 0.5f);
+
 	//ポストエフェクト　ブルーム
 	//PostEffectManager::GetInstance()->AddPostEffectOrder(PostEffectKind::None);
 	PostEffectManager::GetInstance()->AddPostEffectOrder(PostEffectKind::BloomExtract);
