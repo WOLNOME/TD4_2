@@ -42,18 +42,17 @@ void Norm::TitleScene::Initialize() {
 	backGroundObject_->RegistWorldTransform(&backGroundWT_);
 
 	/* UIの初期化 */
-	titleUI_.textureHandle = TextureManager::GetInstance()->LoadTexture("whiteSquare.png");
+	titleUI_.textureHandle = TextureManager::GetInstance()->LoadTexture("title.png");
 	titleUI_.sprite = std::make_unique<Sprite>();
 	titleUI_.sprite->Initialize(SpriteTag{}, SpriteManager::GetInstance()->GenerateName("titleUI"), Order::Front2, titleUI_.textureHandle);
 	titleUI_.sprite->SetAnchorPoint({ 0.5f,0.5f });
-	titleUI_.sprite->SetPosition({ 640.0f,180.0f });
+	titleUI_.sprite->SetPosition(titlePos_);
 
-	buttonUI_.textureHandle = TextureManager::GetInstance()->LoadTexture("whiteSquare.png");
+	buttonUI_.textureHandle = TextureManager::GetInstance()->LoadTexture("titleButton.png");
 	buttonUI_.sprite = std::make_unique<Sprite>();
 	buttonUI_.sprite->Initialize(SpriteTag{}, SpriteManager::GetInstance()->GenerateName("buttonUI"), Order::Front2, buttonUI_.textureHandle);
 	buttonUI_.sprite->SetAnchorPoint({ 0.5f,0.5f });
-	buttonUI_.sprite->SetPosition({ 640.0f,360.0f });
-	buttonUI_.sprite->SetSize({ 100.0f,75.0f });
+	buttonUI_.sprite->SetPosition(buttonPos_);
 
 	//ボタンUIの初期サイズを取得
 	buttonInitSize_ = buttonUI_.sprite->GetSize();
@@ -63,7 +62,7 @@ void Norm::TitleScene::Initialize() {
 
 		std::unique_ptr<TitleEnemy> newObject = std::make_unique<TitleEnemy>();
 
-		newObject->Initialize(Vector3(spawnLengthX_ * spawnDirection_, spawnLengthY_ * i + startPosY_, 0.0f));
+		newObject->Initialize(Vector3(spawnLengthX_ * spawnDirection_, spawnLengthY_ * i + startPosY_, 2.0f));
 
 		spawnDirection_ *= -1.0f;
 

@@ -76,6 +76,10 @@ namespace Norm {
 
 		UI buttonUI_;
 
+		Vector2 titlePos_ = { 640.0f,180.0f };
+
+		Vector2 buttonPos_ = { 640.0f,460.0f };
+
 		Vector2 buttonInitSize_;
 
 		float buttonLength_ = 80.0f;
@@ -86,7 +90,7 @@ namespace Norm {
 
 		float spawnDirection_ = 1.0f;
 
-		float spawnLengthX_ = 40.0f;
+		float spawnLengthX_ = 45.0f;
 
 		float spawnLengthY_ = 7.5f;
 

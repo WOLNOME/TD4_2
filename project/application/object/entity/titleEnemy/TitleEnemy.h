@@ -43,7 +43,7 @@ private:
 
 	float maxFrequency_ = 3.0f;
 
-	float maxLength_ = 45.0f;
+	float maxLength_ = 50.0f;
 
 	float timer_ = 0.0f;
 
