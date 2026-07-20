@@ -35,6 +35,8 @@ void Norm::ResultScene::Initialize() {
 	spriteResult_ = std::make_unique<Sprite>();
 	texResult_ = TextureManager::GetInstance()->LoadTexture("result.png");
 	spriteResult_->Initialize(SpriteTag{}, Object3dManager::GetInstance()->GenerateName("Sprite"), Order::Front0, texResult_);
+
+	PostEffectManager::GetInstance()->AddPostEffectOrder(PostEffectKind::None);
 }
 
 void Norm::ResultScene::Finalize() {}

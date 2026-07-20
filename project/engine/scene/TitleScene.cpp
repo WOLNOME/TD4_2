@@ -56,6 +56,8 @@ void Norm::TitleScene::Initialize() {
 	buttonUI_.sprite->SetSize({ 100.0f,75.0f });
 
 	initSize_ = buttonUI_.sprite->GetSize();
+
+	PostEffectManager::GetInstance()->AddPostEffectOrder(PostEffectKind::None);
 }
 
 void Norm::TitleScene::Finalize() {
