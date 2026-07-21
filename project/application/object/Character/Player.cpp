@@ -189,6 +189,7 @@ void Norm::Player::OnCollision(ICollider* other, CollisionAttribute otherAttr) {
 		/// ===Enemy=== ///
 		if (otherAttr == CollisionAttribute::Enemy) {
 
+			// isDead_ = true;
 		}
 	}
 
@@ -208,7 +209,7 @@ void Norm::Player::Move() {
 	float targetVelocityX = 0.0f;
 
 	// ゴールしていない場合のみキー入力を受け付ける
-	if (!IsGoaled()) {
+	if (!IsGoaled() && !IsDead()) {
 		// 左右入力移動
 		if (input_->PushKey(DIK_A)) {
 			targetVelocityX = -kSpeed;
