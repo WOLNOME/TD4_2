@@ -29,6 +29,7 @@ constexpr EnemyDirection Opposite(EnemyDirection dir) {
 }
 
 /// ===前方宣言=== ///
+class LightManager;
 namespace Norm {
 	class Player;
 }
@@ -69,11 +70,6 @@ public:
 	/// </summary>
 	/// <param name="directionX"></param>
 	void UpdateFacing(float directionX);
-
-	/// <summary>
-	/// フラッシュを喰らった時の処理
-	/// </summary>
-	void Flash();
 
 public:
 	/// ============================== ///
@@ -155,6 +151,12 @@ public:
 	/// ============================== ///
 	
 	/// <summary>
+	/// LightManagerのポインタを設定する
+	/// </summary>
+	/// <param name="lightManager"></param>
+	void SetLightManager(LightManager* lightManager) { lightManager_ = lightManager; }
+
+	/// <summary>
 	/// 色の設定
 	/// </summary>
 	/// <param name="color"></param>
@@ -214,6 +216,9 @@ private:
 	// プレイヤーのポインタ
 	Norm::Player* player_ = nullptr;
 
+	// LightManagerのポインタ
+	LightManager* lightManager_ = nullptr;
+
 	// 速度
 	Norm::Vector3 velocity_ = { 0.0f, 0.0f, 0.0f };
 
@@ -238,13 +243,23 @@ private:
 	bool isDead_ = false;
 
 #ifdef _DEBUG
-	bool isFlash_ = false;
 	bool isAttack_ = false;
 	bool isEscape_ = false;
 	bool isTurning_ = false;
 #endif // _DEBUG
 
 private:
+
+	/// <summary>
+	/// ライトに当たった時の処理
+	/// </summary>
+	/// <returns></returns>
+	bool IsLightHit();
+
+	/// <summary>
+	/// フラッシュを喰らった時の処理
+	/// </summary>
+	void IsFlash();
 
 	/// <summary>
 	/// 角度補間関数

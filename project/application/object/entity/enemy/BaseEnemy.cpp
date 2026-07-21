@@ -4,12 +4,15 @@
 #include "Object3dManager.h"
 #include "CollisionManager.h"
 #include "TextureManager.h"
+#include "PointLight.h"
 // Application
-#include <application/object/collision/ObjectCollider.h>
+#include <application/system/LightManager.h>
 // Player
 #include <application/object/Character/Player.h>
 // EnemyState
 #include "State/EnemyMoveState.h"
+#include "State/EnemyStopState.h"
+#include "State/EnemyDeadState.h"
 // Math
 #include "MyMath.h"
 // Debug
@@ -17,9 +20,8 @@
 #include <imgui.h>
 #include "State/EnemyChaseState.h"
 #include "State/EnemyEscapeState.h"
-#include "State/EnemyDeadState.h"
 #endif // _DEBUG
-#include "State/EnemyStopState.h"
+
 
 using namespace Norm;
 
@@ -84,6 +86,9 @@ void BaseEnemy::Update() {
 		ChangeState(std::make_unique<EnemyDeadState>());
 	}
 
+	/// ===フラッシュの処理=== ///
+	IsFlash();
+
 	/// ===Stateの管理=== ///
 	if (currentState_) {
 		// 各Stateの更新
@@ -128,7 +133,6 @@ void BaseEnemy::DebugWithImGui() {
 	ImGui::Checkbox("isAttack_", &isAttack_);
 	ImGui::Checkbox("isEscape_", &isEscape_);
 	ImGui::Checkbox("isTurning_", &isTurning_);
-	ImGui::Checkbox("isFlash_", &isFlash_);
 	ImGui::Checkbox("isAreaColliding_", &isAreaColliding_);
 	ImGui::Checkbox("isFootColliding_", &isFootColliding_);
 
@@ -146,11 +150,6 @@ void BaseEnemy::DebugWithImGui() {
 	if (isEscape_) {
 		isEscape_ = false;
 		ChangeState(std::make_unique<EnemyEscapeState>());
-	}
-	// フラッシュ状態が変化した場合の処理
-	if (isFlash_) {
-		isFlash_ = false;	
-		Flash();
 	}
 
 	// コライダーデバッグ
@@ -212,12 +211,29 @@ void BaseEnemy::UpdateFacing(float directionX) {
 }
 
 ///-------------------------------------------/// 
+///	ライトに当たった時の処理
+///-------------------------------------------///
+bool BaseEnemy::IsLightHit() {
+	// フラッシュとの距離を計算
+	Vector3 diff = worldTransform_.GetTranslate() - lightManager_->GetPointLight()->GetPosition();
+	float distance = diff.LengthSq(); // 距離の2乗を計算
+	float hitRange = lightManager_->GetPointLight()->GetRadius() + 1.0f; // 1.0fは敵の半径
+
+	return distance <= hitRange;
+}
+
+///-------------------------------------------/// 
 /// フラッシュを喰らった時の処理
 ///-------------------------------------------///
-void BaseEnemy::Flash() {
-	// フラッシュの構造体などが有ればそれを受け取り、フラッシュの範囲内にEnemyがいたらStateを移動するようにする。
+void BaseEnemy::IsFlash() {
+	// ライトに当たっていなければ処理を終了
+	if (!IsLightHit()) return;
 
-	ChangeState(std::make_unique<EnemyStopState>(std::move(currentState_)));
+	// フラッシュを喰らった場合の処理
+	if (lightManager_->GetIsFlush()) {
+		// フラッシュ中なら停止状態に遷移
+		ChangeState(std::make_unique<EnemyStopState>(std::move(currentState_)));
+	}
 }
 
 ///-------------------------------------------/// 

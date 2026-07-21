@@ -8,13 +8,14 @@
 /// エネミーのスポーン
 ///-------------------------------------------///
 void EnemyManager::SpawnEnemy(
-	const Norm::Vector3& position, Norm::Player* player, EnemyDirection firstDirection) {
+	const Norm::Vector3& position, EnemyDirection firstDirection) {
 
 	// BaseEnemyのインスタンスを生成し、unique_ptrで管理
 	std::unique_ptr<BaseEnemy> enemy = std::make_unique<BaseEnemy>();
 
 	// 初期化メソッドを呼び出す
-	enemy->Initialize(position, player, firstDirection);
+	enemy->Initialize(position, player_, firstDirection);
+    enemy->SetLightManager(lightManager_);
 
 	// 配列に追加
 	enemies_.push_back(std::move(enemy));

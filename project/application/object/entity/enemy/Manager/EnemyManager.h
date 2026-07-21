@@ -5,6 +5,7 @@
 #include <vector>
 
 /// ===前方宣言=== ///
+class LightManager;
 namespace Norm {
 	class Player;
 }
@@ -20,9 +21,8 @@ public:
 	/// 敵を生成する
 	/// </summary>
 	/// <param name="position">スポーン位置</param>
-	/// <param name="player">プレイヤー</param>
 	/// <param name="firstDirection">初期方向</param>
-	void SpawnEnemy(const Norm::Vector3& position, Norm::Player* player, EnemyDirection firstDirection = EnemyDirection::Left);
+	void SpawnEnemy(const Norm::Vector3& position, EnemyDirection firstDirection = EnemyDirection::Left);
 
 	/// <summary>
 	/// 敵を更新する
@@ -54,6 +54,21 @@ public:
 	/// <returns></returns>
 	int GetDeadEnemyCount() const { return deadEnemyCount_; }
 
+public:
+	/// ===Setter=== ///
+	
+	/// <summary>
+	/// Playerのポインタを設定する
+	/// </summary>
+	/// <param name="player"></param>
+	void SetPlayer(Norm::Player* player) { player_ = player; }
+
+	/// <summary>
+	/// LightManagerのポインタを設定する
+	/// </summary>
+	/// <param name="lightManager"></param>
+	void SetLightManager(LightManager* lightManager) { lightManager_ = lightManager; }
+
 private:
 	/// ============================== ///
 	///		メンバ変数
@@ -63,6 +78,9 @@ private:
 
 	// プレイヤーのポインタ
 	Norm::Player* player_ = nullptr;
+
+	// LightManagerのポインタ
+	LightManager* lightManager_ = nullptr;
 
 	// 死亡した敵の数
 	int deadEnemyCount_ = 0;
