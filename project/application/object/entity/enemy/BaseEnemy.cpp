@@ -231,8 +231,10 @@ void BaseEnemy::IsFlash() {
 
 	// フラッシュを喰らった場合の処理
 	if (lightManager_->GetIsFlush()) {
-		// フラッシュ中なら停止状態に遷移
-		ChangeState(std::make_unique<EnemyStopState>(std::move(currentState_)));
+		// 現在の状態がEnemyStopStateでない場合、EnemyStopStateに変更
+		if (!dynamic_cast<EnemyStopState*>(currentState_.get())) {
+			ChangeState(std::make_unique<EnemyStopState>(std::move(currentState_)));
+		}
 	}
 }
 
