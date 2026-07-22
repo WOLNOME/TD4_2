@@ -119,6 +119,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="application\object\entity\enemy\collider\EnemyAreaCollider.cpp" />
     <ClCompile Include="application\object\entity\enemy\State\EnemyStopState.cpp" />
     <ClCompile Include="application\object\entity\enemy\Manager\EnemyManager.cpp" />
+    <ClCompile Include="application\object\entity\enemy\collider\EnemyBodyCollider.cpp" />
+    <ClCompile Include="application\object\entity\enemy\State\EnemyDeadState.cpp" />
     <ClCompile Include="engine\collision\base\AABBColliderBase.cpp" />
     <ClCompile Include="engine\behaviorTree\nodeBase\NodeBase.cpp" />
     <ClCompile Include="engine\behaviorTree\interface\INode.cpp" />
@@ -218,6 +220,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="engine\scene\ResultScene.cpp" />
     <ClCompile Include="application\ui\pause\PauseMenu.cpp" />
     <ClCompile Include="application\object\entity\titleEnemy\TitleEnemy.cpp" />
+    <ClCompile Include="application\system\LightManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="application\system\direction\cinematic\Cinematic.h" />
@@ -231,6 +234,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="application\object\entity\enemy\collider\EnemyAreaCollider.h" />
     <ClInclude Include="application\object\entity\enemy\State\EnemyStopState.h" />
     <ClInclude Include="application\object\entity\enemy\Manager\EnemyManager.h" />
+    <ClInclude Include="application\object\entity\enemy\collider\EnemyBodyCollider.h" />
+    <ClInclude Include="application\object\entity\enemy\State\EnemyDeadState.h" />
     <ClInclude Include="engine\collision\base\AABBColliderBase.h" />
     <ClInclude Include="engine\behaviorTree\nodeBase\NodeBase.h" />
     <ClInclude Include="engine\behaviorTree\interface\INode.h" />
@@ -343,6 +348,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="application\ui\pause\PauseMenu.h" />
     <ClInclude Include="engine\3d\object\ObjectEnum.h" />
     <ClInclude Include="application\object\entity\titleEnemy\TitleEnemy.h" />
+    <ClInclude Include="application\system\LightManager.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt" />

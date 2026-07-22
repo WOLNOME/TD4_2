@@ -31,7 +31,7 @@ private:
 	// 前の状態へのポインタ
 	std::unique_ptr<EnemyState> previousState_ = nullptr;
 
-	float stopDuration_ = 1.0f; // 停止時間(秒)
+	float stopDuration_ = 0.8f; // 停止時間(秒)
 	float stopTimer_ = 0.0f; // 経過時間
 
 private:

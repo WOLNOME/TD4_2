@@ -8,13 +8,14 @@
 /// エネミーのスポーン
 ///-------------------------------------------///
 void EnemyManager::SpawnEnemy(
-	const Norm::Vector3& position, Norm::Player* player, EnemyDirection firstDirection) {
+	const Norm::Vector3& position, EnemyDirection firstDirection) {
 
 	// BaseEnemyのインスタンスを生成し、unique_ptrで管理
 	std::unique_ptr<BaseEnemy> enemy = std::make_unique<BaseEnemy>();
 
 	// 初期化メソッドを呼び出す
-	enemy->Initialize(position, player, firstDirection);
+	enemy->Initialize(position, player_, firstDirection);
+    enemy->SetLightManager(lightManager_);
 
 	// 配列に追加
 	enemies_.push_back(std::move(enemy));
@@ -24,17 +25,24 @@ void EnemyManager::SpawnEnemy(
 /// エネミーの更新
 ///-------------------------------------------///
 void EnemyManager::UpdateEnemies() {
-	for (auto& enemy : enemies_) {
-		if (enemy) {
-			// 死亡しているかどうかを確認
-			if (enemy->IsDead()) {
-				deadEnemyCount_++;
-			}
+	// Enemyの更新処理
+    for (auto& enemy : enemies_) {
+        if (enemy) {
+            enemy->Update();
+        }
+    }
 
-			// エネミーの更新処理
-			enemy->Update();
-		}
-	}
+    // 死亡した敵をリストから削除
+    for (auto it = enemies_.begin(); it != enemies_.end(); ) {
+        if ((*it)->IsDead()) {
+            // 死亡カウントを増加
+            deadEnemyCount_++;            
+            it = enemies_.erase(it);
+        } else {
+			// 次の要素に進む
+            ++it;
+        }
+    }
 }
 
 ///-------------------------------------------/// 

@@ -36,6 +36,12 @@ namespace Norm {
 		sceneLight_->SetLight(dirLight.get());
 		sceneLight_->SetLight(pointLight.get());
 
+		//ライト管理クラスの生成・初期化
+		lightManager_ = std::make_unique<LightManager>();
+		lightManager_->Initialize();
+		lightManager_->SetPointLight(pointLight.get());
+		lightManager_->SetCamera(camera_.get());
+
 		//天球と地面の生成と初期化
 		skydome_ = std::make_unique<Skydome>();
 		skydome_->Initialize();
@@ -124,7 +130,7 @@ namespace Norm {
 
 		// 爆発ギミック
 		explosionGimmick_ = std::make_unique<ExplosionGimmick>();
-		explosionGimmick_->SetLightInfo(&lightInfo_);
+		explosionGimmick_->SetLightManager(lightManager_.get());
 		explosionGimmick_->SetPosition({ 0.0f, 10.0f, 40.0f });
 		explosionGimmick_->Initialize(camera_.get());
 
@@ -210,13 +216,6 @@ namespace Norm {
 		//点光源の座標としてcpを適用する
 		pointLight->SetPosition(cp);
 
-		// ギミック判定用ライト情報
-		lightInfo_.position = cp;
-		lightInfo_.range = 5.0f;
-		lightInfo_.isLighting = true;
-
-		// 左クリックでフラッシュ
-		lightInfo_.isFlash = input_->TriggerMouseButton(MouseButton::LeftButton);
 
 	}
 }

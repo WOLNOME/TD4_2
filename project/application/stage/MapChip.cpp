@@ -15,7 +15,7 @@ void Norm::MapChip::Initialize(Type type, const Vector3& position) {
 	CollisionAttribute attribute = CollisionAttribute::Block; // デフォルトは通常ブロックにしておく
 
 	if (type_ == MapChip::Type::NormalBlock) {
-		modelName = "normalBlock";
+		modelName = "block";
 		attribute = CollisionAttribute::Block;
 	} else if (type_ == MapChip::Type::AreaBlock) {
 		modelName = "areaBlock";

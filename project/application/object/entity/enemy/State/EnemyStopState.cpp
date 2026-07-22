@@ -3,6 +3,8 @@
 #include "application/object/entity/enemy/BaseEnemy.h"
 // State
 #include "EnemyChaseState.h"
+// 
+#include <MyMath.h>
 
 
 ///-------------------------------------------/// 
@@ -27,11 +29,12 @@ void EnemyStopState::Enter(BaseEnemy* enemy) {
 ///-------------------------------------------///
 void EnemyStopState::Update() {
 	/// ===タイマーの更新=== ///
-	stopTimer_ += 1.0f / 60.0f; // 60FPS想定で減算
+	stopTimer_ += Norm::kDeltaTime;
 
 	/// ===Stateの変更=== ///
 	if (stopTimer_ >= stopDuration_) {
 		ResumePreviousState(); // 前の状態に戻る
+		return;
 	}
 }
 
@@ -42,7 +45,7 @@ void EnemyStopState::Exit() {
 	EnemyState::Exit();
 }
 
-///-------------------------------------------/// 
+///-------------------------------------------/// fd
 /// 一つ前の状態に戻る
 ///-------------------------------------------///
 void EnemyStopState::ResumePreviousState() {

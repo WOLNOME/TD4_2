@@ -4,12 +4,15 @@
 #include "Object3dManager.h"
 #include "CollisionManager.h"
 #include "TextureManager.h"
+#include "PointLight.h"
 // Application
-#include <application/object/collision/ObjectCollider.h>
+#include <application/system/LightManager.h>
 // Player
 #include <application/object/Character/Player.h>
 // EnemyState
 #include "State/EnemyMoveState.h"
+#include "State/EnemyStopState.h"
+#include "State/EnemyDeadState.h"
 // Math
 #include "MyMath.h"
 // Debug
@@ -18,7 +21,7 @@
 #include "State/EnemyChaseState.h"
 #include "State/EnemyEscapeState.h"
 #endif // _DEBUG
-#include "State/EnemyStopState.h"
+
 
 using namespace Norm;
 
@@ -45,37 +48,20 @@ void BaseEnemy::Initialize(Norm::Vector3 position, Norm::Player* player, EnemyDi
 
 	/// ===コライダー=== ///
 	// 生成 + 登録
-	collider_ = std::make_unique<ObjectCollider>(object3d_.get());
-	auto* enemyCollider = dynamic_cast<ObjectCollider*>(collider_.get());
-	if (enemyCollider) {
-		enemyCollider->SetCollisionAttribute(CollisionAttribute::Enemy);
-		enemyCollider->SetWorldTransform(&worldTransform_);
-		enemyCollider->SetOffset({ 0.0f, 0.0f, 0.0f });
-		enemyCollider->SetOBBSize({ 1.0f, 1.0f, 1.0f }); // 敵のコライダーサイズ
-		enemyCollider->SetHolder(this); // 自身のポインタをセット
-	}
+	bodyCollider_ = std::make_unique<EnemyBodyCollider>(this);
+	bodyCollider_->SetCollisionAttribute(CollisionAttribute::Enemy);
+	bodyCollider_->SetWorldTransform(&worldTransform_);
+	bodyCollider_->SetOffset({ 0.0f, 0.0f, 0.0f });
+	bodyCollider_->SetOBBSize({ 1.0f, 1.0f, 1.0f }); // Bodyのコライダーサイズ
+	bodyCollider_->SetHolder(this);
 
 	// Area
 	areaCollider_ = std::make_unique<EnemyAreaCollider>(this);
-	auto* enemyAreaCollider = dynamic_cast<EnemyAreaCollider*>(areaCollider_.get());
-	if (enemyAreaCollider) {
-		enemyAreaCollider->SetCollisionAttribute(CollisionAttribute::EnemyArea);
-		enemyAreaCollider->SetWorldTransform(&worldTransform_);
-		enemyAreaCollider->SetOffset({ 0.0f, 0.0f, 0.0f });
-		enemyAreaCollider->SetOBBSize({ 1.3f, 1.0f, 1.3f }); // Areaのコライダーサイズ
-		enemyAreaCollider->SetHolder(this); // 自身のポインタをセット
-	}
-
-	// 足場
-	moveCollider_ = std::make_unique<EnemyMoveCollider>(this);
-	auto* enemyMoveCollider = dynamic_cast<EnemyMoveCollider*>(moveCollider_.get());
-	if (enemyMoveCollider) {
-		enemyMoveCollider->SetCollisionAttribute(CollisionAttribute::EnemyFoot);
-		enemyMoveCollider->SetWorldTransform(&worldTransform_);
-		enemyMoveCollider->SetOffset({ -1.5f, -1.0f, 0.0f });
-		enemyMoveCollider->SetOBBSize({ 0.8f, 1.5f, 0.8f }); // 敵のコライダーサイズ
-		enemyMoveCollider->SetHolder(this); // 自身のポインタをセット
-	}
+	areaCollider_->SetCollisionAttribute(CollisionAttribute::EnemyArea);
+	areaCollider_->SetWorldTransform(&worldTransform_);
+	areaCollider_->SetOffset({ 0.0f, 0.0f, 0.0f });
+	areaCollider_->SetOBBSize({ 1.3f, 1.0f, 1.3f });
+	areaCollider_->SetHolder(this);
 
 	/// ===初期位置=== ///
 	initialPosition_ = position;
@@ -91,6 +77,18 @@ void BaseEnemy::Initialize(Norm::Vector3 position, Norm::Player* player, EnemyDi
 /// 更新処理
 ///-------------------------------------------///
 void BaseEnemy::Update() {
+	/// ===死亡フラグの確認=== ///
+	if (isBodyColliding_) {
+		// Colliderを解放
+		bodyCollider_.reset();
+		areaCollider_.reset();
+		// 状態を死亡状態に変更。
+		ChangeState(std::make_unique<EnemyDeadState>());
+	}
+
+	/// ===フラッシュの処理=== ///
+	IsFlash();
+
 	/// ===Stateの管理=== ///
 	if (currentState_) {
 		// 各Stateの更新
@@ -101,12 +99,6 @@ void BaseEnemy::Update() {
 	if (!isFootColliding_ || isAreaColliding_) {
 		// Y軸を180度回転させる
 		SetCurrentDirection(Opposite(currentDirection_));
-	}
-
-	/// ===ColliderのOffsetの更新=== ///
-	if (auto* enemyMoveCollider = dynamic_cast<EnemyMoveCollider*>(moveCollider_.get())) {
-		float offsetX = (currentDirection_ == EnemyDirection::Right) ? -1.5f : 1.5f;
-		enemyMoveCollider->SetOffset({ offsetX, -1.0f, 0.0f });
 	}
 
 	/// ===座標の更新=== ///
@@ -141,7 +133,6 @@ void BaseEnemy::DebugWithImGui() {
 	ImGui::Checkbox("isAttack_", &isAttack_);
 	ImGui::Checkbox("isEscape_", &isEscape_);
 	ImGui::Checkbox("isTurning_", &isTurning_);
-	ImGui::Checkbox("isFlash_", &isFlash_);
 	ImGui::Checkbox("isAreaColliding_", &isAreaColliding_);
 	ImGui::Checkbox("isFootColliding_", &isFootColliding_);
 
@@ -160,29 +151,18 @@ void BaseEnemy::DebugWithImGui() {
 		isEscape_ = false;
 		ChangeState(std::make_unique<EnemyEscapeState>());
 	}
-	// フラッシュ状態が変化した場合の処理
-	if (isFlash_) {
-		isFlash_ = false;	
-		Flash();
-	}
 
 	// コライダーデバッグ
-	if (collider_) {
-		auto* enemyCollider = dynamic_cast<ObjectCollider*>(collider_.get());
-		if (enemyCollider) {
-			enemyCollider->Debug();
+	if (bodyCollider_) {
+		auto* enemyBodyCollider = dynamic_cast<EnemyBodyCollider*>(bodyCollider_.get());
+		if (enemyBodyCollider) {
+			enemyBodyCollider->Debug();
 		}
 	}
 	if (areaCollider_) {
 		auto* enemyAreaCollider = dynamic_cast<EnemyAreaCollider*>(areaCollider_.get());
 		if (enemyAreaCollider) {
 			enemyAreaCollider->Debug();
-		}
-	}
-	if (moveCollider_) {
-		auto* enemyMoveCollider = dynamic_cast<EnemyMoveCollider*>(moveCollider_.get());
-		if (enemyMoveCollider) {
-			enemyMoveCollider->Debug();
 		}
 	}
 
@@ -231,19 +211,31 @@ void BaseEnemy::UpdateFacing(float directionX) {
 }
 
 ///-------------------------------------------/// 
-/// フラッシュを喰らった時の処理
+///	ライトに当たった時の処理
 ///-------------------------------------------///
-void BaseEnemy::Flash() {
-	// フラッシュの構造体などが有ればそれを受け取り、フラッシュの範囲内にEnemyがいたらStateを移動するようにする。
+bool BaseEnemy::IsLightHit() {
+	// フラッシュとの距離を計算
+	Vector3 diff = worldTransform_.GetTranslate() - lightManager_->GetPointLight()->GetPosition();
+	float distance = diff.LengthSq(); // 距離の2乗を計算
+	float hitRange = lightManager_->GetPointLight()->GetRadius() + 1.0f; // 1.0fは敵の半径
 
-	ChangeState(std::make_unique<EnemyStopState>(std::move(currentState_)));
+	return distance <= hitRange;
 }
 
 ///-------------------------------------------/// 
-/// 衝突時コールバック
+/// フラッシュを喰らった時の処理
 ///-------------------------------------------///
-void BaseEnemy::OnCollision(ICollider* other, CollisionAttribute otherAttr) {
-	other, otherAttr; // 未使用の引数を無視するためのダミー
+void BaseEnemy::IsFlash() {
+	// ライトに当たっていなければ処理を終了
+	if (!IsLightHit()) return;
+
+	// フラッシュを喰らった場合の処理
+	if (lightManager_->GetIsFlush()) {
+		// 現在の状態がEnemyStopStateでない場合、EnemyStopStateに変更
+		if (!dynamic_cast<EnemyStopState*>(currentState_.get())) {
+			ChangeState(std::make_unique<EnemyStopState>(std::move(currentState_)));
+		}
+	}
 }
 
 ///-------------------------------------------/// 
