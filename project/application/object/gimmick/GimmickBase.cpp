@@ -7,8 +7,6 @@ void GimmickBase::Update()
 
 void GimmickBase::UpdateUI() {
 
-	guideUI_->SetPosition(position_ + uiOffset_);
-	guideUI_->Update();
 }
 
 void GimmickBase::HitLight()

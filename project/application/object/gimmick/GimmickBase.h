@@ -35,7 +35,7 @@ public:
 	virtual void Initialize(Norm::BaseCamera* _camera) = 0;
 	virtual void Update();
 
-	void UpdateUI();
+	virtual void UpdateUI() = 0;
 
 	/// <summary>
 	/// ライトの円に当たっているか判定

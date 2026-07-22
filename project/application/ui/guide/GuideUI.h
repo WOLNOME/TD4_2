@@ -13,11 +13,9 @@ public:
 
 	void Initialize(Norm::BaseCamera* _camera, Norm::Input* _input, Norm::Vector3 _pos);
 
-	void Update();
+	void Update(const Norm::Vector3 _pos, const float _ratio);
 
 	void ImGui();
-
-	void SetPosition(const Norm::Vector3 _pos) { mouseWorldTransform_.SetTranslate(_pos); }
 
 private:
 	/// ============================== ///
@@ -41,6 +39,9 @@ private:
 	int32_t clickTextureHandle_ = EOF;
 	std::unique_ptr<Norm::Sprite> clickSprite_ = nullptr;
 
+	int32_t timerTextureHandle_ = EOF;
+	std::unique_ptr<Norm::Sprite> timerSprite_ = nullptr;
+
 	Norm::BaseCamera* camera_;
 	Norm::Input* input_;
 
@@ -56,5 +57,10 @@ private:
 	Norm::Vector4 spriteColor_ = { 0.5f,0.5f,0.5f,1.0f };
 
 	Norm::Vector3 clickSpriteOffset_ = { -16.0f,-20.0f,0.0f };
+
+	Norm::Vector3 timerSpriteOffset_ = { 0.0f,-20.0f };
+
+	Norm::Vector2 timerSpriteSize_ = { 80.0f,8.0f };
+
 };
 

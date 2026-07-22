@@ -8,8 +8,7 @@
 
 
 
-void ExplosionGimmick::Initialize(Norm::BaseCamera* _camera)
-{
+void ExplosionGimmick::Initialize(Norm::BaseCamera* _camera) {
 
 	gimmickState_ = GimmickState::Hidden;// 初期状態は見つかっていない状態
 
@@ -42,8 +41,7 @@ void ExplosionGimmick::Initialize(Norm::BaseCamera* _camera)
 	);
 }
 
-void ExplosionGimmick::Update()
-{
+void ExplosionGimmick::Update() {
 	constexpr float kDeltaTime = 1.0f / 60.0f;
 
 	// 使用済み状態では再出現まで待機
@@ -75,7 +73,7 @@ void ExplosionGimmick::Update()
 		worldTransform_.SetScale({ explosionScale_, explosionScale_, explosionScale_ });
 
 		// コライダーのサイズも大きくする
-		SetColliderSize({baseColliderSize_.x * explosionScale_,baseColliderSize_.y * explosionScale_,baseColliderSize_.z * explosionScale_});
+		SetColliderSize({ baseColliderSize_.x * explosionScale_,baseColliderSize_.y * explosionScale_,baseColliderSize_.z * explosionScale_ });
 
 		if (explosionTimer_ >= explosionDuration_) {
 
@@ -92,12 +90,14 @@ void ExplosionGimmick::Update()
 		}
 	}
 
-
-
 }
 
-void ExplosionGimmick::Reset()
-{
+void ExplosionGimmick::UpdateUI() {
+
+	guideUI_->Update(position_ + uiOffset_, respawnTimer_ / respawnDuration_);
+}
+
+void ExplosionGimmick::Reset() {
 	gimmickState_ = GimmickState::Hidden;
 
 	isExploded_ = false;
@@ -127,8 +127,7 @@ void ExplosionGimmick::Reset()
 
 }
 
-void ExplosionGimmick::DebugImGui()
-{
+void ExplosionGimmick::DebugImGui() {
 #ifdef _DEBUG
 	if (ImGui::TreeNode("ExplosionGimmick")) {
 
@@ -185,13 +184,12 @@ void ExplosionGimmick::DebugImGui()
 
 	}
 
-	
+
 
 #endif
 }
 
-void ExplosionGimmick::OnFlashHit()
-{
+void ExplosionGimmick::OnFlashHit() {
 	if (gimmickState_ == GimmickState::Used) {
 		return;
 	}
