@@ -17,6 +17,7 @@
 #include <application/object/camera/FollowCamera.h>
 #include <application/stage/StageManager.h>
 #include <application/ui/pause/PauseMenu.h>
+#include <application/ui/operation/OperationUI.h>
 
 #include "application/object/gimmick/ExplosionGimmick.h"
 #include "application/object/gimmick/GimmickManager.h"
@@ -87,11 +88,12 @@ namespace Norm {
 		//ギミック
 		std::unique_ptr<GimmickManager> gimmickManager_;
 
-	// ポーズメニュー
-	std::unique_ptr<PauseMenu> pauseMenu_;
-	std::unique_ptr<GuideUI> guideUI_ = nullptr;
+		// ポーズメニュー
+		std::unique_ptr<PauseMenu> pauseMenu_;
 
-	// BGM
-	std::unique_ptr<Norm::Audio> bgmGame_;
-};
+		std::unique_ptr<OperationUI> operationUI_;
+
+		// BGM
+		std::unique_ptr<Norm::Audio> bgmGame_;
+	};
 } // namespace Norm

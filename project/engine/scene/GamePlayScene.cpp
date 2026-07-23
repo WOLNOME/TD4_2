@@ -84,6 +84,9 @@ void Norm::GamePlayScene::Initialize() {
 	pauseMenu_ = std::make_unique<PauseMenu>();
 	pauseMenu_->Initialize();
 
+	operationUI_ = std::make_unique<OperationUI>();
+	operationUI_->Initialize(player_.get(), camera_.get(), Input::GetInstance());
+
 	// BGM読み込み
 	bgmGame_ = std::make_unique<Norm::Audio>();
 	bgmGame_->Initialize("gameBGM.wav");
@@ -104,6 +107,9 @@ void Norm::GamePlayScene::Update() {
 
 	/* ポーズメニュー更新処理 */
 	pauseMenu_->Update();
+
+	operationUI_->Update();
+
 	// タイトルへ戻るが押されていたらシーンを切り替える
 	if (pauseMenu_->IsRequestedReturnToTitle()) {
 		sceneManager_->SetNextScene("TITLE");
