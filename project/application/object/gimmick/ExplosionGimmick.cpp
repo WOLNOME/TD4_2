@@ -9,8 +9,7 @@
 
 
 
-void ExplosionGimmick::Initialize(Norm::BaseCamera* _camera)
-{
+void ExplosionGimmick::Initialize(Norm::BaseCamera* _camera) {
 
 	gimmickState_ = GimmickState::Hidden;// 初期状態は見つかっていない状態
 
@@ -35,15 +34,10 @@ void ExplosionGimmick::Initialize(Norm::BaseCamera* _camera)
 	gimmickObject_->SetOutlineParam(TextureManager::GetInstance()->LoadTexture("green.png"), 1.1f);
 
 	guideUI_ = std::make_unique<GuideUI>();
-	guideUI_->Initialize(_camera, Input::GetInstance(), "mouse.png", position_);
+	guideUI_->Initialize(_camera, Input::GetInstance(), position_);
 
 	gimmickObject_->RegistWorldTransform(&worldTransform_);
 
-	CreateCollider(
-		CollisionAttribute::Gimmick,
-		{ 0.0f, 1.0f, 0.0f },
-		baseColliderSize_
-	);
 
 	// SE読み込み
 	seBombClick_ = std::make_unique<Norm::Audio>();
@@ -53,8 +47,7 @@ void ExplosionGimmick::Initialize(Norm::BaseCamera* _camera)
 	seExplosion_->Initialize("explosion.wav");
 }
 
-void ExplosionGimmick::Update()
-{
+void ExplosionGimmick::Update() {
 	constexpr float kDeltaTime = 1.0f / 60.0f;
 
 	// 使用済み：再生成まで待つ
@@ -100,11 +93,11 @@ void ExplosionGimmick::Update()
 				});
 
 			// 演出が終わってからコライダーを生成
-			CreateCollider(
+			/*CreateCollider(
 				CollisionAttribute::Gimmick,
 				{ 0.0f, 1.0f, 0.0f },
 				baseColliderSize_
-			);
+			);*/
 
 			gimmickState_ = GimmickState::Hidden;
 		}
@@ -140,7 +133,7 @@ void ExplosionGimmick::Update()
 		worldTransform_.SetScale({ explosionScale_, explosionScale_, explosionScale_ });
 
 		// コライダーのサイズも大きくする
-		SetColliderSize({baseColliderSize_.x * explosionScale_,baseColliderSize_.y * explosionScale_,baseColliderSize_.z * explosionScale_});
+		SetColliderSize({ baseColliderSize_.x * explosionScale_,baseColliderSize_.y * explosionScale_,baseColliderSize_.z * explosionScale_ });
 
 		if (explosionTimer_ >= explosionDuration_) {
 
@@ -160,6 +153,11 @@ void ExplosionGimmick::Update()
 		}
 	}
 
+}
+
+void ExplosionGimmick::UpdateUI() {
+
+	guideUI_->Update(position_ + uiOffset_, respawnTimer_ / respawnDuration_);
 }
 
 void ExplosionGimmick::Reset()
@@ -191,8 +189,7 @@ void ExplosionGimmick::Reset()
 
 }
 
-void ExplosionGimmick::DebugImGui()
-{
+void ExplosionGimmick::DebugImGui() {
 #ifdef _DEBUG
 	if (ImGui::TreeNode("ExplosionGimmick")) {
 
@@ -249,14 +246,14 @@ void ExplosionGimmick::DebugImGui()
 
 	}
 
-	
+
 
 #endif
 }
 
-void ExplosionGimmick::OnFlashHit()
-{
-	if (gimmickState_ == GimmickState::Used) {
+void ExplosionGimmick::OnFlashHit() {
+	if (gimmickState_ == GimmickState::Used ||
+		gimmickState_ == GimmickState::Respawning) {
 		return;
 	}
 
@@ -270,6 +267,12 @@ void ExplosionGimmick::OnFlashHit()
 	explosionTimer_ = 0.0f;
 	explosionScale_ = 1.0f;
 
-	// 爆弾クリック音再生
+	// 爆発状態になった瞬間だけコライダーを生成
+	CreateCollider(
+		CollisionAttribute::Gimmick,
+		{ 0.0f, 1.0f, 0.0f },
+		baseColliderSize_
+	);
+
 	seBombClick_->Play(false, 0.5f);
 }

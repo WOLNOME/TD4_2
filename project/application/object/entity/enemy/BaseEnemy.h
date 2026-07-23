@@ -29,6 +29,7 @@ constexpr EnemyDirection Opposite(EnemyDirection dir) {
 }
 
 /// ===前方宣言=== ///
+class LightManager;
 namespace Norm {
 	class Player;
 }
@@ -70,11 +71,6 @@ public:
 	/// <param name="directionX"></param>
 	void UpdateFacing(float directionX);
 
-	/// <summary>
-	/// フラッシュを喰らった時の処理
-	/// </summary>
-	void Flash();
-
 public:
 	/// ============================== ///
 	///		getter
@@ -84,6 +80,12 @@ public:
 	/// </summary>
 	/// <returns></returns>
 	Norm::WorldTransform& GetWorldTransform() { return worldTransform_; }
+
+	/// <summary>
+	/// カラーの取得
+	/// </summary>
+	/// <returns></returns>
+	Norm::Vector4 GetColor() const { return object3d_->GetColor(); }
 
 	/// <summary>
 	/// プレイヤーのポインタを取得
@@ -128,6 +130,12 @@ public:
 	bool IsBodyColliding() const { return isBodyColliding_; }
 
 	/// <summary>
+	/// プレイヤーと衝突中かどうかを取得する
+	/// </summary>
+	/// <returns></returns>
+	bool IsPlayerColliding() const { return isPlayerColliding_; }
+
+	/// <summary>
 	/// 回転中かどうかを取得
 	/// </summary>
 	/// <returns></returns>
@@ -147,6 +155,19 @@ public:
 	/// ============================== ///
 	///		setter
 	/// ============================== ///
+	
+	/// <summary>
+	/// LightManagerのポインタを設定する
+	/// </summary>
+	/// <param name="lightManager"></param>
+	void SetLightManager(LightManager* lightManager) { lightManager_ = lightManager; }
+
+	/// <summary>
+	/// 色の設定
+	/// </summary>
+	/// <param name="color"></param>
+	void SetColor(const Norm::Vector4& color) { object3d_->SetColor(color); }
+
 	/// <summary>
 	/// 速度を設定する
 	/// </summary>
@@ -158,6 +179,11 @@ public:
 	/// </summary>
 	/// <param name="dir"></param>
 	void SetCurrentDirection(EnemyDirection dir) { currentDirection_ = dir; }
+
+	/// <summary>
+	/// 死亡したことを設定する
+	/// </summary>
+	void EnemyDead() { isDead_ = true; }
 
 	/// <summary>
 	/// 衝突中かどうかを設定する(足元)
@@ -176,6 +202,12 @@ public:
 	/// </summary>
 	/// <param name="isColliding"></param>
 	void SetBodyColliding(bool isColliding) { isBodyColliding_ = isColliding; }
+
+	/// <summary>
+	/// 衝突中かどうかを設定する(プレイヤー)
+	/// </summary>
+	/// <param name="isColliding"></param>
+	void SetPlayerColliding(bool isColliding) { isPlayerColliding_ = isColliding; }
 
 #ifdef _DEBUG
 	void SetIsTurning(bool isFlag) { isTurning_ = isFlag; }
@@ -196,6 +228,9 @@ private:
 	// プレイヤーのポインタ
 	Norm::Player* player_ = nullptr;
 
+	// LightManagerのポインタ
+	LightManager* lightManager_ = nullptr;
+
 	// 速度
 	Norm::Vector3 velocity_ = { 0.0f, 0.0f, 0.0f };
 
@@ -212,6 +247,7 @@ private:
 	bool isFootColliding_ = false;
 	bool isAreaColliding_ = false;
 	bool isBodyColliding_ = false;
+	bool isPlayerColliding_ = false;
 
 	// 回転中かどうかのフラグ
 	bool isRotating_ = false; 
@@ -220,13 +256,23 @@ private:
 	bool isDead_ = false;
 
 #ifdef _DEBUG
-	bool isFlash_ = false;
 	bool isAttack_ = false;
 	bool isEscape_ = false;
 	bool isTurning_ = false;
 #endif // _DEBUG
 
 private:
+
+	/// <summary>
+	/// ライトに当たった時の処理
+	/// </summary>
+	/// <returns></returns>
+	bool IsLightHit();
+
+	/// <summary>
+	/// フラッシュを喰らった時の処理
+	/// </summary>
+	void IsFlash();
 
 	/// <summary>
 	/// 角度補間関数
