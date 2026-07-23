@@ -385,6 +385,7 @@
     <ClCompile Include="application\object\entity\enemy\collider\EnemyBodyCollider.cpp" />
     <ClCompile Include="application\object\entity\enemy\State\EnemyDeadState.cpp" />
     <ClCompile Include="application\system\LightManager.cpp" />
+    <ClCompile Include="application\object\entity\enemy\State\EnemyKnockbackState.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="engine\scenebase\AbstractSceneFactory.h">
@@ -716,6 +717,7 @@
     <ClInclude Include="application\object\entity\enemy\collider\EnemyBodyCollider.h" />
     <ClInclude Include="application\object\entity\enemy\State\EnemyDeadState.h" />
     <ClInclude Include="application\system\LightManager.h" />
+    <ClInclude Include="application\object\entity\enemy\State\EnemyKnockbackState.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\shaders\line\Line.hlsli">

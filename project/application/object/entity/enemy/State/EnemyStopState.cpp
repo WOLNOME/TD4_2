@@ -1,19 +1,10 @@
 #include "EnemyStopState.h"
 // Enemy
 #include "application/object/entity/enemy/BaseEnemy.h"
-// State
-#include "EnemyChaseState.h"
-// 
+// state
+#include "EnemyMoveState.h"
+// Math
 #include <MyMath.h>
-
-
-///-------------------------------------------/// 
-/// コンストラクタ
-///-------------------------------------------///
-EnemyStopState::EnemyStopState(std::unique_ptr<EnemyState> state) {
-	// 所有権を受け取る
-	previousState_ = std::move(state);
-}
 
 ///-------------------------------------------/// \
 /// 初期化処理
@@ -33,8 +24,8 @@ void EnemyStopState::Update() {
 
 	/// ===Stateの変更=== ///
 	if (stopTimer_ >= stopDuration_) {
-		ResumePreviousState(); // 前の状態に戻る
-		return;
+		// 移動状態に遷移
+		enemy_->ChangeState(std::make_unique<EnemyMoveState>());
 	}
 }
 
@@ -43,13 +34,4 @@ void EnemyStopState::Update() {
 ///-------------------------------------------///
 void EnemyStopState::Exit() {
 	EnemyState::Exit();
-}
-
-///-------------------------------------------/// fd
-/// 一つ前の状態に戻る
-///-------------------------------------------///
-void EnemyStopState::ResumePreviousState() {
-	if (previousState_) {
-		enemy_->ChangeState(std::move(previousState_));
-	}
 }

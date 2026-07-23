@@ -219,8 +219,12 @@ void Norm::Player::OnCollision(ICollider* other, CollisionAttribute otherAttr) {
 	/// ===Enemy=== ///
 	if (otherAttr == CollisionAttribute::Enemy) {
 		if (!isInvincible_) {
+			
+#ifdef _DEBUG
+#else 
 			// HPを減らす
-			//hp_--;
+			hp_--;
+#endif // _DEBUG
 
 			if (hp_ <= 0) {
 				// HPが0になったら死亡フラグを立てる
