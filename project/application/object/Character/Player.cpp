@@ -56,6 +56,8 @@ void Norm::Player::Update() {
 	// 移動入力処理
 	Move();
 
+	// 無敵時間の更新
+	InvincibleUpdate();
 
 	// 重力の計算（自由落下）
 	yVelocity_ += kGravity;
@@ -74,6 +76,9 @@ void Norm::Player::Update() {
 
 	// 行列の更新
 	wt_.UpdateMatrix();
+
+	// Colorの更新
+	object_->SetColor(invincibleColor_);
 
 	// 空中フラグをオン
 	if (!isGrounded_) {
@@ -112,11 +117,17 @@ void Norm::Player::Debug() {
 			wt_.SetTranslate({translate[0], translate[1], translate[2]});
 		}
 
+		ImGui::Text("HP: %d", hp_);
+
 		// 接地中フラグ
 		ImGui::Checkbox("IsGrounded", &isGrounded_);
 
 		// ゴール済みフラグ
 		ImGui::Checkbox("IsGoaled", &isGoaled_);
+
+		// 無敵フラグ
+		ImGui::Checkbox("IsInvincible", &isInvincible_);
+		ImGui::DragFloat("InvincibleColor.w", &invincibleColor_.w, 0.01f, 0.0f, 1.0f);
 
 		// コライダーデバッグ
 		if (collider_) {
@@ -185,10 +196,23 @@ void Norm::Player::OnCollision(ICollider* other, CollisionAttribute otherAttr) {
 				}
 			}
 		}
+	}
 
-		/// ===Enemy=== ///
-		if (otherAttr == CollisionAttribute::Enemy) {
+	/// ===Enemy=== ///
+	if (otherAttr == CollisionAttribute::Enemy) {
+		if (!isInvincible_) {
+			// HPを減らす
+			//hp_--;
 
+			if (hp_ <= 0) {
+				// HPが0になったら死亡フラグを立てる
+				isDead_ = true;
+			} else {
+				// HPが残っている場合は無敵時間を開始する
+				isInvincible_ = true;
+				// 点滅速度を設定
+				invincibleTimer_ = kDeltaTime * 4.0f;
+			}
 		}
 	}
 
@@ -208,7 +232,7 @@ void Norm::Player::Move() {
 	float targetVelocityX = 0.0f;
 
 	// ゴールしていない場合のみキー入力を受け付ける
-	if (!IsGoaled()) {
+	if (!IsGoaled() && !IsDead()) {
 		// 左右入力移動
 		if (input_->PushKey(DIK_A)) {
 			targetVelocityX = -kSpeed;
@@ -238,4 +262,31 @@ void Norm::Player::Move() {
 		velocity_.x = 0.0f;
 	}
 
+}
+
+///-------------------------------------------/// 
+/// 無敵時間の更新処理
+///-------------------------------------------///
+void Norm::Player::InvincibleUpdate() {
+	// 無敵時間中でなければ処理しない
+	if (!isInvincible_) return;
+
+	// 透明度を減少させる
+	invincibleColor_.w -= invincibleTimer_;
+
+	// 無敵時間中のカラー変化（点滅）
+	if (invincibleColor_.w <= 0.3f) {
+		invincibleTimer_ *= -1.0f;
+	} else if (invincibleColor_.w > 1.0f){
+		invincibleTimer_ *= -1.0f;
+		invincibleCounter_++;
+	}
+
+	// 無敵時間が終了したかどうかをチェック
+	if (invincibleCounter_ >= 5) {
+		// 無敵時間終了dw
+		invincibleColor_.w = 1.0f;
+		invincibleCounter_ = 0;
+		isInvincible_ = false;
+	}
 }

@@ -62,6 +62,8 @@ void Norm::GamePlayScene::Initialize() {
 
 	// Enemyの生成と初期化
 	enemyManager_ = std::make_unique<EnemyManager>();
+	enemyManager_->SetPlayer(player_.get());
+	enemyManager_->SetLightManager(lightManager_.get());
 
 	// 爆発ギミック
 	// ギミック管理
@@ -77,12 +79,6 @@ void Norm::GamePlayScene::Initialize() {
 		enemyManager_.get(),
 		gimmickManager_.get()
 	);
-
-
-	
-
-	// Enemyの生成と初期化
-	enemyManager_=std::make_unique<EnemyManager>();
 
 	// ポーズメニュー生成 + 初期化
 	pauseMenu_ = std::make_unique<PauseMenu>();
@@ -125,6 +121,8 @@ void Norm::GamePlayScene::Update() {
 	// ゴールに触れたらリザルトへ移行（仮）
 	if (player_->IsGoaled()) {
 		sceneManager_->SetNextScene("RESULT");
+	} else if (player_->IsDead()) {
+		//sceneManager_->SetNextScene("GAME_OVER");
 	}
 	backgroundWT_.SetTranslate({ // 背景オブジェクトをプレイヤーに追従させる
 		player_->GetTranslate().x, 

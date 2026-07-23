@@ -23,6 +23,7 @@ public:
 	/// </summary>
 	void Update() override;
 
+	void UpdateUI() override;
 
 	/// <summary>
 	/// 爆発をリセット
@@ -43,8 +44,6 @@ public:
 	/// </summary>
 	/// <returns></returns>
 	bool IsExploded() const { return isExploded_; }
-
-
 
 	const char* GetStateName() const
 	{

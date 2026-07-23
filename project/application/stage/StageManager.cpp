@@ -49,7 +49,7 @@ void Norm::StageManager::LoadStage(const std::string& jsonPath, Player* player, 
 				// 敵の生成
 				if (blockTypeStr == "ghost") {
 					if (enemyManager) {
-						enemyManager->SpawnEnemy(position, player);
+						enemyManager->SpawnEnemy(position);
 					}
 					continue;
 				}

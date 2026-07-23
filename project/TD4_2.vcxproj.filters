@@ -383,6 +383,7 @@
       <Filter>application\object\gimmick</Filter>
     </ClCompile>
     <ClCompile Include="application\object\entity\enemy\collider\EnemyBodyCollider.cpp" />
+    <ClCompile Include="application\object\entity\enemy\State\EnemyDeadState.cpp" />
     <ClCompile Include="application\system\LightManager.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -713,6 +714,7 @@
       <Filter>application\object\gimmick</Filter>
     </ClInclude>
     <ClInclude Include="application\object\entity\enemy\collider\EnemyBodyCollider.h" />
+    <ClInclude Include="application\object\entity\enemy\State\EnemyDeadState.h" />
     <ClInclude Include="application\system\LightManager.h" />
   </ItemGroup>
   <ItemGroup>

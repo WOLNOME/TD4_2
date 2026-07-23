@@ -12,9 +12,10 @@ void GimmickBase::Update()
 	assert(lightManager_ && "ライトマネージャーが設定されていません");
 
 	HitLight();
+}
 
-	guideUI_->SetPosition(position_ + uiOffset_);
-	guideUI_->Update();
+void GimmickBase::UpdateUI() {
+
 }
 
 void GimmickBase::HitLight()
