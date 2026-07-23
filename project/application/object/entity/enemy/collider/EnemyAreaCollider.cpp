@@ -30,12 +30,9 @@ void EnemyAreaCollider::Debug() {
 void EnemyAreaCollider::OnCollision(Norm::ICollider* _other, Norm::CollisionAttribute _attribute) {
 
 	// 衝突時の処理
-	if (_attribute == Norm::CollisionAttribute::Area) {
+	if (IsColliding(_attribute)) {
 		// カラーを赤に変更
 		debugLineColor_ = { 1,0,0,1 };
-
-		// フラグを有効化
-		enemy_->SetAreaColliding(true);
 
 		// お互いのコライダーを取得
 		auto* enemyCollider = dynamic_cast<OBBColliderBase*>(this);
@@ -60,6 +57,9 @@ void EnemyAreaCollider::OnCollision(Norm::ICollider* _other, Norm::CollisionAttr
 				// それ以外は側面衝突として処理する
 				else {
 					pushVector.y = 0.0f;
+
+					// 横からの衝突だった場合のみフラグを有効化
+					enemy_->SetAreaColliding(true);
 
 					if ((pushVector.x > 0.0f && enemy_->GetVelocity().x < 0.0f) || (pushVector.x < 0.0f && enemy_->GetVelocity().x > 0.0f)) {
 						enemy_->SetVelocity({ 0.0f, enemy_->GetVelocity().y, enemy_->GetVelocity().z });
