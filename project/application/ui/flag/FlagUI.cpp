@@ -3,6 +3,7 @@
 #include "engine/base/windows/WinApp.h"
 #include "engine/base/texture/TextureManager.h"
 #include "engine/2d/SpriteManager.h"
+#include "application/ui/math/UIMath.h"
 
 using namespace Norm;
 
@@ -73,18 +74,7 @@ void FlagUI::Update(Norm::Vector3 _playerPos) {
 
 	worldTransform_.UpdateMatrix();
 
-	Vector3 translate = worldTransform_.GetTranslate();
-
-	Matrix4x4 viewport = MyMath::MakeViewportMatrix(0, 0, static_cast<float>(WinApp::GetInstance()->kClientWidth), static_cast<float>(WinApp::GetInstance()->kClientHeight), 0, 1);
-
-	Matrix4x4 viewProjection = camera_->GetViewProjectionMatrix();
-
-	Matrix4x4 viewProjectionViewport = viewProjection * viewport;
-
-	//3Dオブジェクトの座標をスクリーン座標に変換する
-	Vector3 screenPos = MyMath::Transform(translate, viewProjectionViewport);
-
-	sprite_->SetPosition({ screenPos.x,screenPos.y });
+	sprite_->SetPosition(WorldToScreen(worldTransform_.GetTranslate(), camera_->GetViewProjectionMatrix()));
 
 	sprite_->SetSize(size_);
 }

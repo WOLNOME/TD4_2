@@ -7,6 +7,8 @@ using namespace Norm;
 #include "engine/2d/SpriteManager.h"
 #include "engine/math/MyMath.h"
 
+#include "application/ui/math/uiMath.h"
+
 #include "imgui.h"
 
 #include <algorithm>
@@ -131,16 +133,7 @@ void GuideUI::ImGui() {
 
 void GuideUI::UpdateSpritePos() {
 
-	Vector3 translate = mouseWorldTransform_.GetTranslate();
-
-	Matrix4x4 viewport = MyMath::MakeViewportMatrix(0, 0, static_cast<float>(WinApp::GetInstance()->kClientWidth), static_cast<float>(WinApp::GetInstance()->kClientHeight), 0, 1);
-
-	Matrix4x4 viewProjection = camera_->GetViewProjectionMatrix();
-
-	Matrix4x4 viewProjectionViewport = viewProjection * viewport;
-
-	//3Dオブジェクトの座標をスクリーン座標に変換する
-	Vector3 screenPos = MyMath::Transform(translate, viewProjectionViewport);
+	Vector2 screenPos = WorldToScreen(mouseWorldTransform_.GetTranslate(), camera_->GetViewProjectionMatrix());
 
 	mouseSprite_->SetPosition({ screenPos.x,screenPos.y });
 
@@ -153,33 +146,12 @@ float GuideUI::GetDistanceToMouse() {
 
 	Vector3 translate = mouseWorldTransform_.GetTranslate();
 
-	Vector3 cameraPos = camera_->worldTransform.GetWorldTranslate();
+	Vector2 mousePos = { input_->GetMousePosition().x,input_->GetMousePosition().y };
 
-	Vector3 mousePos = { input_->GetMousePosition().x,input_->GetMousePosition().y,0.0f };
-
-	Matrix4x4 invViewProjection = MyMath::Inverse(camera_->GetViewProjectionMatrix());
-
-	//マウス座標を正規化デバイス座標に変換
-	float ndcX = (2.0f * mousePos.x / WinApp::GetInstance()->kClientWidth) - 1.0f;
-	float ndcY = 1.0f - (2.0f * mousePos.y / WinApp::GetInstance()->kClientHeight);
-
-	Vector3 pointNDC = { ndcX,ndcY,1.0f };
-
-	//正規化デバイス座標をワールド座標に変換
-	Vector3 mouseWorldPos = MyMath::Transform(pointNDC, invViewProjection);
-
-	//カメラ座標からマウス座標への直線を生成
-	Line line;
-	line.diff = Vector3(mouseWorldPos - cameraPos).Normalized();
-	line.origin = cameraPos;
-
-	//XY平面を作成
-	Plane YZPlane;
-	YZPlane.normal = { 0,0,1 };
-	YZPlane.distance = 0.0f;
-
-	//直線と平面の交点を求める
-	Vector3 closestPoint= MyMath::CollisionPoint(line, YZPlane);
+	Vector3 closestPoint = ScreenToWorld(
+		mousePos, camera_->worldTransform.GetWorldTranslate(),
+		camera_->GetViewProjectionMatrix()
+	);
 
 	return MyMath::Length(translate - closestPoint);
 }

@@ -387,6 +387,7 @@
     <ClCompile Include="application\system\LightManager.cpp" />
     <ClCompile Include="application\ui\flag\FlagUI.cpp" />
     <ClCompile Include="application\ui\operation\OperationUI.cpp" />
+    <ClCompile Include="application\ui\math\UIMath.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="engine\scenebase\AbstractSceneFactory.h">
@@ -720,6 +721,7 @@
     <ClInclude Include="application\system\LightManager.h" />
     <ClInclude Include="application\ui\flag\FlagUI.h" />
     <ClInclude Include="application\ui\operation\OperationUI.h" />
+    <ClInclude Include="application\ui\math\UIMath.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\shaders\line\Line.hlsli">
