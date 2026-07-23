@@ -74,7 +74,13 @@ namespace Norm {
 
 		UI titleUI_;
 
+		UI tutorialUI_;
+
 		UI buttonUI_;
+
+		UI tutorialButtonUI_;
+
+		UI exitUI_;
 
 		Vector2 initSize_;
 
@@ -86,13 +92,23 @@ namespace Norm {
     
 		Vector2 titlePos_ = { 640.0f,180.0f };
 
-		Vector2 buttonPos_ = { 640.0f,460.0f };
+		Vector2 tutorialPos_ = { 640.0f,360.0f };
+
+		Vector2 buttonPos_ = { 640.0f,400.0f };
+
+		Vector2 tutorialButtonPos_ = { 640.0f,550.0f };
+
+		Vector2 exitUIPos_ = { 60.0f,60.0f };
 
 		Vector2 buttonInitSize_;
 
 		float buttonLength_ = 80.0f;
 
 		float buttonSizeRatio_ = 1.2f;
+
+		float tutorialTimer_ = 0.0f;
+
+		float tutorialMaxTime_ = 1.0f;
 
 		int maxEnemy_ = 5;
 
@@ -105,6 +121,8 @@ namespace Norm {
 		float startPosY_ = -15.0f;
 
 		bool isSceneChange_ = false;
+
+		bool isTutorial_ = false;
 
 		float sceneChangeTimer_ = 0.0f;
 

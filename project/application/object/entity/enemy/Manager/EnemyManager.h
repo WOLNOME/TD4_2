@@ -2,13 +2,30 @@
 /// ===Include=== ///
 #include <application/object/entity/enemy/BaseEnemy.h>
 #include <memory>
-#include <vector>
+#include <unordered_map>
 
 /// ===前方宣言=== ///
 class LightManager;
 namespace Norm {
 	class Player;
 }
+
+///=====================================================/// 
+/// EnemySlot
+/// 1体のEnemy枠を表す。Enemy本体・スポーン情報・リスポーン状態を保持する
+///=====================================================///
+struct EnemySlot {
+	// Enemy本体(死亡中はnullptr)
+	std::unique_ptr<BaseEnemy> enemy = nullptr;
+	// スポーン位置
+	Norm::Vector3 spawnPosition = { 0.0f, 0.0f, 0.0f };
+	// 初期方向
+	EnemyDirection firstDirection = EnemyDirection::Left;
+	// リスポーン待機中かどうか
+	bool isRespawning = false;
+	// リスポーンまでの残りフレーム数
+	float respawnTimer = 0.0f;
+};
 
 ///=====================================================/// 
 /// EnemyManager
@@ -43,10 +60,10 @@ public:
 	/// ===Getter=== ///
 
 	/// <summary>
-	/// 敵の数を取得する
+	/// 生存している敵の数を取得する
 	/// </summary>
 	/// <returns></returns>
-	int GetEnemyCount() const { return static_cast<int>(enemies_.size()); }
+	int GetEnemyCount() const;
 
 	/// <summary>
 	/// 死亡した敵の数を取得する
@@ -56,7 +73,7 @@ public:
 
 public:
 	/// ===Setter=== ///
-	
+
 	/// <summary>
 	/// Playerのポインタを設定する
 	/// </summary>
@@ -69,12 +86,32 @@ public:
 	/// <param name="lightManager"></param>
 	void SetLightManager(LightManager* lightManager) { lightManager_ = lightManager; }
 
+	/// <summary>
+	/// リスポーンまでの待機フレーム数を設定する
+	/// </summary>
+	/// <param name="frames"></param>
+	void SetRespawnDelayFrames(float frames) { respawnDelayFrames_ = frames; }
+
+private:
+	/// ============================== ///
+	///		メンバ関数
+	/// ============================== ///
+
+	/// <summary>
+	/// 指定したスロットにEnemyを(再)生成する
+	/// </summary>
+	/// <param name="slot"></param>
+	void RespawnEnemy(EnemySlot& slot);
+
 private:
 	/// ============================== ///
 	///		メンバ変数
 	/// ============================== ///
-	//　敵のポインタを保持する配列
-	std::vector<std::unique_ptr<BaseEnemy>> enemies_ = {};
+	// 敵を管理するmap (キー: 一意のEnemy ID)
+	std::unordered_map<int, EnemySlot> enemies_ = {};
+
+	// 次に発行するEnemy ID
+	int nextEnemyId_ = 0;
 
 	// プレイヤーのポインタ
 	Norm::Player* player_ = nullptr;
@@ -84,6 +121,7 @@ private:
 
 	// 死亡した敵の数
 	int deadEnemyCount_ = 0;
+
+	// リスポーンまでの時間
+	float respawnDelayFrames_ = 20.0f;
 };
-
-

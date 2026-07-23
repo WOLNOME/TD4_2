@@ -14,6 +14,8 @@ void LightManager::Initialize() {
 }
 
 void LightManager::Update() {
+	isFlashTriggered_ = false;
+
 	assert(pointLight_ && "ポイントライトを設定してください");
 	assert(camera_ && "カメラを設定してください");
 
@@ -33,6 +35,7 @@ void LightManager::Update() {
 		pointLight_->SetRadius(kMaxRange);
 		//フラッシュフラグをオンにする
 		isFlush_ = true;
+		isFlashTriggered_ = true;
 		//クールタイマーをセット
 		flushCoolTimer_ = kFlushCoolTime;
 	}

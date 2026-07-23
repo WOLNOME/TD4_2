@@ -239,6 +239,9 @@ void BaseEnemy::IsFlash() {
 
 	// フラッシュを喰らった場合の処理
 	if (lightManager_->GetIsFlush()) {
+		// 衝突属性をEnemyGhostに変更して、衝突判定を無効化
+		bodyCollider_->SetCollisionAttribute(CollisionAttribute::EnemyGhost);
+
 		// EnemyStopStateに変更
 		ChangeState(std::make_unique<EnemyStopState>());
 	}

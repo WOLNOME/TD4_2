@@ -24,6 +24,8 @@ void EnemyStopState::Update() {
 
 	/// ===Stateの変更=== ///
 	if (stopTimer_ >= stopDuration_) {
+		// 終了時にコライダーを再設定
+		enemy_->SetBodyCollider();
 		// 移動状態に遷移
 		enemy_->ChangeState(std::make_unique<EnemyMoveState>());
 	}

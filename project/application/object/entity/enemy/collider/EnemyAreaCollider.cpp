@@ -1,5 +1,7 @@
 #include "EnemyAreaCollider.h"
 #include <application/object/entity/enemy/BaseEnemy.h>
+// State
+#include <application/object/entity/enemy/State/EnemyChaseState.h>
 
 ///-------------------------------------------/// 
 /// コンストラクタ
@@ -26,14 +28,11 @@ void EnemyAreaCollider::Debug() {
 /// 衝突時のコールバック
 ///-------------------------------------------///
 void EnemyAreaCollider::OnCollision(Norm::ICollider* _other, Norm::CollisionAttribute _attribute) {
-	
+
 	// 衝突時の処理
-	if (_attribute == Norm::CollisionAttribute::Area) {
+	if (IsColliding(_attribute)) {
 		// カラーを赤に変更
 		debugLineColor_ = { 1,0,0,1 };
-
-		// フラグを有効化
-		enemy_->SetAreaColliding(true);
 
 		// お互いのコライダーを取得
 		auto* enemyCollider = dynamic_cast<OBBColliderBase*>(this);
@@ -59,6 +58,9 @@ void EnemyAreaCollider::OnCollision(Norm::ICollider* _other, Norm::CollisionAttr
 				else {
 					pushVector.y = 0.0f;
 
+					// 横からの衝突だった場合のみフラグを有効化
+					enemy_->SetAreaColliding(true);
+
 					if ((pushVector.x > 0.0f && enemy_->GetVelocity().x < 0.0f) || (pushVector.x < 0.0f && enemy_->GetVelocity().x > 0.0f)) {
 						enemy_->SetVelocity({ 0.0f, enemy_->GetVelocity().y, enemy_->GetVelocity().z });
 					}
@@ -70,5 +72,19 @@ void EnemyAreaCollider::OnCollision(Norm::ICollider* _other, Norm::CollisionAttr
 				enemy_->GetWorldTransform().UpdateMatrix();
 			}
 		}
+	}
+}
+
+///-------------------------------------------/// 
+/// 衝突候補
+///-------------------------------------------///
+bool EnemyAreaCollider::IsColliding(Norm::CollisionAttribute _attribute) {
+
+	// 敵の状態がEnemyChaseStateの場合は、Area属性のみ衝突対象とする
+	if (dynamic_cast<EnemyChaseState*>(enemy_->GetCurrentState())) {
+		return _attribute == Norm::CollisionAttribute::Area;
+	} else {
+		// それ以外の状態では、Area属性とBlock属性を衝突対象とする
+		return  _attribute == Norm::CollisionAttribute::Block || _attribute == Norm::CollisionAttribute::Area;
 	}
 }

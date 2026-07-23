@@ -389,6 +389,7 @@
     <ClCompile Include="application\ui\operation\OperationUI.cpp" />
     <ClCompile Include="application\ui\math\UIMath.cpp" />
     <ClCompile Include="application\object\entity\enemy\State\EnemyKnockbackState.cpp" />
+    <ClCompile Include="engine\scene\GameOverScene.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="engine\scenebase\AbstractSceneFactory.h">
@@ -724,6 +725,7 @@
     <ClInclude Include="application\ui\operation\OperationUI.h" />
     <ClInclude Include="application\ui\math\UIMath.h" />
     <ClInclude Include="application\object\entity\enemy\State\EnemyKnockbackState.h" />
+    <ClInclude Include="engine\scene\GameOverScene.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\shaders\line\Line.hlsli">

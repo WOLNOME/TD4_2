@@ -112,6 +112,12 @@ public:
 	EnemyDirection GetCurrentDirection() const { return currentDirection_; }
 
 	/// <summary>
+	/// 現在の状態を取得する
+	/// </summary>
+	/// <returns></returns>
+	EnemyState* GetCurrentState() const { return currentState_.get(); }
+
+	/// <summary>
 	/// 衝突中かどうかを取得する(足元)
 	/// </summary>
 	/// <returns></returns>
@@ -161,6 +167,11 @@ public:
 	/// </summary>
 	/// <param name="lightManager"></param>
 	void SetLightManager(LightManager* lightManager) { lightManager_ = lightManager; }
+
+	/// <summary>
+	/// BodyColliderの衝突属性をEnemyに設定する
+	/// </summary>
+	void SetBodyCollider() {bodyCollider_->SetCollisionAttribute(Norm::CollisionAttribute::Enemy); }
 
 	/// <summary>
 	/// 色の設定
@@ -244,10 +255,10 @@ private:
 	float targetFacingRotationY_ = 0.0f; 
 
 	// 衝突中かどうかを保持するフラグ
+	bool isFootColliding_ = false;
 	bool isAreaColliding_ = false;
 	bool isBodyColliding_ = false;
 	bool isPlayerColliding_ = false;
-	bool isFootColliding_ = false;
 
 	// 回転中かどうかのフラグ
 	bool isRotating_ = false; 

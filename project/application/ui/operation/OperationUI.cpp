@@ -19,7 +19,8 @@ void OperationUI::Initialize(Norm::Player* _player, Norm::BaseCamera* _camera, N
 		"wKeyUI",
 		"keyboard_w.png",
 		"keyboard_w_outline.png",
-		Vector3(3.25f, 2.25f, 0.0f),
+		Vector3(keyUIPos_.x, keyUIPos_.y + keyUIDistance_, keyUIPos_.z),
+		keyUISize_,
 		DIK_W,
 		false,
 		camera_,
@@ -31,7 +32,8 @@ void OperationUI::Initialize(Norm::Player* _player, Norm::BaseCamera* _camera, N
 		"aKeyUI",
 		"keyboard_a.png",
 		"keyboard_a_outline.png",
-		Vector3(2.0f, 1.0f, 0.0f),
+		Vector3(keyUIPos_.x - keyUIDistance_, keyUIPos_.y, keyUIPos_.z),
+		keyUISize_,
 		DIK_A,
 		false,
 		camera_,
@@ -43,7 +45,8 @@ void OperationUI::Initialize(Norm::Player* _player, Norm::BaseCamera* _camera, N
 		"sKeyUI",
 		"keyboard_s.png",
 		"keyboard_s_outline.png",
-		Vector3(3.25f, 1.0f, 0.0f),
+		Vector3(keyUIPos_.x, keyUIPos_.y, keyUIPos_.z),
+		keyUISize_,
 		DIK_S,
 		false,
 		camera_,
@@ -55,7 +58,8 @@ void OperationUI::Initialize(Norm::Player* _player, Norm::BaseCamera* _camera, N
 		"dKeyUI",
 		"keyboard_d.png",
 		"keyboard_d_outline.png",
-		Vector3(4.5f, 1.0f, 0.0f),
+		Vector3(keyUIPos_.x + keyUIDistance_, keyUIPos_.y, keyUIPos_.z),
+		keyUISize_,
 		DIK_D,
 		false,
 		camera_,
@@ -67,12 +71,28 @@ void OperationUI::Initialize(Norm::Player* _player, Norm::BaseCamera* _camera, N
 		"leftMouseUI",
 		"mouse_left_outline.png",
 		"mouse_outline.png",
-		Vector3(3.25f, -1.0f, 0.0f),
+		mouseUIPos_,
+		mouseUISize_,
 		DIK_0,
 		true,
 		camera_,
 		input_
 	);
+
+	hpTexture_ = TextureManager::GetInstance()->LoadTexture("whiteHeart.png");
+
+	for (int i = 0; i < player_->GetHP(); i++) {
+
+		std::unique_ptr<Sprite> newUI = std::make_unique<Sprite>();
+		newUI->Initialize(SpriteTag{}, SpriteManager::GetInstance()->GenerateName("hpUI"), Order::Front2, hpTexture_);
+		newUI->SetAnchorPoint({ 0.5f,0.5f });
+		newUI->SetPosition({ 0.0f,0.0f });
+		newUI->SetSize({ 48.0f,48.0f });
+
+		hpUI_.push_back(std::move(newUI));
+	}
+
+	playerMaxHP_ = player_->GetHP();
 
 	moveHelpTexture_ = TextureManager::GetInstance()->LoadTexture("moveHelp.png");
 	moveHelpUI_ = std::make_unique<Sprite>();
@@ -92,12 +112,41 @@ void OperationUI::Update() {
 
 	Vector2 screenPos = WorldToScreen(player_->GetTranslate(), camera_->GetViewProjectionMatrix());
 
-	wKeyUI_->Update(player_->GetTranslate());
-	aKeyUI_->Update(player_->GetTranslate());
-	sKeyUI_->Update(player_->GetTranslate());
-	dKeyUI_->Update(player_->GetTranslate());
-	leftMouseUI_->Update(player_->GetTranslate());
+	wKeyUI_->Update(player_->GetTranslate(), uiColor_);
+	aKeyUI_->Update(player_->GetTranslate(), uiColor_);
+	sKeyUI_->Update(player_->GetTranslate(), uiColor_);
+	dKeyUI_->Update(player_->GetTranslate(), uiColor_);
+	leftMouseUI_->Update(player_->GetTranslate(), uiColor_);
+
+	int hpCount = player_->GetHP();
+
+	int maxCount = playerMaxHP_;
+
+	for (auto& ui : hpUI_) {
+
+		if (hpCount > 0) {
+
+			ui->SetColor({ 0.5f,0.5f,0.5f,1.0f });
+
+		} else {
+
+			ui->SetColor({ 0.05f,0.05f,0.05f,1.0f });
+
+			hpCount = 0;
+		}
+
+		Vector3 offset = hpUIOffset_ - hpUISizeX_ * (playerMaxHP_ - maxCount);
+
+		ui->SetPosition(WorldToScreen(player_->GetTranslate() + offset, camera_->GetViewProjectionMatrix()));
+
+		hpCount--;
+
+		maxCount--;
+	}
 
 	moveHelpUI_->SetPosition(WorldToScreen(player_->GetTranslate() + moveHelpOffset_, camera_->GetViewProjectionMatrix()));
+	moveHelpUI_->SetColor(uiColor_);
+
 	flashHelpUI_->SetPosition(WorldToScreen(player_->GetTranslate() + flashHelpOffset_, camera_->GetViewProjectionMatrix()));
+	flashHelpUI_->SetColor(uiColor_);
 }
