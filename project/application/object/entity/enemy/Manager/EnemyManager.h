@@ -122,6 +122,6 @@ private:
 	// 死亡した敵の数
 	int deadEnemyCount_ = 0;
 
-	// リスポーンまでの待機フレーム数(既定: 60fps想定で3秒)
-	float respawnDelayFrames_ = 30.0f;
+	// リスポーンまでの時間
+	float respawnDelayFrames_ = 20.0f;
 };
