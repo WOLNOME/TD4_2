@@ -80,6 +80,8 @@ void BaseEnemy::Initialize(Norm::Vector3 position, Norm::Player* player, EnemyDi
 void BaseEnemy::Update() {
 	/// ===死亡フラグの確認=== ///
 	if (isBodyColliding_) {
+		bodyCollider_.reset();
+		areaCollider_.reset();
 		// 状態を死亡状態に変更
 		ChangeState(std::make_unique<EnemyDeadState>());
 	}
@@ -231,6 +233,9 @@ bool BaseEnemy::IsLightHit() {
 /// フラッシュを喰らった時の処理
 ///-------------------------------------------///
 void BaseEnemy::IsFlash() {
+	// 現在の状態がEnemyDeadStateでない場合
+	if (dynamic_cast<EnemyDeadState*>(currentState_.get())) return;
+
 	// ライトに当たっていなければ処理を終了
 	if (!IsLightHit()) return;
 
@@ -239,8 +244,11 @@ void BaseEnemy::IsFlash() {
 		// 衝突属性をEnemyGhostに変更して、衝突判定を無効化
 		bodyCollider_->SetCollisionAttribute(CollisionAttribute::EnemyGhost);
 
-		// EnemyStopStateに変更
-		ChangeState(std::make_unique<EnemyStopState>());
+		// 現在の状態がEnemyKnockbackStateでない場合
+		if (!dynamic_cast<EnemyKnockbackState*>(currentState_.get()) && !dynamic_cast<EnemyStopState*>(currentState_.get())) {
+			//EnemyStopStateに変更
+			ChangeState(std::make_unique<EnemyStopState>(std::move(currentState_)));
+		}
 	}
 }
 

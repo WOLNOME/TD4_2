@@ -6,6 +6,13 @@
 // Math
 #include <MyMath.h>
 
+///-------------------------------------------/// 
+/// コンストラクタ
+///-------------------------------------------///
+EnemyStopState::EnemyStopState(std::unique_ptr<EnemyState> state) {
+	previousState_ = std::move(state);
+}
+
 ///-------------------------------------------/// \
 /// 初期化処理
 ///-------------------------------------------///
@@ -27,7 +34,7 @@ void EnemyStopState::Update() {
 		// 終了時にコライダーを再設定
 		enemy_->SetBodyCollider();
 		// 移動状態に遷移
-		enemy_->ChangeState(std::make_unique<EnemyMoveState>());
+		enemy_->ChangeState(std::move(previousState_));
 	}
 }
 
