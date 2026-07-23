@@ -44,6 +44,19 @@ public:
 	/// <returns></returns>
 	bool GetIsFlush() { return isFlush_; }
 
+	/// <summary>
+	/// フラッシュ時のヒット範囲の取得
+	/// </summary>
+	/// <returns></returns>
+	float GetFlashHitRange() const { return kFlashHitRange; }
+	/// <summary>
+	/// フラッシュがトリガーされたかどうかの取得
+	/// </summary>
+	/// <returns></returns>
+	bool GetIsFlashTriggered() const {
+		return isFlashTriggered_;
+	}
+
 	// =========================================================
 	// setter
 	// =========================================================
@@ -74,6 +87,7 @@ private:
 	const float kMaxIntensity = 6.0f;		//フラッシュ時最大の輝度
 	const float kNormalIntensity = 2.0f;	//通常時の輝度
 	const float kMaxRange = 14.0f;			//フラッシュ時最大の範囲
+	const float kFlashHitRange = 3.0f;
 	const float kNormalRange = 6.0f;		//通常時の範囲
 
 	const float kFlushKeepTime = 0.6f;
@@ -81,7 +95,7 @@ private:
 
 	const float kFlushCoolTime = 2.0f;
 	float flushCoolTimer_ = 0.0f;
-
+	bool isFlashTriggered_ = false;
 
 };
 

@@ -154,6 +154,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="engine\3d\camera\BaseCamera.cpp" />
     <ClCompile Include="engine\base\directx\D3DResourceLeakChecker.cpp" />
     <ClCompile Include="engine\base\directx\DirectXCommon.cpp" />
+    <ClCompile Include="engine\scene\GameOverScene.cpp" />
     <ClCompile Include="engine\scene\SampleScene.cpp" />
     <ClCompile Include="engine\util\RandomStringUtil.cpp" />
     <ClCompile Include="engine\util\StringUtility.cpp" />
@@ -271,6 +272,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="engine\3d\camera\BaseCamera.h" />
     <ClInclude Include="engine\base\directx\D3DResourceLeakChecker.h" />
     <ClInclude Include="engine\base\directx\DirectXCommon.h" />
+    <ClInclude Include="engine\scene\GameOverScene.h" />
     <ClInclude Include="engine\scene\SampleScene.h" />
     <ClInclude Include="engine\util\Handle.h" />
     <ClInclude Include="engine\util\JsonUtil.h" />

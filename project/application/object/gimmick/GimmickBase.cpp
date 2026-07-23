@@ -30,7 +30,7 @@ void GimmickBase::HitLight()
 	}
 
 	// フラッシュだったらフラッシュ用処理
-	if (lightManager_->GetIsFlush()) {
+	if (lightManager_->GetIsFlashTriggered()) {
 		OnFlashHit();
 		return;
 	}
@@ -75,14 +75,23 @@ void GimmickBase::SetColliderSize(const Vector3& size)
 
 bool GimmickBase::IsHitLightCircle() const
 {
-	Vector3 diff = position_ - lightManager_->GetPointLight()->GetPosition();
+	if (!lightManager_ || !lightManager_->GetPointLight()) {
+		return false;
+	}
 
+	Vector3 diff =
+		position_ - lightManager_->GetPointLight()->GetPosition();
+
+	
 	float distanceSq =
 		diff.x * diff.x +
-		diff.y * diff.y +
-		diff.z * diff.z;
+		diff.y * diff.y;
 
-	float hitRange = lightManager_->GetPointLight()->GetRadius() + radius_;
+	float lightRange = lightManager_->GetIsFlush()
+		? lightManager_->GetFlashHitRange()
+		: 2.0f;
+
+	float hitRange = lightRange + radius_;
 
 	return distanceSq <= hitRange * hitRange;
 }

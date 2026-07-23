@@ -73,7 +73,7 @@ protected:
 	Vector3 uiOffset_ = { 0.0f,2.0f,0.0f };
 
 	Vector3 position_{};
-	float radius_ = 1.0f;
+	float radius_ = 0.5f;
 
 	std::unique_ptr<ICollider> collider_ = nullptr;
 };
