@@ -12,6 +12,7 @@ void FlagUI::Initialize(
 	const std::string _onTextureName,
 	const std::string _offTextureName,
 	const Norm::Vector3 _offset,
+	const Norm::Vector2 _size,
 	const BYTE _keyNumber,
 	const bool _isMouseUI,
 	Norm::BaseCamera* _camera,
@@ -38,9 +39,11 @@ void FlagUI::Initialize(
 	worldTransform_.Initialize();
 
 	offset_ = _offset;
+
+	size_ = _size;
 }
 
-void FlagUI::Update(Norm::Vector3 _playerPos) {
+void FlagUI::Update(Norm::Vector3 _playerPos, Norm::Vector4 _color) {
 
 	if (isMouseUI_) {
 
@@ -77,4 +80,6 @@ void FlagUI::Update(Norm::Vector3 _playerPos) {
 	sprite_->SetPosition(WorldToScreen(worldTransform_.GetTranslate(), camera_->GetViewProjectionMatrix()));
 
 	sprite_->SetSize(size_);
+
+	sprite_->SetColor(_color);
 }
