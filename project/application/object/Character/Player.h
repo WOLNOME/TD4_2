@@ -68,6 +68,12 @@ public:
 	/// <returns></returns>
 	bool IsDead() const { return isDead_; }
 
+	/// <summary>
+	/// HPの取得
+	/// </summary>
+	/// <returns></returns>
+	int GetHP() const { return hp_; }
+
 private:
 	// =========================================================
 	// Internal Methods
@@ -77,6 +83,11 @@ private:
 	/// 移動入力処理
 	/// </summary>
 	void Move();
+
+	/// <summary>
+	/// 無敵時間の更新処理
+	/// </summary>
+	void InvincibleUpdate();
 
 private:
 	// =========================================================
@@ -129,5 +140,14 @@ private:
 	std::unique_ptr<Norm::Audio> seLand_;
 	// ゴール音
 	std::unique_ptr<Norm::Audio> seGoal_;
+
+	// 無敵時間
+	bool isInvincible_ = false;
+	float invincibleTimer_ = 0.0f;
+	int invincibleCounter_ = 0;
+	Vector4 invincibleColor_ = { 1.0f, 1.0f, 1.0f, 1.0f }; // 無敵時の色（半透明）
+
+	// HP
+	int hp_ = 3;
 };
 } 
