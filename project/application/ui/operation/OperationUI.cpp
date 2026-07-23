@@ -74,6 +74,21 @@ void OperationUI::Initialize(Norm::Player* _player, Norm::BaseCamera* _camera, N
 		input_
 	);
 
+	hpTexture_ = TextureManager::GetInstance()->LoadTexture("whiteHeart.png");
+
+	for (int i = 0; i < player_->GetHP(); i++) {
+
+		std::unique_ptr<Sprite> newUI = std::make_unique<Sprite>();
+		newUI->Initialize(SpriteTag{}, SpriteManager::GetInstance()->GenerateName("hpUI"), Order::Front2, hpTexture_);
+		newUI->SetAnchorPoint({ 0.5f,0.5f });
+		newUI->SetPosition({ 0.0f,0.0f });
+		newUI->SetSize({ 48.0f,48.0f });
+
+		hpUI_.push_back(std::move(newUI));
+	}
+
+	playerMaxHP_ = player_->GetHP();
+
 	moveHelpTexture_ = TextureManager::GetInstance()->LoadTexture("moveHelp.png");
 	moveHelpUI_ = std::make_unique<Sprite>();
 	moveHelpUI_->Initialize(SpriteTag{}, SpriteManager::GetInstance()->GenerateName("moveHelpUI"), Order::Front2, moveHelpTexture_);
@@ -97,6 +112,32 @@ void OperationUI::Update() {
 	sKeyUI_->Update(player_->GetTranslate());
 	dKeyUI_->Update(player_->GetTranslate());
 	leftMouseUI_->Update(player_->GetTranslate());
+
+	int hpCount = player_->GetHP();
+
+	int maxCount = playerMaxHP_;
+
+	for (auto& ui : hpUI_) {
+
+		if (hpCount > 0) {
+
+			ui->SetColor({ 1.0f,1.0f,1.0f,1.0f });
+
+		} else {
+
+			ui->SetColor({ 0.05f,0.05f,0.05f,1.0f });
+
+			hpCount = 0;
+		}
+
+		Vector3 offset = hpUIOffset_ - hpUISizeX_ * (playerMaxHP_ - maxCount);
+
+		ui->SetPosition(WorldToScreen(player_->GetTranslate() + offset, camera_->GetViewProjectionMatrix()));
+
+		hpCount--;
+
+		maxCount--;
+	}
 
 	moveHelpUI_->SetPosition(WorldToScreen(player_->GetTranslate() + moveHelpOffset_, camera_->GetViewProjectionMatrix()));
 	flashHelpUI_->SetPosition(WorldToScreen(player_->GetTranslate() + flashHelpOffset_, camera_->GetViewProjectionMatrix()));
