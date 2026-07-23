@@ -106,7 +106,7 @@ void BaseEnemy::Update() {
 	}
 
 	/// ===回転の処理=== ///
-	if (!isFootColliding_ || isAreaColliding_) {
+	if (isAreaColliding_) {
 		// Y軸を180度回転させる
 		SetCurrentDirection(Opposite(currentDirection_));
 	}
@@ -124,12 +124,10 @@ void BaseEnemy::Update() {
 
 	/// ===フラグの更新=== ///
 	// 衝突中かどうかのフラグをリセット
-	isFootColliding_ = false;
 	isAreaColliding_ = false;
 	isPlayerColliding_ = false;
 	// 回転中のフラグの状態を設定
 	if (isRotating_) {
-		isFootColliding_ = true; // 回転中は衝突中とみなす
 		isAreaColliding_ = false;
 	}
 }
@@ -145,7 +143,6 @@ void BaseEnemy::DebugWithImGui() {
 	ImGui::Checkbox("isEscape_", &isEscape_);
 	ImGui::Checkbox("isTurning_", &isTurning_);
 	ImGui::Checkbox("isAreaColliding_", &isAreaColliding_);
-	ImGui::Checkbox("isFootColliding_", &isFootColliding_);
 
 	Vector3 worldPos = worldTransform_.GetWorldTranslate();
 	ImGui::DragFloat3("position", &worldPos.x, 0.1f);
