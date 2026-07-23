@@ -1,7 +1,6 @@
 #pragma once
 /// ===Include=== ///
 #include "Base/EnemyState.h"
-#include <memory>
 
 ///-------------------------------------------/// 
 /// EnemyStopState
@@ -9,8 +8,6 @@
 ///-------------------------------------------///
 class EnemyStopState : public EnemyState {
 public:
-	
-	EnemyStopState(std::unique_ptr<EnemyState> state);
 
 	/// <summary>
 	/// 初期化処理
@@ -28,17 +25,8 @@ public:
 	void Exit() override;
 
 private:
-	// 前の状態へのポインタ
-	std::unique_ptr<EnemyState> previousState_ = nullptr;
 
-	float stopDuration_ = 0.8f; // 停止時間(秒)
+	float stopDuration_ = 0.8f; // 停止時間
 	float stopTimer_ = 0.0f; // 経過時間
-
-private:
-
-	/// <summary>
-	/// 一つ前の状態に戻る
-	/// </summary>
-	void ResumePreviousState();
 };
 				

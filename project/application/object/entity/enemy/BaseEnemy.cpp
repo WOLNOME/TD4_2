@@ -13,6 +13,7 @@
 #include "State/EnemyMoveState.h"
 #include "State/EnemyStopState.h"
 #include "State/EnemyDeadState.h"
+#include "State/EnemyKnockbackState.h"
 // Math
 #include "MyMath.h"
 // Debug
@@ -82,8 +83,17 @@ void BaseEnemy::Update() {
 		// Colliderを解放
 		bodyCollider_.reset();
 		areaCollider_.reset();
-		// 状態を死亡状態に変更。
+		// 状態を死亡状態に変更
 		ChangeState(std::make_unique<EnemyDeadState>());
+	}
+
+	/// ===Playerと衝突した時=== ///
+	if (isPlayerColliding_) {
+		// 現在の状態がEnemyKnockbackStateでない場合
+		if (!dynamic_cast<EnemyKnockbackState*>(currentState_.get()) && !dynamic_cast<EnemyStopState*>(currentState_.get())) {
+			//EnemyKnockbackStateに変更
+			ChangeState(std::make_unique<EnemyKnockbackState>(std::move(currentState_)));
+		}
 	}
 
 	/// ===フラッシュの処理=== ///
@@ -116,6 +126,7 @@ void BaseEnemy::Update() {
 	// 衝突中かどうかのフラグをリセット
 	isFootColliding_ = false;
 	isAreaColliding_ = false;
+	isPlayerColliding_ = false;
 	// 回転中のフラグの状態を設定
 	if (isRotating_) {
 		isFootColliding_ = true; // 回転中は衝突中とみなす
@@ -231,10 +242,8 @@ void BaseEnemy::IsFlash() {
 
 	// フラッシュを喰らった場合の処理
 	if (lightManager_->GetIsFlush()) {
-		// 現在の状態がEnemyStopStateでない場合、EnemyStopStateに変更
-		if (!dynamic_cast<EnemyStopState*>(currentState_.get())) {
-			ChangeState(std::make_unique<EnemyStopState>(std::move(currentState_)));
-		}
+		// EnemyStopStateに変更
+		ChangeState(std::make_unique<EnemyStopState>());
 	}
 }
 
