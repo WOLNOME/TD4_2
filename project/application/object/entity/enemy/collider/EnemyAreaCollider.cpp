@@ -46,7 +46,25 @@ void EnemyAreaCollider::OnCollision(Norm::ICollider* _other, Norm::CollisionAttr
 			Norm::Vector3 pushVector = { 0.0f, 0.0f, 0.0f };
 
 			if (Norm::MyMath::CalculatePushVector(enemyOBB, areaOBB, &pushVector)) {
-				// 敵の座標を押し戻しベクトル分だけ戻す
+				// ブロック吸い付き対策
+				// 上方向の押し戻しであり、かつ落下中の場合のみ天面への接地とみなす
+				if (pushVector.y > 0.0f && pushVector.y >= std::abs(pushVector.x)) {
+					pushVector.x = 0.0f;
+				}
+				// 天井へ頭突きした際
+				else if (pushVector.y < 0.0f && std::abs(pushVector.y) >= std::abs(pushVector.x)) {
+					pushVector.x = 0.0f;
+				}
+				// それ以外は側面衝突として処理する
+				else {
+					pushVector.y = 0.0f;
+
+					if ((pushVector.x > 0.0f && enemy_->GetVelocity().x < 0.0f) || (pushVector.x < 0.0f && enemy_->GetVelocity().x > 0.0f)) {
+						enemy_->SetVelocity({ 0.0f, enemy_->GetVelocity().y, enemy_->GetVelocity().z });
+					}
+				}
+
+				// プレイヤーの座標を押し戻しベクトル分だけ戻す
 				Norm::Vector3 currentPos = enemy_->GetWorldTransform().GetTranslate();
 				enemy_->GetWorldTransform().SetTranslate(Norm::MyMath::Add(currentPos, pushVector));
 				enemy_->GetWorldTransform().UpdateMatrix();
