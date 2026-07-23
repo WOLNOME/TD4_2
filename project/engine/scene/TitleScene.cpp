@@ -54,6 +54,24 @@ void Norm::TitleScene::Initialize() {
 	buttonUI_.sprite->SetAnchorPoint({ 0.5f,0.5f });
 	buttonUI_.sprite->SetPosition(buttonPos_);
 
+	tutorialButtonUI_.textureHandle = TextureManager::GetInstance()->LoadTexture("tutorialButton.png");
+	tutorialButtonUI_.sprite = std::make_unique<Sprite>();
+	tutorialButtonUI_.sprite->Initialize(SpriteTag{}, SpriteManager::GetInstance()->GenerateName("tutorialButtonUI"), Order::Front2, tutorialButtonUI_.textureHandle);
+	tutorialButtonUI_.sprite->SetAnchorPoint({ 0.5f,0.5f });
+	tutorialButtonUI_.sprite->SetPosition(tutorialButtonPos_);
+
+	tutorialUI_.textureHandle = TextureManager::GetInstance()->LoadTexture("tutorial.png");
+	tutorialUI_.sprite = std::make_unique<Sprite>();
+	tutorialUI_.sprite->Initialize(SpriteTag{}, SpriteManager::GetInstance()->GenerateName("tutorialUI"), Order::Front3, tutorialUI_.textureHandle);
+	tutorialUI_.sprite->SetAnchorPoint({ 0.5f,0.5f });
+	tutorialUI_.sprite->SetPosition(tutorialPos_);
+
+	exitUI_.textureHandle = TextureManager::GetInstance()->LoadTexture("key_escape.png");
+	exitUI_.sprite = std::make_unique<Sprite>();
+	exitUI_.sprite->Initialize(SpriteTag{}, SpriteManager::GetInstance()->GenerateName("exitUI"), Order::Front3, exitUI_.textureHandle);
+	exitUI_.sprite->SetAnchorPoint({ 0.5f,0.5f });
+	exitUI_.sprite->SetPosition(exitUIPos_);
+
 	//ボタンUIの初期サイズを取得
 	buttonInitSize_ = buttonUI_.sprite->GetSize();
 
@@ -113,27 +131,67 @@ void Norm::TitleScene::Update() {
 	}
 
 	/* ボタンUIの更新 */
-	Vector2 mousePos = Input::GetInstance()->GetMousePosition();
+	Vector3 mousePos = { Input::GetInstance()->GetMousePosition().x,Input::GetInstance()->GetMousePosition().y,0.0f };
 
-	Vector2 uiPos = buttonUI_.sprite->GetPosition();
+	Vector3 buttonPos = { buttonUI_.sprite->GetPosition().x,buttonUI_.sprite->GetPosition().y,0.0f };
 
-	//マウスがボタンUIの範囲内にあれば
-	if (MyMath::Length(Vector3(mousePos.x, mousePos.y, 0.0f) - Vector3(uiPos.x, uiPos.y, 0.0f)) <= buttonLength_) {
+	Vector3 tutorialButtonPos = { tutorialButtonUI_.sprite->GetPosition().x,tutorialButtonUI_.sprite->GetPosition().y,0.0f };
 
-		//サイズを少し大きくする
-		buttonUI_.sprite->SetSize(buttonInitSize_ * buttonSizeRatio_);
+	if (isTutorial_) {
 
-		//範囲内で左クリックが押されたらシーンチェンジを開始する
-		if (Input::GetInstance()->TriggerMouseButton(MouseButton::LeftButton)) {
-			// クリック音再生
+		tutorialTimer_ += 1.0f / 60.0f;
+
+		if (Input::GetInstance()->TriggerKey(DIK_ESCAPE)) {
+
 			seClick_->Play(false, 0.5f);
 
-			isSceneChange_ = true;
+			isTutorial_ = false;
 		}
 	} else {
 
-		buttonUI_.sprite->SetSize(buttonInitSize_);
+		tutorialTimer_ -= 1.0f / 60.0f;
+
+		//マウスがボタンUIの範囲内にあれば
+		if (MyMath::Length(mousePos - buttonPos) <= buttonLength_) {
+
+			//サイズを少し大きくする
+			buttonUI_.sprite->SetSize(buttonInitSize_ * buttonSizeRatio_);
+
+			//範囲内で左クリックが押されたらシーンチェンジを開始する
+			if (Input::GetInstance()->TriggerMouseButton(MouseButton::LeftButton)) {
+
+				// クリック音再生
+				seClick_->Play(false, 0.5f);
+
+				isSceneChange_ = true;
+			}
+
+		} else {
+
+			buttonUI_.sprite->SetSize(buttonInitSize_);
+		}
+
+		if (MyMath::Length(mousePos - tutorialButtonPos) <= buttonLength_) {
+
+			tutorialButtonUI_.sprite->SetSize(buttonInitSize_ * buttonSizeRatio_);
+
+			if (Input::GetInstance()->TriggerMouseButton(MouseButton::LeftButton)) {
+
+				seClick_->Play(false, 0.5f);
+
+				isTutorial_ = true;
+			}
+		} else {
+
+			tutorialButtonUI_.sprite->SetSize(buttonInitSize_);
+		}
 	}
+
+	tutorialTimer_ = std::clamp(tutorialTimer_, 0.0f, tutorialMaxTime_);
+
+	tutorialUI_.sprite->SetColor({ 1.0f,1.0f,1.0f,MyMath::Lerp(0.0f, 1.0f, tutorialTimer_ / tutorialMaxTime_) });
+
+	exitUI_.sprite->SetColor({ 1.0f,1.0f,1.0f,MyMath::Lerp(0.0f, 1.0f, tutorialTimer_ / tutorialMaxTime_) });
 
 	if (isSceneChange_) {
 
