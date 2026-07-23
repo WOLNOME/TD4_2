@@ -223,7 +223,7 @@ void Norm::Player::OnCollision(ICollider* other, CollisionAttribute otherAttr) {
 #ifdef _DEBUG
 #else 
 			// HPを減らす
-			hp_--;
+			//hp_--;
 #endif // _DEBUG
 
 			if (hp_ <= 0) {
