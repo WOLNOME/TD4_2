@@ -21,14 +21,19 @@ void Norm::Player::Initialize() {
 	object_->SetIsOutline(true);
 	object_->SetOutlineParam(TextureManager::GetInstance()->LoadTexture("green.png"), 1.1f);
 	wt_.Initialize();
+	modelWorldTransform_.Initialize();
 	/*wt_.SetTranslate({0.0f, -52.0f, 0.0f});*/
+
 
 	// 最初は右向き
 	currentRotationY_ = 0.0f;
 	targetRotationY_ = 0.0f;
-	wt_.SetRotate({ 0.0f, currentRotationY_, 0.0f });
+	//wt_.SetRotate({ 0.0f, currentRotationY_, 0.0f });
+	modelWorldTransform_.SetTranslate(wt_.GetTranslate());
+	modelWorldTransform_.SetRotate({0.0f,currentRotationY_,0.0f});
 
-	object_->RegistWorldTransform(&wt_);
+	object_->RegistWorldTransform(&modelWorldTransform_);
+	//object_->RegistWorldTransform(&wt_);
 
 	// コライダーの生成 + 登録
 	collider_ = std::make_unique<ObjectCollider>(object_.get());
@@ -83,9 +88,12 @@ void Norm::Player::Update() {
 	// 座標の更新
 	Vector3 currentPos = wt_.GetTranslate();
 	wt_.SetTranslate({currentPos.x + velocity_.x, currentPos.y + velocity_.y, currentPos.z + velocity_.z});
+	// 見た目を物理座標に追従させる
+	modelWorldTransform_.SetTranslate(wt_.GetTranslate());
 
 	// 行列の更新
 	wt_.UpdateMatrix();
+	modelWorldTransform_.UpdateMatrix();
 
 	// Colorの更新
 	object_->SetColor(invincibleColor_);
@@ -317,7 +325,7 @@ void Norm::Player::UpdateFacing()
 		currentRotationY_ = targetRotationY_;
 	}
 
-	wt_.SetRotate({
+	modelWorldTransform_.SetRotate({
 		0.0f,
 		currentRotationY_,
 		0.0f

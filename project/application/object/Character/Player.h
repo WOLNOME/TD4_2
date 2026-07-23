@@ -120,6 +120,8 @@ namespace Norm {
 		std::unique_ptr<Object3d> object_ = nullptr;
 		// ワールドトランスフォーム
 		WorldTransform wt_;
+		// モデル表示・振り向きアニメーション用
+		WorldTransform modelWorldTransform_;
 		// コライダー
 		std::unique_ptr<ICollider> collider_ = nullptr;
 
