@@ -112,6 +112,12 @@ public:
 	EnemyDirection GetCurrentDirection() const { return currentDirection_; }
 
 	/// <summary>
+	/// 現在の状態を取得する
+	/// </summary>
+	/// <returns></returns>
+	EnemyState* GetCurrentState() const { return currentState_.get(); }
+
+	/// <summary>
 	/// 衝突中かどうかを取得する(足元)
 	/// </summary>
 	/// <returns></returns>
@@ -244,6 +250,7 @@ private:
 	float targetFacingRotationY_ = 0.0f; 
 
 	// 衝突中かどうかを保持するフラグ
+	bool isFootColliding_ = false;
 	bool isAreaColliding_ = false;
 	bool isBodyColliding_ = false;
 	bool isPlayerColliding_ = false;
