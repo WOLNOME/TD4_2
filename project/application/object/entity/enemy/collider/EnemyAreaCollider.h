@@ -34,4 +34,11 @@ public:
 private:
 	// 所有者のポインタ
 	BaseEnemy* enemy_ = nullptr;
+
+private:
+
+	/// <summary>
+	/// 衝突候補
+	/// </summary>
+	bool IsColliding(Norm::CollisionAttribute _attribute);
 };
