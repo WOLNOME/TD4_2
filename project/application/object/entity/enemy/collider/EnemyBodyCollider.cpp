@@ -38,9 +38,6 @@ void EnemyBodyCollider::OnCollision(Norm::ICollider * _other, Norm::CollisionAtt
 
 	/// ===Player=== ///
 	if (_attribute == Norm::CollisionAttribute::Player) {
-		if (!enemy_->GetPlayer()->IsInvincible()) {
-			
-		}
 
 		// カラーを赤に変更
 		debugLineColor_ = { 1,0,0,1 };
