@@ -247,6 +247,7 @@ private:
 	bool isAreaColliding_ = false;
 	bool isBodyColliding_ = false;
 	bool isPlayerColliding_ = false;
+	bool isFootColliding_ = false;
 
 	// 回転中かどうかのフラグ
 	bool isRotating_ = false; 
