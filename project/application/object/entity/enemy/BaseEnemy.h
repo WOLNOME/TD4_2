@@ -130,6 +130,12 @@ public:
 	bool IsBodyColliding() const { return isBodyColliding_; }
 
 	/// <summary>
+	/// プレイヤーと衝突中かどうかを取得する
+	/// </summary>
+	/// <returns></returns>
+	bool IsPlayerColliding() const { return isPlayerColliding_; }
+
+	/// <summary>
 	/// 回転中かどうかを取得
 	/// </summary>
 	/// <returns></returns>
@@ -197,6 +203,12 @@ public:
 	/// <param name="isColliding"></param>
 	void SetBodyColliding(bool isColliding) { isBodyColliding_ = isColliding; }
 
+	/// <summary>
+	/// 衝突中かどうかを設定する(プレイヤー)
+	/// </summary>
+	/// <param name="isColliding"></param>
+	void SetPlayerColliding(bool isColliding) { isPlayerColliding_ = isColliding; }
+
 #ifdef _DEBUG
 	void SetIsTurning(bool isFlag) { isTurning_ = isFlag; }
 #endif // _DEBUG
@@ -235,6 +247,7 @@ private:
 	bool isFootColliding_ = false;
 	bool isAreaColliding_ = false;
 	bool isBodyColliding_ = false;
+	bool isPlayerColliding_ = false;
 
 	// 回転中かどうかのフラグ
 	bool isRotating_ = false; 

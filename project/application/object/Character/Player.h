@@ -69,6 +69,12 @@ public:
 	bool IsDead() const { return isDead_; }
 
 	/// <summary>
+	/// 無敵フラグを取得
+	/// </summary>
+	/// <returns></returns>
+	bool IsInvincible() const { return isInvincible_; }
+
+	/// <summary>
 	/// HPの取得
 	/// </summary>
 	/// <returns></returns>
