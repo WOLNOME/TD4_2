@@ -6,6 +6,7 @@
 #include <TextureManager.h>
 #include <imgui.h>
 #include <CombinedParticleManager.h>
+#include <numbers>
 
 // Application
 #include <application/object/collision/ObjectCollider.h>
@@ -21,6 +22,12 @@ void Norm::Player::Initialize() {
 	object_->SetOutlineParam(TextureManager::GetInstance()->LoadTexture("green.png"), 1.1f);
 	wt_.Initialize();
 	/*wt_.SetTranslate({0.0f, -52.0f, 0.0f});*/
+
+	// 最初は右向き
+	currentRotationY_ = 0.0f;
+	targetRotationY_ = 0.0f;
+	wt_.SetRotate({ 0.0f, currentRotationY_, 0.0f });
+
 	object_->RegistWorldTransform(&wt_);
 
 	// コライダーの生成 + 登録
@@ -55,6 +62,9 @@ void Norm::Player::Initialize() {
 void Norm::Player::Update() {
 	// 移動入力処理
 	Move();
+
+	// 振り向き更新
+	UpdateFacing();
 
 	// 無敵時間の更新
 	InvincibleUpdate();
@@ -236,9 +246,14 @@ void Norm::Player::Move() {
 		// 左右入力移動
 		if (input_->PushKey(DIK_A)) {
 			targetVelocityX = -kSpeed;
+			// 左向き
+			targetRotationY_ = std::numbers::pi_v<float>;
 		}
 		if (input_->PushKey(DIK_D)) {
 			targetVelocityX = kSpeed;
+
+			// 右向き
+			targetRotationY_ = 0.0f;
 		}
 
 		// ジャンプ入力
@@ -289,4 +304,22 @@ void Norm::Player::InvincibleUpdate() {
 		invincibleCounter_ = 0;
 		isInvincible_ = false;
 	}
+}
+
+void Norm::Player::UpdateFacing()
+{
+	// 現在角度を目標角度へ近づける
+	currentRotationY_ =
+		MyMath::Lerp(currentRotationY_, targetRotationY_, kTurnSpeed);
+
+	// ほぼ目標角度なら完全に一致させる
+	if (std::abs(targetRotationY_ - currentRotationY_) < 0.001f) {
+		currentRotationY_ = targetRotationY_;
+	}
+
+	wt_.SetRotate({
+		0.0f,
+		currentRotationY_,
+		0.0f
+		});
 }
