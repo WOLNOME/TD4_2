@@ -128,7 +128,7 @@ void Norm::GamePlayScene::Update() {
 	if (player_->IsGoaled()) {
 		sceneManager_->SetNextScene("RESULT");
 	} else if (player_->IsDead()) {
-		//sceneManager_->SetNextScene("GAME_OVER");
+		sceneManager_->SetNextScene("GAMEOVER");
 	}
 	backgroundWT_.SetTranslate({ // 背景オブジェクトをプレイヤーに追従させる
 		player_->GetTranslate().x, 

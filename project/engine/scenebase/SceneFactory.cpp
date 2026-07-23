@@ -4,6 +4,7 @@
 #include "GamePlayScene.h"
 #include "TitleScene.h"
 #include "ResultScene.h"
+#include "GameOverScene.h"
 
 //アプリケーション
 
@@ -29,6 +30,9 @@ namespace Norm {
 	    } else if (sceneName == "RESULT") {
 			// リザルトシーン
 		    newScene = std::make_unique<ResultScene>();
+		} else if (sceneName == "GAMEOVER") {
+			// リザルトシーン
+			newScene = std::make_unique<GameOverScene>();
 		}
 
 		//シーン名をセット
