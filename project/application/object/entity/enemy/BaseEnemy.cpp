@@ -80,9 +80,6 @@ void BaseEnemy::Initialize(Norm::Vector3 position, Norm::Player* player, EnemyDi
 void BaseEnemy::Update() {
 	/// ===死亡フラグの確認=== ///
 	if (isBodyColliding_) {
-		// Colliderを解放
-		bodyCollider_.reset();
-		areaCollider_.reset();
 		// 状態を死亡状態に変更
 		ChangeState(std::make_unique<EnemyDeadState>());
 	}
