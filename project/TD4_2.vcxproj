@@ -222,6 +222,9 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="application\ui\pause\PauseMenu.cpp" />
     <ClCompile Include="application\object\entity\titleEnemy\TitleEnemy.cpp" />
     <ClCompile Include="application\system\LightManager.cpp" />
+    <ClCompile Include="application\ui\flag\FlagUI.cpp" />
+    <ClCompile Include="application\ui\operation\OperationUI.cpp" />
+    <ClCompile Include="application\ui\math\UIMath.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="application\system\direction\cinematic\Cinematic.h" />
@@ -351,6 +354,9 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="engine\3d\object\ObjectEnum.h" />
     <ClInclude Include="application\object\entity\titleEnemy\TitleEnemy.h" />
     <ClInclude Include="application\system\LightManager.h" />
+    <ClInclude Include="application\ui\flag\FlagUI.h" />
+    <ClInclude Include="application\ui\operation\OperationUI.h" />
+    <ClInclude Include="application\ui\math\UIMath.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt" />

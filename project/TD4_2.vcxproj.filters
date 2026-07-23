@@ -385,6 +385,9 @@
     <ClCompile Include="application\object\entity\enemy\collider\EnemyBodyCollider.cpp" />
     <ClCompile Include="application\object\entity\enemy\State\EnemyDeadState.cpp" />
     <ClCompile Include="application\system\LightManager.cpp" />
+    <ClCompile Include="application\ui\flag\FlagUI.cpp" />
+    <ClCompile Include="application\ui\operation\OperationUI.cpp" />
+    <ClCompile Include="application\ui\math\UIMath.cpp" />
     <ClCompile Include="application\object\entity\enemy\State\EnemyKnockbackState.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -717,6 +720,9 @@
     <ClInclude Include="application\object\entity\enemy\collider\EnemyBodyCollider.h" />
     <ClInclude Include="application\object\entity\enemy\State\EnemyDeadState.h" />
     <ClInclude Include="application\system\LightManager.h" />
+    <ClInclude Include="application\ui\flag\FlagUI.h" />
+    <ClInclude Include="application\ui\operation\OperationUI.h" />
+    <ClInclude Include="application\ui\math\UIMath.h" />
     <ClInclude Include="application\object\entity\enemy\State\EnemyKnockbackState.h" />
   </ItemGroup>
   <ItemGroup>

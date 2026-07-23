@@ -244,7 +244,6 @@ private:
 	float targetFacingRotationY_ = 0.0f; 
 
 	// 衝突中かどうかを保持するフラグ
-	bool isFootColliding_ = false;
 	bool isAreaColliding_ = false;
 	bool isBodyColliding_ = false;
 	bool isPlayerColliding_ = false;
