@@ -16,13 +16,14 @@ public:
 		const std::string _onTextureName,
 		const std::string _offTextureName,
 		const Norm::Vector3 _offset,
+		const Norm::Vector2 _size,
 		const BYTE _keyNumber,
 		const bool _isMouseUI,
 		Norm::BaseCamera* _camera,
 		Norm::Input* _input
 	);
 
-	void Update(Norm::Vector3 _playerPos);
+	void Update(Norm::Vector3 _playerPos, Norm::Vector4 _color);
 
 private:
 
@@ -46,5 +47,5 @@ private:
 
 	Norm::Vector3 offset_ = { 0.0f,0.0f,0.0f };
 
-	Norm::Vector2 size_ = { 48.0f,48.0f };
+	Norm::Vector2 size_ = { 32.0f,32.0f };
 };
