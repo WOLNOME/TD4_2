@@ -80,12 +80,12 @@ void Norm::GamePlayScene::Initialize() {
 		gimmickManager_.get()
 	);
 
+	operationUI_ = std::make_unique<OperationUI>();
+	operationUI_->Initialize(player_.get(), camera_.get(), Input::GetInstance());
+
 	// ポーズメニュー生成 + 初期化
 	pauseMenu_ = std::make_unique<PauseMenu>();
 	pauseMenu_->Initialize();
-
-	operationUI_ = std::make_unique<OperationUI>();
-	operationUI_->Initialize(player_.get(), camera_.get(), Input::GetInstance());
 
 	// BGM読み込み
 	bgmGame_ = std::make_unique<Norm::Audio>();
@@ -108,7 +108,7 @@ void Norm::GamePlayScene::Update() {
 	/* ポーズメニュー更新処理 */
 	pauseMenu_->Update();
 
-	operationUI_->Update();
+	operationUI_->Update(pauseMenu_->IsPaused());
 
 	// タイトルへ戻るが押されていたらシーンを切り替える
 	if (pauseMenu_->IsRequestedReturnToTitle()) {

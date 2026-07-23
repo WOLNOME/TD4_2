@@ -108,7 +108,11 @@ void OperationUI::Initialize(Norm::Player* _player, Norm::BaseCamera* _camera, N
 
 }
 
-void OperationUI::Update() {
+void OperationUI::Update(const bool _isPause) {
+
+	if (_isPause) {
+		return;
+	}
 
 	Vector2 screenPos = WorldToScreen(player_->GetTranslate(), camera_->GetViewProjectionMatrix());
 
