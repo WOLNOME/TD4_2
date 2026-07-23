@@ -169,6 +169,11 @@ public:
 	void SetLightManager(LightManager* lightManager) { lightManager_ = lightManager; }
 
 	/// <summary>
+	/// BodyColliderの衝突属性をEnemyに設定する
+	/// </summary>
+	void SetBodyCollider() {bodyCollider_->SetCollisionAttribute(Norm::CollisionAttribute::Enemy); }
+
+	/// <summary>
 	/// 色の設定
 	/// </summary>
 	/// <param name="color"></param>
