@@ -13,7 +13,7 @@ public:
 
 	void Initialize(Norm::Player* _player, Norm::BaseCamera* _camera, Norm::Input* _input);
 
-	void Update();
+	void Update(const bool _isPause);
 
 private:
 
