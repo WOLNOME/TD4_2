@@ -40,7 +40,7 @@ namespace Norm {
 		//ウィンドウプロシージャ
 		wc.lpfnWndProc = WindowProc;
 		//ウィンドウクラス名(何でもいい)
-		wc.lpszClassName = L"TD4_2";
+		wc.lpszClassName = L"4206_ルクスル";
 		//インスタンスハンドル
 		wc.hInstance = GetModuleHandle(nullptr);
 		//カーソル
@@ -58,7 +58,7 @@ namespace Norm {
 		//ウィンドウの生成
 		hwnd = CreateWindow(
 			wc.lpszClassName,		//利用するクラス名
-			L"TD4_2",				//タイトルバーの文字
+			L"4206_ルクスル",				//タイトルバーの文字
 			WS_OVERLAPPEDWINDOW,	//よく見るウィンドウスタイル
 			CW_USEDEFAULT,			//表示X座標(Windowsに任せる)
 			CW_USEDEFAULT,			//表示Y座標(Windowsに任せる)
