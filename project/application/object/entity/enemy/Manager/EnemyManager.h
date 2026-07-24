@@ -34,6 +34,8 @@ struct EnemySlot {
 class EnemyManager {
 public:
 
+	~EnemyManager();
+
 	/// <summary>
 	/// 敵を生成する
 	/// </summary>
